@@ -1,40 +1,36 @@
 package com.example.echolauncher;
 
-import android.content.Context;
-import android.os.Build;
+import android.Manifest;
+import android.app.WallpaperManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
-public class AppDrawer extends Fragment {
+public class HomeScreen extends Fragment {
     private List<AppItem> apps;
     private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.app_drawer, container, false);
+        view = inflater.inflate(R.layout.home_screen, container, false);
 
-        displayAllApps();
-        initDrawer();
-        initSearchBar();
+        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(view.getContext());
+        final ImageView wallpaperView = view.findViewById(R.id.wallpaperView);
+        wallpaperView.setImageDrawable(wallpaperManager.getDrawable());
 
         return view;
     }
@@ -48,15 +44,9 @@ public class AppDrawer extends Fragment {
     }
 
     private void initDrawer() {
-        View drawer = view.findViewById(R.id.drawer);
-        GridView drawerGridView = view.findViewById(R.id.drawerGrid);
-        AppAdapter adapter = new AppAdapter(view.getContext(), apps);
-        drawerGridView.setAdapter(adapter);
-
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        float rows = (float) Math.ceil(drawerGridView.getCount() / drawerGridView.getNumColumns()),
-            itemHeight = 280 + drawerGridView.getVerticalSpacing();
-        view.getLayoutParams().height = (int) (itemHeight * rows);
+        View drawer = view.findViewById(R.id.appDrawerLayout);
+        final GridView drawerGridView = view.findViewById(R.id.appDrawerGrid);
+        drawerGridView.setAdapter(new AppAdapter(view.getContext(), apps));
     }
 
     private void initSearchBar() {

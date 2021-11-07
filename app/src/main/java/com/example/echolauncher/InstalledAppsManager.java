@@ -28,6 +28,8 @@ public class InstalledAppsManager {
                 continue;
 
             apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, info.loadIcon(packageManager)));
+            apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, info.loadIcon(packageManager)));
+            apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, info.loadIcon(packageManager)));
         }
 
         mergeSortApps();

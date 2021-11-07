@@ -42,7 +42,6 @@ public class AppAdapter extends BaseAdapter {
         return position;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
@@ -55,12 +54,13 @@ public class AppAdapter extends BaseAdapter {
 
         ImageView image = view.findViewById(R.id.imageView);
         TextView textView = view.findViewById(R.id.textView);
+        LinearLayout linearLayout = view.findViewById(R.id.appLayout);
 
-        image.getLayoutParams().width = 150;
-        image.getLayoutParams().height = 150;
+        image.getLayoutParams().width = imageWidth;
+        image.getLayoutParams().height = imageHeight;
         image.setImageDrawable(items.get(position).getIcon());
 
-        textView.setTextSize(12);
+        textView.setTextSize(textSize);
         textView.setText(shortened(items.get(position).getName()));
 
         // Open app when this view is pressed
@@ -102,4 +102,6 @@ public class AppAdapter extends BaseAdapter {
     private Context context;
     private List<AppItem> items;
     private Activity activity;
+
+    private final int imageHeight = 150, imageWidth = 150, textSize = 12;
 }
