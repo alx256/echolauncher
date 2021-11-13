@@ -7,9 +7,11 @@ import androidx.fragment.app.FragmentContainerView;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        InstalledAppsManager.Init(getApplicationContext());
+
         // Request READ_EXTERNAL_STORAGE permission (needed for accessing wallpaper)
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set app drawer to a size that means it can be scrolled by ScrollView
         FragmentContainerView appDrawer = findViewById(R.id.appDrawerFragment);
+        appDrawer.getLayoutParams().height = metrics.heightPixels;
 
         // Set home screen to fill screen
         FragmentContainerView homeScreen = findViewById(R.id.homeScreenFragment);
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Add snapping behaviour to scroll view
         ScrollView scrollView = findViewById(R.id.masterScrollView);
+        ScrollManager.Init(scrollView);
         scrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -69,22 +75,22 @@ public class MainActivity extends AppCompatActivity {
                     switch (focus) {
                         case 1:
                             if (yPos < lower) {
-                                scrollView.smoothScrollTo((int) appDrawer.getX(), (int) appDrawer.getY());
+                                ScrollManager.scrollTo(ScrollManager.APP_DRAWER);
                                 focus = 2;
                                 return true;
                             }
                             break;
                         case 2:
                             if (yPos > higher) {
-                                scrollView.smoothScrollTo((int) homeScreen.getX(), (int) homeScreen.getY());
+                                ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
                                 focus = 1;
                                 return true;
                             }
                             break;
                     }
 
-                    if (focus == 1) scrollView.smoothScrollTo((int) homeScreen.getX(), (int) homeScreen.getY());
-                    if (focus == 2) scrollView.smoothScrollTo((int) appDrawer.getX(), (int) appDrawer.getY());
+                    if (focus == 1) ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
+                    if (focus == 2) ScrollManager.scrollTo(ScrollManager.APP_DRAWER);
 
                     return true;
                 }

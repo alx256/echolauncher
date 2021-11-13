@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class InstalledAppsManager {
-    static public List<AppItem> getApps(Context context) {
+    static public void Init(Context context) {
         apps = new ArrayList<>();
         packageManager = context.getPackageManager();
 
@@ -28,13 +28,21 @@ public class InstalledAppsManager {
                 continue;
 
             apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, info.loadIcon(packageManager)));
-            apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, info.loadIcon(packageManager)));
-            apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, info.loadIcon(packageManager)));
         }
 
         mergeSortApps();
+    }
 
+    static public List<AppItem> getAll() {
         return apps;
+    }
+
+    static public AppItem get(String packageName) {
+        for (AppItem item : apps)
+            if (item.getPackageName().equals(packageName))
+                return item;
+
+        return null;
     }
 
     static public List<AppItem> searchFor(String app) {
@@ -43,90 +51,67 @@ public class InstalledAppsManager {
         if (result == -1)
             return new ArrayList<>();
 
-        List<AppItem> finalList = new ArrayList<>();
-        boolean done = false;
-        int index = result;
+        int start = result, end = result;
+        start = findLimit(start, -1, app);
+        end = findLimit(end, 1, app);
 
-        while (!done) {
-            if (apps.get(index).getName().substring(0, app.length()).equalsIgnoreCase(app))
-                finalList.add(apps.get(index++));
-            else
-                done = true;
-        }
-
-        return finalList;
+        return new ArrayList<>(apps.subList(start, end + 1));
     }
 
-    // Checks if the list starts and ends with items that match the string
-    static private boolean isFound(String string, List<AppItem> list) {
-        String string1 = list.get(0).getName().substring(0, string.length()),
-                string2 = list.get(list.size() - 1).getName().substring(0, string.length());
+    // Find when index doesn't contain a matching item anymore
+    static private int findLimit(int index, int add, String string) {
+        boolean done = false;
 
-        return (string1.equalsIgnoreCase(string)) && (string2.equalsIgnoreCase(string));
+        while (!done) {
+            if (index < 0) {
+                index = 0;
+                break;
+            }
+
+            if (index >= apps.size()) {
+                index = apps.size() - 1;
+                break;
+            }
+
+            AppItem item = apps.get(index);
+            if (item == null)
+                break;
+
+            String shortened, name = item.getName();
+            if (string.length() <= name.length())
+                shortened = name.substring(0, string.length());
+            else
+                shortened = name;
+
+            if (!shortened.equalsIgnoreCase(string)) {
+                index -= add;
+                done = true;
+            } else
+                index += add;
+        }
+
+        return index;
     }
 
     static private int binarySearch(String string, int start, int end) {
         while (end >= start) {
-            int mid = start + (end - start) / 2;
-            String shortenedString = apps.get(mid).getName().substring(0, string.length());
+            int mid = (start + end) / 2;
+            String target = apps.get(mid).getName(),
+                search = target;
+            if (target.length() > string.length())
+                search = target.substring(0, string.length());
 
-            if (shortenedString.equalsIgnoreCase(string))
-                return mid;
-
-            if (compare(shortenedString, string))
+            if (compare(search,string))
                 start = mid + 1;
-            else
+            else if (!compare(search, string))
                 end = mid - 1;
+
+            if (search.equalsIgnoreCase(string))
+                return mid;
         }
 
         return -1;
     }
-
-//    static private List<AppItem> binarySearch(String string, List<AppItem> list) {
-//        if (list == null)
-//            return new ArrayList<>();
-//
-//        int mid = list.size() / 2;
-//
-//        if (list.get(mid).getName() == string)
-//            return new ArrayList<>(list.subList(mid, mid + 1));
-//
-//        List<AppItem> list1 = new ArrayList<>(list.subList(0, mid)),
-//                list2 = new ArrayList<>(list.subList(mid, list.size()));
-//
-//        if (list1.isEmpty())
-//            return list2;
-//
-//        if (list2.isEmpty())
-//            return list1;
-//
-//        String string1 = list1.get(list1.size() - 1).getName(),
-//                string2 = list2.get(0).getName();
-//
-//        Log.d("", "list1:");
-//        for (AppItem item : list1)
-//            Log.d("", "\t" + item.getName());
-//
-//        Log.d("", "list2:");
-//        for (AppItem item : list2)
-//            Log.d("", "\t" + item.getName());
-//
-//        if (compare(string, string1))
-//            return binarySearch(string, list1);
-//
-//        if (compare(string2, string))
-//            return binarySearch(string, list2);
-//
-//        if (isFound(string, list1))
-//            return list1;
-//
-//        if (isFound(string, list2))
-//            return list2;
-//
-//
-//        Log.d("", "end");
-//        return new ArrayList<>();
-//    }
 
     static private boolean compare(String string1, String string2) {
         for (int index = 0; index < string1.length(); index++) {

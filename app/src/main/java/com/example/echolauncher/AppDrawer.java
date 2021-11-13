@@ -40,7 +40,7 @@ public class AppDrawer extends Fragment {
     }
 
     private void displayAllApps() {
-        apps = InstalledAppsManager.getApps(view.getContext());
+        apps = InstalledAppsManager.getAll();
     }
 
     private void displaySearchedApps(String string) {
@@ -53,10 +53,10 @@ public class AppDrawer extends Fragment {
         AppAdapter adapter = new AppAdapter(view.getContext(), apps);
         drawerGridView.setAdapter(adapter);
 
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        float rows = (float) Math.ceil(drawerGridView.getCount() / drawerGridView.getNumColumns()),
-            itemHeight = 280 + drawerGridView.getVerticalSpacing();
-        view.getLayoutParams().height = (int) (itemHeight * rows);
+//        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//        float rows = (float) Math.ceil(drawerGridView.getCount() / drawerGridView.getNumColumns()),
+//            itemHeight = 280 + drawerGridView.getVerticalSpacing();
+//        view.getLayoutParams().height = (int) (itemHeight * rows);
     }
 
     private void initSearchBar() {
