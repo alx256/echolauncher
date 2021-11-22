@@ -39,10 +39,12 @@ public class HomeScreen extends Fragment {
         final GridView gridView = view.findViewById(R.id.homeScreenGrid);
         apps = new ArrayList<>();
 
-        for (int i = 0; i < 4 * 12; i++)
+        for (int i = 0; i < 4 * 7; i++)
             apps.add(new AppItem());
 
-        gridView.setAdapter(new AppAdapter(view.getContext(), apps));
+        AppAdapter adapter = new AppAdapter(view.getContext(), apps);
+        adapter.isHomeScreen = true;
+        gridView.setAdapter(adapter);
 
         return view;
     }

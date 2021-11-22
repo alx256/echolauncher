@@ -5,16 +5,24 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+enum Comparison {
+    APP_NAME,
+    PACKAGE_NAME
+}
+
 public class InstalledAppsManager {
     static public void Init(Context context) {
         apps = new ArrayList<>();
         packageManager = context.getPackageManager();
+        availableIcons = new ArrayList<>();
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -27,10 +35,10 @@ public class InstalledAppsManager {
             if (info.packageName.equals(context.getPackageName()))
                 continue;
 
-            apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, info.loadIcon(packageManager)));
+            apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, availableIcons.size() - 1));
         }
 
-        mergeSortApps();
+        sort(apps);
     }
 
     static public List<AppItem> getAll() {
@@ -38,15 +46,25 @@ public class InstalledAppsManager {
     }
 
     static public AppItem get(String packageName) {
-        for (AppItem item : apps)
-            if (item.getPackageName().equals(packageName))
-                return item;
+        int index = binarySearch(packageName, 0, apps.size() - 1, Comparison.PACKAGE_NAME);
+        if (index > -1)
+            return apps.get(index);
+        else
+            return null;
+    }
+
+    static public Drawable getDrawable(String packageName) {
+        try {
+            return packageManager.getApplicationIcon(packageName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         return null;
     }
 
     static public List<AppItem> searchFor(String app) {
-        int result = binarySearch(app, 0, apps.size() - 1);
+        int result = binarySearch(app, 0, apps.size() - 1, Comparison.APP_NAME);
 
         if (result == -1)
             return new ArrayList<>();
@@ -93,15 +111,27 @@ public class InstalledAppsManager {
         return index;
     }
 
-    static private int binarySearch(String string, int start, int end) {
+    static private int binarySearch(String string, int start, int end, Comparison comparison) {
         while (end >= start) {
             int mid = (start + end) / 2;
-            String target = apps.get(mid).getName(),
-                search = target;
+            String target, search;
+            switch (comparison) {
+                case APP_NAME:
+                    target = apps.get(mid).getName();
+                    break;
+                case PACKAGE_NAME:
+                    target = apps.get(mid).getPackageName();
+                    break;
+                default:
+                    target = new String();
+            }
+
+            search = target;
+
             if (target.length() > string.length())
                 search = target.substring(0, string.length());
 
-            if (compare(search,string))
+            if (compare(search, string))
                 start = mid + 1;
             else if (!compare(search, string))
                 end = mid - 1;
@@ -129,10 +159,6 @@ public class InstalledAppsManager {
 
     static private boolean compare(AppItem item1, AppItem item2) {
         return compare(item1.getName(), item2.getName());
-    }
-
-    static private void mergeSortApps() {
-        sort(apps);
     }
 
     static private void sort(List<AppItem> list) {
@@ -169,6 +195,11 @@ public class InstalledAppsManager {
     }
 
     static public PackageManager getPackageManager() { return packageManager; }
+
+    static public AppItem dragging;
+    static public List<Drawable> availableIcons;
+    static public AppShadowBuilder shadowBuilder;
+    static public boolean hidden = false;
 
     static private PackageManager packageManager;
     static private List<AppItem> apps;

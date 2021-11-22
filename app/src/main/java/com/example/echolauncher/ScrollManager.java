@@ -1,7 +1,11 @@
 package com.example.echolauncher;
 
+import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.Window;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.FragmentContainerView;
@@ -29,7 +33,7 @@ public class ScrollManager {
                 break;
             case APP_DRAWER:
                 x = (int) appDrawer.getX();
-                y = (int) appDrawer.getY();
+                y = (int) appDrawer.getY() - statusBarHeight;
                 break;
         }
 
@@ -55,6 +59,8 @@ public class ScrollManager {
     public static final int WIDGET_DRAWER = 0,
         HOME_SCREEN = 1,
         APP_DRAWER = 2;
+
+    public static int statusBarHeight;
 
     private static ScrollView masterScrollView;
     private static FragmentContainerView homeScreen, appDrawer;

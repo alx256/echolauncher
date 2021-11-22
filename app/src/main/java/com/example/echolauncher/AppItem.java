@@ -4,23 +4,23 @@ import android.graphics.drawable.Drawable;
 
 public class AppItem {
     private String name, packageName;
-    private Drawable icon;
+    private int iconIndex;
 
     public AppItem() {
         empty = true;
     }
 
-    public AppItem(String name, String packageName, Drawable icon) {
+    public AppItem(String name, String packageName, int iconIndex) {
         this.name = name;
         this.packageName = packageName;
-        this.icon = icon;
+        this.iconIndex = iconIndex;
 
         empty = false;
     }
 
     public String getName() { return name; }
     public String getPackageName() { return packageName; }
-    public Drawable getIcon() { return icon; }
+    public int getIconIndex() { return iconIndex; }
 
     public boolean empty;
 }
