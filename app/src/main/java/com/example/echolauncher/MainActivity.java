@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.setStatusBarColor(Color.TRANSPARENT);
-//        window.setNavigationBarColor(Color.RED);
-//        window.setNavigationBarColor(Color.TRANSPARENT);
 
         setContentView(R.layout.activity_main);
 
@@ -53,19 +51,18 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
         // Get screen size
-        DisplayMetrics metricsFull = new DisplayMetrics(), metricsFit = new DisplayMetrics();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            getWindowManager().getDefaultDisplay().getRealMetrics(metricsFull);
-        }
-        getWindowManager().getDefaultDisplay().getMetrics(metricsFit);
+        Globals.metricsFit = new DisplayMetrics();
+        Globals.metricsFull = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metricsFull);
+        getWindowManager().getDefaultDisplay().getMetrics(Globals.metricsFit);
 
         // Set app drawer to a size that means it can be scrolled by ScrollView
         FragmentContainerView appDrawer = findViewById(R.id.appDrawerFragment);
-        appDrawer.getLayoutParams().height = metricsFull.heightPixels;
+        appDrawer.getLayoutParams().height = Globals.metricsFull.heightPixels;
 
         // Set home screen to fill screen
         FragmentContainerView homeScreen = findViewById(R.id.homeScreenFragment);
-        homeScreen.getLayoutParams().height = metricsFull.heightPixels;
+        homeScreen.getLayoutParams().height = Globals.metricsFull.heightPixels;
 
         // 0 = Widgets, 1 = Home Screen, 2 = App Drawer
         focus = 1;
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         scrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                int appDrawerPosition[] = new int[2], offset = metricsFull.heightPixels / 4;
+                int appDrawerPosition[] = new int[2], offset = Globals.metricsFull.heightPixels / 4;
                 appDrawer.getLocationOnScreen(appDrawerPosition);
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
@@ -93,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
                     int yPos = appDrawerPosition[1];
                     // Lower yPos means that it is closer to the top of the screen
-                    float mid = metricsFull.heightPixels / 2,
+                    float mid = Globals.metricsFull.heightPixels / 2,
                             lower = mid + offset,
                             higher = mid - offset;
 

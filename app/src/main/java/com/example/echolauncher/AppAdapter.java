@@ -70,6 +70,7 @@ public class AppAdapter extends BaseAdapter {
         image.getLayoutParams().height = imageHeight;
         image.getLayoutParams().width = imageWidth;
         textView.setTextSize(textSize);
+        textView.getLayoutParams().height = textHeight;
 
         AppItem item = items.get(position);
 
@@ -84,7 +85,14 @@ public class AppAdapter extends BaseAdapter {
         return finalView;
     }
 
+    public float getHeight() {
+        return imageHeight + textHeight;
+    }
+
     private void setTemp(AppItem item, View view) {
+        if (item == null)
+            return;
+
         image = view.findViewById(R.id.imageView);
         textView = view.findViewById(R.id.textView);
         image.setImageDrawable(InstalledAppsManager.getDrawable(item.getPackageName()));
@@ -105,6 +113,9 @@ public class AppAdapter extends BaseAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (item == null)
+                    return;
+
                 PackageManager packageManager = InstalledAppsManager.getPackageManager();
                 String packageName = item.getPackageName();
                 Log.d("AppAdapter", "Opening " + packageName + "...");
@@ -231,6 +242,6 @@ public class AppAdapter extends BaseAdapter {
     private LinearLayout linearLayout;
 
     private final int imageHeight = 150, imageWidth = 150, textSize = 12,
-            highlight = 0x44000000;
+            textHeight = 55;
     private boolean stationary;
 }
