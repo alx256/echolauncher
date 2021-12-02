@@ -50,8 +50,8 @@ public class AppDrawer extends Fragment {
     private void initDrawer() {
         View drawer = view.findViewById(R.id.drawer);
         GridView drawerGridView = view.findViewById(R.id.drawerGrid);
-        AppAdapter adapter = new AppAdapter(view.getContext(), apps);
-        drawerGridView.setAdapter(adapter);
+        Globals.adapter = new AppAdapter(view.getContext(), apps);
+        drawerGridView.setAdapter(Globals.adapter);
 
 //        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 //        float rows = (float) Math.ceil(drawerGridView.getCount() / drawerGridView.getNumColumns()),

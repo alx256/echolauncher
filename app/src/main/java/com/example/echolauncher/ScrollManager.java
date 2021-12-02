@@ -1,6 +1,7 @@
 package com.example.echolauncher;
 
 import android.graphics.Rect;
+import android.os.CountDownTimer;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -45,13 +46,18 @@ public class ScrollManager {
     }
 
     private static void doScroll(int x, int y) {
-        lastX = masterScrollView.getScrollX();
-        lastY = masterScrollView.getScrollY();
+        if (!canScroll)
+            return;
+
+        canScroll = false;
 
         masterScrollView.post(new Runnable() {
             @Override
             public void run() {
+                lastX = masterScrollView.getScrollX();
+                lastY = masterScrollView.getScrollY();
                 masterScrollView.smoothScrollTo(x, y);
+                canScroll = true;
             }
         });
     }
@@ -61,6 +67,7 @@ public class ScrollManager {
         APP_DRAWER = 2;
 
     public static int statusBarHeight;
+    public static boolean canScroll = true;
 
     private static ScrollView masterScrollView;
     private static FragmentContainerView homeScreen, appDrawer;

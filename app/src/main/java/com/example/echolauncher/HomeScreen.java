@@ -13,6 +13,7 @@ import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.gridlayout.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -37,20 +38,23 @@ public class HomeScreen extends Fragment {
         final ImageView wallpaperView = view.findViewById(R.id.wallpaperView);
         wallpaperView.setImageDrawable(wallpaperManager.getDrawable());
 
-        final GridView gridView = view.findViewById(R.id.homeScreenGrid);
-        gridView.getLayoutParams().width = Globals.metricsFull.widthPixels;
+//        final GridView gridView = view.findViewById(R.id.homeScreenGrid);
+//        gridView.getLayoutParams().width = Globals.metricsFull.widthPixels;
+        final GridLayout gridLayout = view.findViewById(R.id.homeScreenGrid);
         apps = new ArrayList<>();
 
         AppAdapter adapter = new AppAdapter(view.getContext(), apps);
-        adapter.isHomeScreen = true;
-        gridView.setAdapter(adapter);
+//        adapter.isHomeScreen = true;
+//        gridView.setAdapter(adapter);
 
-        float itemHeight = adapter.getHeight() + 20.0f;
+//        float itemHeight = adapter.getHeight() + 20.0f;
 
-        for (int i = 0;
-             i < 200;
-             i++)
-            apps.add(new AppItem());
+        gridLayout.setColumnCount(Globals.metricsFit.widthPixels / new AppItem().getHeight());
+        gridLayout.setRowCount(Globals.metricsFit.widthPixels / new AppItem().getHeight());
+
+        for (int x = 0; x < gridLayout.getColumnCount(); x++)
+            for (int y = 0; y < gridLayout.getRowCount(); y++)
+                apps.add(new AppItem());
 
         final int RIGHT_AREA = Globals.metricsFull.widthPixels - 200;
 
@@ -60,7 +64,13 @@ public class HomeScreen extends Fragment {
         delete.setY(-Globals.metricsFull.heightPixels + delete.getLayoutParams().height);
         delete.setVisibility(View.INVISIBLE);
 
-        gridView.setOnDragListener(new View.OnDragListener() {
+        gridLayout.addView(new AppItem().toView(getContext()));
+
+        for (int x = 0; x < gridLayout.getColumnCount(); x++)
+            for (int y = 0; y < 10; y++)
+                gridLayout.addView(new AppItem().toView(getContext()));
+
+        gridLayout.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 delete.setVisibility(View.VISIBLE);

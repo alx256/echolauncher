@@ -14,7 +14,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <ImageView
@@ -26,31 +25,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_delete" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/homeScreenGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_margin="70px"
+        android:clipToPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <FrameLayout
-            android:id="@+id/homeScreenLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <GridView
-                android:id="@+id/homeScreenGrid"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:numColumns="4"
-                android:padding="10px"
-                android:verticalSpacing="20px" />
-        </FrameLayout>
-
-    </LinearLayout>
+    </androidx.gridlayout.widget.GridLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
