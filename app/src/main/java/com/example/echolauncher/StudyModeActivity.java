@@ -18,7 +18,7 @@ public class StudyModeActivity extends Activity {
 
         GridLayout allowedApps = findViewById(R.id.allowedApps);
         allowedApps.getLayoutParams().height = (int) (Globals.appHeight * 1.5f);
-        StudyModeManager.updateGrid(allowedApps);
+        StudyModeManager.updateGrid(allowedApps, false);
 
         updateThread = new Thread() {
             @Override

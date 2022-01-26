@@ -3,6 +3,13 @@ package com.example.echolauncher;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewManager;
+import android.view.ViewParent;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import androidx.gridlayout.widget.GridLayout;
 
 import java.util.ArrayList;
@@ -23,7 +30,7 @@ public class StudyModeManager {
                 while (true) {
                     if (System.currentTimeMillis() >= endTime) {
                         disable();
-                        break;
+                        return;
                     }
                 }
             }
@@ -55,20 +62,43 @@ public class StudyModeManager {
             allowedApps.add(allowedApp);
     }
 
-    public static void updateGrid(GridLayout grid) {
+    public static void updateGrid(GridLayout grid, boolean moveable) {
         initAllowedApps();
         grid.removeAllViews();
 
-        for (AppItem item : StudyModeManager.allowedApps)
-            grid.addView(item.copyView());
+        if (allowedApps.size() == 0)
+            grid.addView(infoText);
+        else
+            grid.removeView(infoText);
+
+        for (AppItem item : StudyModeManager.allowedApps) {
+            AppItem itemCopy = item;
+            itemCopy.moveable = moveable;
+            grid.addView(itemCopy.copyView());
+        }
     }
 
     public static void updateDropTarget() {
-        updateGrid(dropTarget);
+        initAllowedApps();
+
+        if (allowedApps.size() == 0)
+            expandTarget();
+        else
+            minimiseTarget();
+
+        updateGrid(dropTarget, true);
     }
 
     public static void setDropTarget(DropTarget dropTarget) {
         StudyModeManager.dropTarget = dropTarget;
+        infoText = dropTarget.findViewById(R.id.infoText);
+        deleteCross = dropTarget.findViewById(R.id.delete);
+        deleteCross = ((View) dropTarget.getParent()).findViewById(R.id.delete);
+        deleteCrossParams = new LinearLayout.LayoutParams(
+                Globals.appIconWidth,
+                Globals.appHeight,
+                0.25f
+        );
     }
 
     public static DropTarget getDropTarget() {
@@ -98,11 +128,27 @@ public class StudyModeManager {
             allowedApps = new ArrayList<>();
     }
 
+    private static void expandTarget() {
+        deleteCrossParams.weight = 0.0f;
+        deleteCrossWidth = deleteCross.getLayoutParams().width;
+        deleteCross.getLayoutParams().width = 0;
+    }
+
+    private static void minimiseTarget() {
+        deleteCrossParams.weight = deleteCrossWidth;
+        deleteCross.getLayoutParams().width = deleteCrossWidth;
+    }
+
     private static boolean enabled;
     private static Thread waitThread;
     private static long endTime;
     private static Context context;
     private static List<AppItem> allowedApps;
     private static DropTarget dropTarget;
+    private static TextView infoText;
+    private static DropTarget deleteCross;
+    private static LinearLayout.LayoutParams deleteCrossParams;
+    private static int deleteCrossWidth;
+
     private static final int MAX_APPS = 4;
 }

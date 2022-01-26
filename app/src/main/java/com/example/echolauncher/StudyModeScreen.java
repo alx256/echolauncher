@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.gridlayout.widget.GridLayout;
 import androidx.annotation.NonNull;
@@ -84,10 +85,9 @@ public class StudyModeScreen extends Fragment {
                 StudyModeManager.updateDropTarget();
             }
         });
-        StudyModeManager.setDropTarget(target);
-        StudyModeManager.updateDropTarget();
 
         DropTarget delete = view.findViewById(R.id.delete);
+        delete.getLayoutParams().width = Globals.appIconWidth;
         delete.getLayoutParams().height = (int) (Globals.appHeight * 1.5f);
         delete.setOnDropListener(new DropTarget.OnDropListener() {
             @Override
@@ -95,6 +95,9 @@ public class StudyModeScreen extends Fragment {
                 StudyModeManager.removeAllowedApp(item);
             }
         });
+
+        StudyModeManager.setDropTarget(target);
+        StudyModeManager.updateDropTarget();
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
