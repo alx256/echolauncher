@@ -1,6 +1,7 @@
 package com.example.echolauncher;
 
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -10,10 +11,12 @@ import android.view.Window;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.FragmentContainerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 public class ScrollManager {
     public static void Init(View view) {
         masterScrollView = view.findViewById(R.id.masterScrollView);
+        widgetDrawer = view.findViewById(R.id.widgetDrawerFragment);
         homeScreen = view.findViewById(R.id.homeScreenFragment);
         appDrawer = view.findViewById(R.id.appDrawerFragment);
 
@@ -21,12 +24,22 @@ public class ScrollManager {
         y = 0;
         lastX = 0;
         lastY = 0;
+
+        masterScrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                do {
+                    masterScrollView.scrollTo((int)homeScreen.getX(), (int)homeScreen.getY());
+                } while (homeScreen.getY() == 0.0f);
+            }
+        });
     }
 
     public static void scrollTo(int destination) {
         switch (destination) {
             case WIDGET_DRAWER:
-                // Not implemented yet
+                x = (int) widgetDrawer.getX();
+                y = (int) widgetDrawer.getY();
                 break;
             case HOME_SCREEN:
                 x = (int) homeScreen.getX();
@@ -34,7 +47,7 @@ public class ScrollManager {
                 break;
             case APP_DRAWER:
                 x = (int) appDrawer.getX();
-                y = (int) appDrawer.getY() - statusBarHeight;
+                y = (int) appDrawer.getY() - Globals.statusBarHeight;
                 break;
         }
 
@@ -66,10 +79,9 @@ public class ScrollManager {
         HOME_SCREEN = 1,
         APP_DRAWER = 2;
 
-    public static int statusBarHeight;
     public static boolean canScroll = true;
 
     private static ScrollView masterScrollView;
-    private static FragmentContainerView homeScreen, appDrawer;
+    private static FragmentContainerView widgetDrawer, homeScreen, appDrawer;
     private static int x, y, lastX, lastY;
 }

@@ -32,8 +32,8 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
-public class AppAdapter extends BaseAdapter {
-    public AppAdapter(Context context, List<AppItem> items) {
+public class WidgetAdapter extends BaseAdapter {
+    public WidgetAdapter(Context context, List<WidgetItem> items) {
         this.context = context;
         this.items = items;
     }
@@ -54,9 +54,10 @@ public class AppAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View finalView = items.get(position).toView(context);
+        finalView.setBackgroundColor(0x555555);
         return finalView;
     }
 
     private Context context;
-    private List<AppItem> items;
+    private List<WidgetItem> items;
 }

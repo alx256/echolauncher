@@ -31,10 +31,22 @@
             android:orientation="vertical">
 
             <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/widgetDrawerFragment"
+                android:name="com.example.echolauncher.WidgetDrawer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!--            <androidx.fragment.app.FragmentContainerView-->
+<!--                android:id="@+id/homeScreenFragment"-->
+<!--                android:name="com.example.echolauncher.HomeScreen"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent" />-->
+
+            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/homeScreenFragment"
                 android:name="com.example.echolauncher.HomeScreen"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/appDrawerFragment"

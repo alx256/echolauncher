@@ -24,34 +24,44 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
-public class AppDrawer extends Fragment {
-    private List<AppItem> apps;
-    private View view;
-
+public class WidgetDrawer extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.app_drawer, container, false);
+        view = inflater.inflate(R.layout.widget_drawer, container, false);
 
-        displayAllApps();
+        displayAllWidgets();
         initDrawer();
-        initSearchBar();
 
         return view;
     }
 
-    private void displayAllApps() {
-        apps = InstalledAppsManager.getAll();
-    }
+    private void displayAllWidgets() {
+        widgets = WidgetsManager.getAll();
 
-    private void displaySearchedApps(String string) {
-        apps = InstalledAppsManager.searchFor(string);
+        // Update each widget
+        tickThread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    for (WidgetItem widgetItem : widgets)
+                        widgetItem.getWidget().Tick();
+
+                    try {
+                        sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        tickThread.start();
     }
 
     private void initDrawer() {
-        View drawer = view.findViewById(R.id.drawer);
         GridView drawerGridView = view.findViewById(R.id.drawerGrid);
-        Globals.appAdapter = new AppAdapter(view.getContext(), apps);
-        drawerGridView.setAdapter(Globals.appAdapter);
+        Globals.widgetAdapter = new WidgetAdapter(view.getContext(), widgets);
+        drawerGridView.setAdapter(Globals.widgetAdapter);
 
 //        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 //        float rows = (float) Math.ceil(drawerGridView.getCount() / drawerGridView.getNumColumns()),
@@ -59,26 +69,7 @@ public class AppDrawer extends Fragment {
 //        view.getLayoutParams().height = (int) (itemHeight * rows);
     }
 
-    private void initSearchBar() {
-        TextInputEditText input = view.findViewById(R.id.appSearchBar);
-
-        input.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void afterTextChanged(Editable s) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
-                    displaySearchedApps(s.toString());
-                    initDrawer();
-                } else {
-                    displayAllApps();
-                    initDrawer();
-                }
-            }
-        });
-    }
+    private List<WidgetItem> widgets;
+    private View view;
+    private Thread tickThread;
 }

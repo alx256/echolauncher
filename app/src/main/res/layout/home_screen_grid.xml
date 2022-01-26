@@ -7,24 +7,22 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/wallpaperView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:id="@+id/cross"
+        android:layout_width="69dp"
+        android:layout_height="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        app:srcCompat="@android:drawable/ic_delete" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/homeScreenPager"
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/homeScreenGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="27dp"
+        android:clipToPadding="true"
+        tools:layout_editor_absoluteX="27dp"
+        tools:layout_editor_absoluteY="758dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

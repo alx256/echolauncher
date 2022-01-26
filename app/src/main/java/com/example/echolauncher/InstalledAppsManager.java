@@ -6,11 +6,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 enum Comparison {
@@ -35,6 +34,7 @@ public class InstalledAppsManager {
             if (info.packageName.equals(context.getPackageName()))
                 continue;
 
+            availableIcons.add(getDrawable(info.packageName));
             apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, availableIcons.size() - 1));
         }
 
@@ -45,7 +45,7 @@ public class InstalledAppsManager {
         return apps;
     }
 
-    static public AppItem get(String packageName) {
+    static public PinItem get(String packageName) {
         int index = binarySearch(packageName, 0, apps.size() - 1, Comparison.PACKAGE_NAME);
         if (index > -1)
             return apps.get(index);
@@ -120,7 +120,7 @@ public class InstalledAppsManager {
                     target = apps.get(mid).getName();
                     break;
                 case PACKAGE_NAME:
-                    target = apps.get(mid).getPackageName();
+                    target = apps.get(mid).getIdentifier();
                     break;
                 default:
                     target = new String();
@@ -144,6 +144,9 @@ public class InstalledAppsManager {
     }
 
     static private boolean compare(String string1, String string2) {
+        if (string1 == null && string2 == null)
+            return true;
+
         for (int index = 0; index < string1.length(); index++) {
             if (index >= string2.length())
                 return true;
@@ -196,7 +199,7 @@ public class InstalledAppsManager {
 
     static public PackageManager getPackageManager() { return packageManager; }
 
-    static public AppItem dragging;
+    static public PinItem dragging;
     static public List<Drawable> availableIcons;
     static public AppShadowBuilder shadowBuilder;
     static public boolean hidden = false;
