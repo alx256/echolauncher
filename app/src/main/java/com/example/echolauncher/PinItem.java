@@ -47,11 +47,17 @@ public class PinItem {
     protected void setTemp(PinItem pinItem, View view) {
         image = view.findViewById(R.id.appIcon);
         textView = view.findViewById(R.id.textView);
-        image.setImageDrawable(pinItem.drawable);
+        if (!isWidget)
+            image.setImageDrawable(pinItem.drawable);
         textView.setText(shortened(pinItem.name));
 
         name = pinItem.getName();
         identifier = pinItem.getIdentifier();
+    }
+
+    protected void setColor(int color) {
+        if (image != null)
+            image.setBackgroundColor(color);
     }
 
     protected void clear(View view) {
@@ -78,10 +84,11 @@ public class PinItem {
                 }
 
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                // Open the app with a custom animation
                 activity = (Activity) context;
                 activity.startActivity(intent);
-                //activity.finish();
-                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                activity.finish();
+                activity.overridePendingTransition(R.transition.open_app, 0);
             }
         });
 

@@ -58,18 +58,13 @@ public class StudyModeManager {
     public static void addAllowedApp(AppItem allowedApp) {
         initAllowedApps();
 
-        if (allowedApps.size() < MAX_APPS)
+        if (allowedApps.size() < MAX_APPS && !allowedApps.contains(allowedApp))
             allowedApps.add(allowedApp);
     }
 
     public static void updateGrid(GridLayout grid, boolean moveable) {
         initAllowedApps();
         grid.removeAllViews();
-
-        if (allowedApps.size() == 0)
-            grid.addView(infoText);
-        else
-            grid.removeView(infoText);
 
         for (AppItem item : StudyModeManager.allowedApps) {
             AppItem itemCopy = item;
@@ -81,17 +76,16 @@ public class StudyModeManager {
     public static void updateDropTarget() {
         initAllowedApps();
 
+        updateGrid(dropTarget, true);
+
         if (allowedApps.size() == 0)
             expandTarget();
         else
             minimiseTarget();
-
-        updateGrid(dropTarget, true);
     }
 
     public static void setDropTarget(DropTarget dropTarget) {
         StudyModeManager.dropTarget = dropTarget;
-        infoText = dropTarget.findViewById(R.id.infoText);
         deleteCross = dropTarget.findViewById(R.id.delete);
         deleteCross = ((View) dropTarget.getParent()).findViewById(R.id.delete);
         deleteCrossParams = new LinearLayout.LayoutParams(
@@ -99,6 +93,7 @@ public class StudyModeManager {
                 Globals.appHeight,
                 0.25f
         );
+        dropTarget.removeAllViews();
     }
 
     public static DropTarget getDropTarget() {
@@ -129,12 +124,16 @@ public class StudyModeManager {
     }
 
     private static void expandTarget() {
+        dropTarget.setBackgroundText("Drop apps here to pin");
+
         deleteCrossParams.weight = 0.0f;
         deleteCrossWidth = deleteCross.getLayoutParams().width;
         deleteCross.getLayoutParams().width = 0;
     }
 
     private static void minimiseTarget() {
+        dropTarget.removeBackgroundText();
+
         deleteCrossParams.weight = deleteCrossWidth;
         deleteCross.getLayoutParams().width = deleteCrossWidth;
     }
@@ -145,7 +144,6 @@ public class StudyModeManager {
     private static Context context;
     private static List<AppItem> allowedApps;
     private static DropTarget dropTarget;
-    private static TextView infoText;
     private static DropTarget deleteCross;
     private static LinearLayout.LayoutParams deleteCrossParams;
     private static int deleteCrossWidth;

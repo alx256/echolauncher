@@ -98,20 +98,7 @@
                 android:id="@+id/allowedApps"
                 android:layout_width="match_parent"
                 android:layout_height="92dp"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/infoText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Drop emergency apps here to pin. Pinned apps will still be usable when Study Mode is enabled."
-                    android:textAlignment="center"
-                    android:textSize="20dp" />
-            </com.example.echolauncher.DropTarget>
+                android:layout_weight="1"/>
 
             <com.example.echolauncher.DropTarget
                 android:id="@+id/delete"
@@ -122,10 +109,10 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="43dp"
-                    android:layout_height="49dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="66dp"
                     app:layout_column="0"
-                    app:layout_row="0"
+                    app:layout_row="1"
                     app:srcCompat="@drawable/cross" />
             </com.example.echolauncher.DropTarget>
 

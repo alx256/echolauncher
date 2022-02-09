@@ -1,5 +1,7 @@
 package com.example.echolauncher;
 
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Debug;
 import android.text.Editable;
@@ -12,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.gridlayout.widget.GridLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

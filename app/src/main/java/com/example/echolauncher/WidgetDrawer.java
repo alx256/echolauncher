@@ -47,7 +47,7 @@ public class WidgetDrawer extends Fragment {
                         widgetItem.getWidget().Tick();
 
                     try {
-                        sleep(300);
+                        sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

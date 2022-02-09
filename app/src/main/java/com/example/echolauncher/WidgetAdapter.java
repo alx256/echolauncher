@@ -54,7 +54,6 @@ public class WidgetAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View finalView = items.get(position).toView(context);
-        finalView.setBackgroundColor(0x555555);
         return finalView;
     }
 
