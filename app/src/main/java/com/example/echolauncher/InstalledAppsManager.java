@@ -6,15 +6,33 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.util.Pair;
+import android.view.View;
+
+import androidx.gridlayout.widget.GridLayout;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.CertificatePinner;
 
 enum Comparison {
     APP_NAME,
-    PACKAGE_NAME
+    APP_IDENTIFIER,
+    WIDGET_NAME,
+    WIDGET_IDENTIFIER,
+    NONE
+}
+
+enum Instruction {
+    PIN,
+    HOVER,
+    CLEAR
 }
 
 public class InstalledAppsManager {
@@ -27,6 +45,7 @@ public class InstalledAppsManager {
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, 0);
 
+        // Add all apps
         for (ResolveInfo resolveInfo : resolveInfos) {
             ApplicationInfo info = resolveInfo.activityInfo.applicationInfo;
 
@@ -35,22 +54,33 @@ public class InstalledAppsManager {
                 continue;
 
             availableIcons.add(getDrawable(info.packageName));
-            apps.add(new AppItem(packageManager.getApplicationLabel(info).toString(), info.packageName, availableIcons.size() - 1));
+            PinItem.Name name = new PinItem.Name(packageManager.getApplicationLabel(info).toString());
+            apps.add(new AppItem(name, info.packageName, availableIcons.size() - 1));
         }
 
-        sort(apps);
+        // Add all widgets
+        widgets = new ArrayList<>();
+        // Weather widget
+        widgets.add(new WidgetItem(new PinItem.Name("Weather"), new WeatherWidget()));
+
+        mergeSort(Comparison.APP_NAME);
     }
 
-    static public List<AppItem> getAll() {
+    static public List<AppItem> getAllApps() {
         return apps;
     }
+    static public List<WidgetItem> getAllWidgets() { return widgets; }
 
-    static public PinItem get(String packageName) {
-        int index = binarySearch(packageName, 0, apps.size() - 1, Comparison.PACKAGE_NAME);
+    static public PinItem get(String identifier) {
+        int index = binarySearch(identifier, 0, apps.size() - 1, Comparison.APP_IDENTIFIER);
         if (index > -1)
             return apps.get(index);
-        else
-            return null;
+
+        index = binarySearch(identifier, 0, widgets.size() - 1, Comparison.WIDGET_IDENTIFIER);
+        if (index > - 1)
+            return widgets.get(index);
+
+        return null;
     }
 
     static public Drawable getDrawable(String packageName) {
@@ -76,6 +106,24 @@ public class InstalledAppsManager {
         return new ArrayList<>(apps.subList(start, end + 1));
     }
 
+    static public void updateGrid(GridLayout gridLayout, Context context) {
+//        int index = 0;
+//        View v;
+//
+//        for (PinItem item : homeScreenItems) {
+//            if (item.getClass() != HomeItem.class) {
+//                if (item.getClass() == WidgetItem.class)
+//                    v = ((WidgetItem) item).toView(context);
+//                else
+//                    v = ((AppItem) item).toView(context);
+//
+//                gridLayout.addView(v, index++);
+//            } else {
+//                gridLayout.addView(((HomeItem) item).toView(context), index++);
+//            }
+//        }
+    }
+
     // Find when index doesn't contain a matching item anymore
     static private int findLimit(int index, int add, String string) {
         boolean done = false;
@@ -95,7 +143,7 @@ public class InstalledAppsManager {
             if (item == null)
                 break;
 
-            String shortened, name = item.getName();
+            String shortened, name = item.getName().full();
             if (string.length() <= name.length())
                 shortened = name.substring(0, string.length());
             else
@@ -112,31 +160,37 @@ public class InstalledAppsManager {
     }
 
     static private int binarySearch(String string, int start, int end, Comparison comparison) {
+        mergeSort(comparison);
+
         while (end >= start) {
             int mid = (start + end) / 2;
-            String target, search;
+            String target;
             switch (comparison) {
                 case APP_NAME:
-                    target = apps.get(mid).getName();
+                    target = apps.get(mid).getName().full();
                     break;
-                case PACKAGE_NAME:
+                case APP_IDENTIFIER:
                     target = apps.get(mid).getIdentifier();
+                    break;
+                case WIDGET_NAME:
+                    target = widgets.get(mid).getName().full();
+                    break;
+                case WIDGET_IDENTIFIER:
+                    target = widgets.get(mid).getIdentifier();
                     break;
                 default:
                     target = new String();
             }
 
-            search = target;
-
             if (target.length() > string.length())
-                search = target.substring(0, string.length());
+                target = target.substring(0, string.length());
 
-            if (compare(search, string))
+            if (compare(target, string))
                 start = mid + 1;
-            else if (!compare(search, string))
+            else if (!compare(target, string))
                 end = mid - 1;
 
-            if (search.equalsIgnoreCase(string))
+            if (target.equalsIgnoreCase(string))
                 return mid;
         }
 
@@ -160,11 +214,15 @@ public class InstalledAppsManager {
         return false;
     }
 
-    static private boolean compare(AppItem item1, AppItem item2) {
-        return compare(item1.getName(), item2.getName());
+    static private void mergeSort(Comparison comparison) {
+        if (comparison == currentComparison)
+            return;
+
+        sort(apps, comparison);
+        currentComparison = comparison;
     }
 
-    static private void sort(List<AppItem> list) {
+    static private void sort(List<AppItem> list, Comparison comparison) {
         if (list.size() <= 1)
             return;
 
@@ -173,17 +231,27 @@ public class InstalledAppsManager {
         List<AppItem> list1 = new ArrayList<>(list.subList(0, mid)),
                 list2 = new ArrayList<>(list.subList(mid, list.size()));
 
-        sort(list1);
-        sort(list2);
+        sort(list1, comparison);
+        sort(list2, comparison);
 
-        merge(list1, list2, list);
+        merge(list1, list2, list, comparison);
     }
 
-    static private void merge(List<AppItem> list1, List<AppItem> list2, List<AppItem> list) {
+    static private void merge(List<AppItem> list1, List<AppItem> list2, List<AppItem> list,
+                              Comparison comparison) {
         int index1 = 0, index2 = 0, index = 0;
+        String string1, string2;
 
         while (index1 < list1.size() && index2 < list2.size()) {
-            if (compare(list1.get(index1), list2.get(index2)))
+            if (comparison == Comparison.APP_NAME) {
+                string1 = list1.get(index1).getName().full();
+                string2 = list2.get(index2).getName().full();
+            } else {
+                string1 = list1.get(index1).getIdentifier();
+                string2 = list2.get(index2).getIdentifier();
+            }
+
+            if (compare(string1, string2))
                 list.set(index++, list1.get(index1++));
             else
                 list.set(index++, list2.get(index2++));
@@ -201,9 +269,13 @@ public class InstalledAppsManager {
 
     static public PinItem dragging;
     static public List<Drawable> availableIcons;
+    static public Map<Integer, List<Instruction>> homeScreenInstructions;
     static public AppShadowBuilder shadowBuilder;
+    static public HomeScreenGridAdapter gridAdapter;
     static public boolean hidden = false;
 
     static private PackageManager packageManager;
     static private List<AppItem> apps;
+    static private List<WidgetItem> widgets;
+    static private Comparison currentComparison = Comparison.NONE;
 }

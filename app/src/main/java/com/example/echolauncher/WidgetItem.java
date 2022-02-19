@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class WidgetItem extends PinItem {
-    public WidgetItem(String name, Widget widget) {
+    public WidgetItem(Name name, Widget widget) {
         super.name = name;
         super.identifier = widget.getIdentifier();
         super.iconIndex = -1;
@@ -36,8 +36,8 @@ public class WidgetItem extends PinItem {
         super.context = context;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        finalView = inflater.inflate(R.layout.item_widget, null, false);
-        finalView = super.toView(finalView);
+        finalView = inflater.inflate(R.layout.item, null, false);
+        super.initView(finalView);
 
         ImageView icon = finalView.findViewById(R.id.appIcon);
         icon.setColorFilter(widget.color);
@@ -45,14 +45,13 @@ public class WidgetItem extends PinItem {
         for (char c : new char[]{'L', 'R', 'U', 'D'})
             populate(finalView, c);
 
+        TextView textView = finalView.findViewById(R.id.textView);
+        textView.setVisibility(View.INVISIBLE);
+
         return finalView;
     }
 
-    public Widget getWidget() {
-        return widget;
-    }
-
-    private void populate(View finalView, char character) {
+    protected void populate(View finalView, char character) {
         switch (character) {
             case 'L':
                 textID = R.id.leftText;
@@ -70,12 +69,14 @@ public class WidgetItem extends PinItem {
                 textID = -1;
         }
 
+        textView = finalView.findViewById(textID);
+
         if (widget.textPositions.get(character) != null) {
-            textView = finalView.findViewById(textID);
+            textView.setVisibility(View.VISIBLE);
             textView.setText(widget.textPositions.get(character));
-        } else if (textID != -1) {
-            textView = finalView.findViewById(textID);
-            textView.setText("");
+        } else if (textID != - 1) {
+            if (textView.getVisibility() != View.INVISIBLE)
+                textView.setVisibility(View.INVISIBLE);
         }
 
 //        if (widget.drawablePositions.get(character) != null) {
@@ -83,10 +84,13 @@ public class WidgetItem extends PinItem {
 //        }
     }
 
+    public Widget getWidget() {
+        return widget;
+    }
+
     private int imageHeight = 150, imageWidth = 150 * 4, textSize = 12,
             textHeight = 55;
     private Widget widget;
     private TextView textView;
-    private int textID;
     private Runnable tick;
 }

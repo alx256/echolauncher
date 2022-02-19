@@ -11,60 +11,48 @@ import androidx.gridlayout.widget.GridLayout;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.flexbox.AlignItems;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxItemDecoration;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeScreenGrid extends Fragment {
-    private List<AppItem> apps;
-    private View view;
+import okhttp3.CertificatePinner;
 
+public class HomeScreenGrid extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.home_screen_grid, container, false);
 
-//        final GridView gridView = view.findViewById(R.id.homeScreenGrid);
-//        gridView.getLayoutParams().width = Globals.metricsFull.widthPixels;
-        final GridLayout gridLayout = view.findViewById(R.id.homeScreenGrid);
-        apps = new ArrayList<>();
+        final RecyclerView recyclerView = view.findViewById(R.id.homeScreenGrid);
 
-        AppAdapter adapter = new AppAdapter(view.getContext(), apps);
-//        adapter.isHomeScreen = true;
-//        gridView.setAdapter(adapter);
+        FlexboxLayoutManager manager = new FlexboxLayoutManager(getContext());
+        manager.setFlexWrap(FlexWrap.WRAP);
+        manager.setFlexDirection(FlexDirection.ROW);
+        manager.setAlignItems(AlignItems.STRETCH);
+        manager.setJustifyContent(JustifyContent.SPACE_EVENLY);
 
-//        float itemHeight = adapter.getHeight() + 20.0f;
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setItemAnimator(null);
+        recyclerView.setLayoutManager(manager);
 
-        gridLayout.setColumnCount(Globals.metricsFit.widthPixels / new AppItem().getHeight());
-        gridLayout.setRowCount(Globals.metricsFit.widthPixels / new AppItem().getHeight());
-
-        for (int x = 0; x < gridLayout.getColumnCount(); x++)
-            for (int y = 0; y < gridLayout.getRowCount(); y++)
-                apps.add(new AppItem());
-
-        final int RIGHT_AREA = Globals.metricsFull.widthPixels - 200;
+        InstalledAppsManager.gridAdapter = new HomeScreenGridAdapter(getContext());
+        recyclerView.setAdapter(InstalledAppsManager.gridAdapter);
 
         ImageView delete = view.findViewById(R.id.cross);
-        Log.d("", Float.toString(Globals.metricsFit.heightPixels));
-//        delete.setY(-(Globals.metricsFull.heightPixels - Globals.metricsFit.heightPixels));
         delete.setY(-Globals.metricsFull.heightPixels + delete.getLayoutParams().height);
         delete.setVisibility(View.INVISIBLE);
 
-        gridLayout.addView(new AppItem().toView(getContext()));
-
-        for (int x = 0; x < gridLayout.getColumnCount(); x++)
-            for (int y = 0; y < 10; y++)
-                gridLayout.addView(new AppItem().toView(getContext()));
-
-        gridLayout.setOnDragListener(new View.OnDragListener() {
+        recyclerView.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 delete.setVisibility(View.VISIBLE);
-
-                totalX += dragEvent.getX();
-                if (dragEvent.getAction() == DragEvent.ACTION_DRAG_LOCATION) {
-                    if (dragEvent.getX() >= RIGHT_AREA)
-                        Log.d("", Integer.toString(RIGHT_AREA));
-                }
 
                 if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED)
                     delete.setVisibility(View.INVISIBLE);
@@ -76,5 +64,5 @@ public class HomeScreenGrid extends Fragment {
         return view;
     }
 
-    private float totalX = 0.0f;
+    private View view;
 }

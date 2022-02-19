@@ -36,7 +36,7 @@ public class WidgetDrawer extends Fragment {
     }
 
     private void displayAllWidgets() {
-        widgets = WidgetsManager.getAll();
+        widgets = InstalledAppsManager.getAllWidgets();
 
         // Update each widget
         tickThread = new Thread() {

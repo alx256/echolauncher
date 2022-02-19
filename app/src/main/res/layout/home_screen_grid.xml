@@ -15,14 +15,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_delete" />
 
-    <androidx.gridlayout.widget.GridLayout
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeScreenGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="27dp"
-        android:clipToPadding="true"
-        tools:layout_editor_absoluteX="27dp"
-        tools:layout_editor_absoluteY="758dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

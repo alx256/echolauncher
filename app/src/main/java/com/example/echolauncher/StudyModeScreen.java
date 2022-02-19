@@ -116,6 +116,5 @@ public class StudyModeScreen extends Fragment {
 
     private View view, crossView;
     private int minutes = 0, seconds = 0;
-    private DeleteItem cross;
     private List<AppItem> pinned;
 }

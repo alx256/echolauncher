@@ -5,23 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 public class AppItem extends PinItem {
-    public AppItem() {
-        setEmpty();
-    }
-
-    public AppItem(String name, String packageName, int iconIndex) {
+    public AppItem(Name name, String packageName, int iconIndex) {
         super.name = name;
         super.identifier = packageName;
         super.iconIndex = iconIndex;
         setSuper();
 
         empty = false;
-    }
-
-    private void setEmpty() {
-        empty = true;
-        super.iconIndex = -1;
-        setSuper();
     }
 
     private void setSuper() {
@@ -37,8 +27,9 @@ public class AppItem extends PinItem {
         super.context = context;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        finalView = inflater.inflate(R.layout.item_app, null, false);
-        finalView = super.toView(finalView);
+        finalView = inflater.inflate(R.layout.item, null, false);
+        super.initView(finalView);
+
         return finalView;
     }
 

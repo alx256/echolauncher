@@ -40,7 +40,7 @@ public class AppDrawer extends Fragment {
     }
 
     private void displayAllApps() {
-        apps = InstalledAppsManager.getAll();
+        apps = InstalledAppsManager.getAllApps();
     }
 
     private void displaySearchedApps(String string) {
