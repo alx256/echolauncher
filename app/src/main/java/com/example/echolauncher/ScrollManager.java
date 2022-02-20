@@ -25,7 +25,9 @@ public class ScrollManager {
         y = 0;
         lastX = 0;
         lastY = 0;
-        
+
+        masterScrollView.setVerticalScrollBarEnabled(false);
+
         ViewTreeObserver observer = masterScrollView.getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
