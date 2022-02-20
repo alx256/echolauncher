@@ -125,7 +125,8 @@ public class InstalledAppsManager {
         return new ArrayList<>(apps.subList(start, end + 1));
     }
 
-    static public void updateGrid(int position, Instruction instruction, String identifier) {
+    static public void updateGrid(int position, Instruction instruction,
+                                  String identifier) {
         if (homeScreenInstructions.get(position) == null)
             homeScreenInstructions.put(position, new ArrayList<>());
         homeScreenInstructions.get(position).add(new InstructionCollection(instruction, identifier));

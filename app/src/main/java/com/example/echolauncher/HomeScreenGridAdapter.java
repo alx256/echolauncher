@@ -89,11 +89,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-//                if (!filled) {
-//                    updateTotal(view.getMeasuredHeight());
-//                    notifyItemChanged(0);
-//                }
-
                 ConstraintLayout layout = view.findViewById(R.id.constraintLayout);
                 layout.getLayoutParams().width = layoutWidthApps;
 
@@ -107,6 +102,44 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        ConstraintLayout layout = holder.itemView.findViewById(R.id.constraintLayout);
+        ViewTreeObserver observer = layout.getViewTreeObserver();
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                updateItem(holder);
+
+                ViewTreeObserver temp = layout.getViewTreeObserver();
+                temp.removeOnPreDrawListener(this);
+
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return total;
+    }
+
+    public void updateTotal(int height) {
+        if (height == 0)
+            return;
+
+        int columns = Globals.metricsFull.heightPixels / height;
+        total = columns * NUM_ROW_APPS;
+    }
+
+    private void setImageViewWidth(ImageView imageView, int width) {
+        if (imageView.getLayoutParams().width > layoutWidthApps)
+            imageView.getLayoutParams().width = layoutWidthApps;
+        else
+            imageView.getLayoutParams().width = width;
+    }
+
+    private void updateItem(ViewHolder holder) {
+        int position = holder.getAdapterPosition();
+
         if (holder.item != null)
             if (holder.item.getGridIndex() == -1)
                 holder.item.setGridIndex(position);
@@ -178,46 +211,26 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         break;
                 }
 
+//                if (layout.getLayoutParams() != null) {
+//                    scaleItems(layout, holder);
+//                } else {
+//                    ViewTreeObserver observer = layout.getViewTreeObserver();
+//                    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                        @Override
+//                        public void onGlobalLayout() {
+//                            scaleItems(layout, holder);
+//
+//                            ViewTreeObserver temp = layout.getViewTreeObserver();
+//                            temp.removeOnGlobalLayoutListener(this);
+//                        }
+//                    });
+//                }
                 ConstraintLayout layout = holder.itemView.findViewById(R.id.constraintLayout);
-
-                if (layout.getLayoutParams() != null) {
-                    scaleItems(layout, holder);
-                } else {
-                    ViewTreeObserver observer = layout.getViewTreeObserver();
-                    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            scaleItems(layout, holder);
-
-                            ViewTreeObserver temp = layout.getViewTreeObserver();
-                            temp.removeOnGlobalLayoutListener(this);
-                        }
-                    });
-                }
+                scaleItems(layout, holder);
 
                 InstalledAppsManager.homeScreenInstructions.remove(position);
             }
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return total;
-    }
-
-    public void updateTotal(int height) {
-        if (height == 0)
-            return;
-
-        int columns = Globals.metricsFull.heightPixels / height;
-        total = columns * NUM_ROW_APPS;
-    }
-
-    private void setImageViewWidth(ImageView imageView, int width) {
-        if (imageView.getLayoutParams().width > layoutWidthApps)
-            imageView.getLayoutParams().width = layoutWidthApps;
-        else
-            imageView.getLayoutParams().width = width;
     }
 
     private Type type(PinItem item) {

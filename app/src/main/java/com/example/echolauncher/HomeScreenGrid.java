@@ -70,14 +70,13 @@ public class HomeScreenGrid extends Fragment {
                 RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
                 HomeScreenGridAdapter adapter = (HomeScreenGridAdapter) recyclerView.getAdapter();
                 adapter.updateTotal(holder.itemView.getMeasuredHeight());
+                adapter.notifyItemChanged(0);
 
                 try {
                     HomeScreenStorage.ReadItems(getContext());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                adapter.notifyDataSetChanged();
 
                 ViewTreeObserver temp = view.getViewTreeObserver();
                 temp.removeOnGlobalLayoutListener(this);

@@ -102,7 +102,6 @@ public class HomeScreenStorage {
                             identifier += c;
                             break;
                         case 1:
-                            // Convert c from ASCII to an int
                             position += c;
                             break;
                         case 2:
