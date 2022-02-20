@@ -210,21 +210,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
                         break;
                 }
-
-//                if (layout.getLayoutParams() != null) {
-//                    scaleItems(layout, holder);
-//                } else {
-//                    ViewTreeObserver observer = layout.getViewTreeObserver();
-//                    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//                        @Override
-//                        public void onGlobalLayout() {
-//                            scaleItems(layout, holder);
-//
-//                            ViewTreeObserver temp = layout.getViewTreeObserver();
-//                            temp.removeOnGlobalLayoutListener(this);
-//                        }
-//                    });
-//                }
+                
                 ConstraintLayout layout = holder.itemView.findViewById(R.id.constraintLayout);
                 scaleItems(layout, holder);
 
