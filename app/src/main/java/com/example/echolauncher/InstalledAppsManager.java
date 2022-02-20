@@ -31,11 +31,30 @@ enum Comparison {
 
 enum Instruction {
     PIN,
+    ADD,
     HOVER,
     CLEAR
 }
 
 public class InstalledAppsManager {
+    static public class InstructionCollection {
+        public InstructionCollection(Instruction instruction, String identifier) {
+            this.instruction = instruction;
+            this.identifier = identifier;
+        }
+
+        public Instruction getInstruction() {
+            return instruction;
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        private Instruction instruction;
+        private String identifier;
+    }
+
     static public void Init(Context context) {
         apps = new ArrayList<>();
         packageManager = context.getPackageManager();
@@ -106,22 +125,11 @@ public class InstalledAppsManager {
         return new ArrayList<>(apps.subList(start, end + 1));
     }
 
-    static public void updateGrid(GridLayout gridLayout, Context context) {
-//        int index = 0;
-//        View v;
-//
-//        for (PinItem item : homeScreenItems) {
-//            if (item.getClass() != HomeItem.class) {
-//                if (item.getClass() == WidgetItem.class)
-//                    v = ((WidgetItem) item).toView(context);
-//                else
-//                    v = ((AppItem) item).toView(context);
-//
-//                gridLayout.addView(v, index++);
-//            } else {
-//                gridLayout.addView(((HomeItem) item).toView(context), index++);
-//            }
-//        }
+    static public void updateGrid(int position, Instruction instruction, String identifier) {
+        if (homeScreenInstructions.get(position) == null)
+            homeScreenInstructions.put(position, new ArrayList<>());
+        homeScreenInstructions.get(position).add(new InstructionCollection(instruction, identifier));
+        gridAdapter.notifyItemChanged(position);
     }
 
     // Find when index doesn't contain a matching item anymore
@@ -267,9 +275,9 @@ public class InstalledAppsManager {
 
     static public PackageManager getPackageManager() { return packageManager; }
 
-    static public PinItem dragging;
+    static public String dragging;
     static public List<Drawable> availableIcons;
-    static public Map<Integer, List<Instruction>> homeScreenInstructions;
+    static public Map<Integer, List<InstructionCollection>> homeScreenInstructions;
     static public AppShadowBuilder shadowBuilder;
     static public HomeScreenGridAdapter gridAdapter;
     static public boolean hidden = false;

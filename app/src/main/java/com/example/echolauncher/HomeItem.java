@@ -61,19 +61,11 @@ public class HomeItem extends PinItem {
             }
         });
 
-        finalView.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("hello world", "hello world" + finalView.getMeasuredHeight());
-                if (finalView.getMeasuredHeight() > 0) {
-                    InstalledAppsManager.gridAdapter.updateTotal(finalView.getMeasuredHeight());
-                    InstalledAppsManager.gridAdapter.notifyItemChanged(0);
-                    finalView.removeCallbacks(this);
-                }
-            }
-        });
-
         return finalView;
+    }
+
+    private void updateGrid(Instruction instruction) {
+        InstalledAppsManager.updateGrid(getGridIndex(), instruction, InstalledAppsManager.dragging);
     }
 
     public int dragEventStatus = -1;

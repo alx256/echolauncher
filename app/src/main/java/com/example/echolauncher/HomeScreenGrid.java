@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.gridlayout.widget.GridLayout;
 
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import com.google.android.flexbox.FlexboxItemDecoration;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,27 @@ public class HomeScreenGrid extends Fragment {
                     delete.setVisibility(View.INVISIBLE);
 
                 return true;
+            }
+        });
+
+        ViewTreeObserver observer = recyclerView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
+                HomeScreenGridAdapter adapter = (HomeScreenGridAdapter) recyclerView.getAdapter();
+                adapter.updateTotal(holder.itemView.getMeasuredHeight());
+
+                try {
+                    HomeScreenStorage.ReadItems(getContext());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                adapter.notifyDataSetChanged();
+
+                ViewTreeObserver temp = view.getViewTreeObserver();
+                temp.removeOnGlobalLayoutListener(this);
             }
         });
 

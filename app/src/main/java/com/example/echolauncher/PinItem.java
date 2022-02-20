@@ -92,8 +92,6 @@ public class PinItem {
     }
 
     public View.OnTouchListener getOnTouchListener() {
-        PinItem instance = this;
-
         return new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -105,7 +103,7 @@ public class PinItem {
                     view.startDrag(data, InstalledAppsManager.shadowBuilder, view, 0);
                     ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
                     stationary = false;
-                    InstalledAppsManager.dragging = instance;
+                    InstalledAppsManager.dragging = identifier;
 
                     return true;
                 }
@@ -158,13 +156,6 @@ public class PinItem {
             // Handle dragging events
             view.setOnDragListener(getOnDragListener());
         }
-    }
-
-    protected void updateGrid(Instruction instruction) {
-        if (InstalledAppsManager.homeScreenInstructions.get(gridIndex) == null)
-            InstalledAppsManager.homeScreenInstructions.put(gridIndex, new ArrayList<>());
-        InstalledAppsManager.homeScreenInstructions.get(gridIndex).add(instruction);
-        InstalledAppsManager.gridAdapter.notifyItemChanged(gridIndex);
     }
 
     public boolean empty = false, isHomeScreen = false, moveable = true;
