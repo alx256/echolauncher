@@ -26,17 +26,18 @@ public class HomeScreenStorage {
     }
 
     public static void Init(Context context) {
-//        try {
-//            outputStream = context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            outputStream.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        // Create file if necessary, but don't overwrite any data
+        try {
+            outputStream = context.openFileOutput(FILE_NAME, Context.MODE_APPEND);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void WriteItem(String identifier, int position, int screen, Context context) throws IOException {
@@ -47,7 +48,6 @@ public class HomeScreenStorage {
         }
 
         String data = identifier + ',' + position + ',' + screen + '\n';
-        Log.d("test320193", data);
         SavedItem item = new SavedItem(identifier, position, screen);
 
         for (char c : data.toCharArray())
