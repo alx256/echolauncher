@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ScrollView;
 
@@ -24,13 +25,15 @@ public class ScrollManager {
         y = 0;
         lastX = 0;
         lastY = 0;
-
-        masterScrollView.post(new Runnable() {
+        
+        ViewTreeObserver observer = masterScrollView.getViewTreeObserver();
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
-            public void run() {
-                do {
-                    masterScrollView.scrollTo((int)homeScreen.getX(), (int)homeScreen.getY());
-                } while (homeScreen.getY() == 0.0f);
+            public boolean onPreDraw() {
+                masterScrollView.scrollTo((int) homeScreen.getX(), (int) homeScreen.getY());
+                ViewTreeObserver temp = masterScrollView.getViewTreeObserver();
+                temp.removeOnPreDrawListener(this);
+                return true;
             }
         });
     }
