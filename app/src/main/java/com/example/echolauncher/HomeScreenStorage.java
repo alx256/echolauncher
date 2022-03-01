@@ -84,9 +84,7 @@ public class HomeScreenStorage {
                     // Newline
                     int positionInt = toInt(position), screenInt = toInt(screen);
 
-                    InstalledAppsManager.updateGrid(positionInt, Instruction.ADD, identifier);
-
-                    Log.d("test" + (i++), positionInt + ":" + identifier);
+                    InstalledAppsManager.updateGrid(positionInt, Instruction.ADD, InstalledAppsManager.get(identifier));
 
                     identifier = "";
                     position = "";

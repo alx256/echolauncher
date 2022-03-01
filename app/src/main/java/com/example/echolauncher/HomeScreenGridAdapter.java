@@ -152,8 +152,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         if (instructionCollections != null) {
             for (InstalledAppsManager.InstructionCollection instructionCollection : instructionCollections) {
-                String identifier = instructionCollection.getIdentifier();
-                PinItem item = InstalledAppsManager.get(identifier);
+                PinItem item = instructionCollection.getItem();
 
                 switch (instructionCollection.getInstruction()) {
                     case ADD:

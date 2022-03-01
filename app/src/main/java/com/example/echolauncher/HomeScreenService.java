@@ -21,10 +21,10 @@ public class HomeScreenService extends Service {
         return null;
     }
 
-    public void add(int position, int screen, String identifier) {
-        storedItems.put(position,
-                new InstalledAppsManager.InstructionCollection(Instruction.ADD, identifier));
-    }
+//    public void add(int position, int screen, String identifier) {
+//        storedItems.put(position,
+//                new InstalledAppsManager.InstructionCollection(Instruction.ADD, identifier));
+//    }
 
     private Map<Integer, InstalledAppsManager.InstructionCollection> storedItems;
 }

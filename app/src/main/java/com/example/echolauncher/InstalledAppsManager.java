@@ -38,21 +38,21 @@ enum Instruction {
 
 public class InstalledAppsManager {
     static public class InstructionCollection {
-        public InstructionCollection(Instruction instruction, String identifier) {
+        public InstructionCollection(Instruction instruction, PinItem item) {
             this.instruction = instruction;
-            this.identifier = identifier;
+            this.item = item;
         }
 
         public Instruction getInstruction() {
             return instruction;
         }
 
-        public String getIdentifier() {
-            return identifier;
+        public PinItem getItem() {
+            return item;
         }
 
         private Instruction instruction;
-        private String identifier;
+        private PinItem item;
     }
 
     static public void Init(Context context) {
@@ -126,10 +126,10 @@ public class InstalledAppsManager {
     }
 
     static public void updateGrid(int position, Instruction instruction,
-                                  String identifier) {
+                                  PinItem item) {
         if (homeScreenInstructions.get(position) == null)
             homeScreenInstructions.put(position, new ArrayList<>());
-        homeScreenInstructions.get(position).add(new InstructionCollection(instruction, identifier));
+        homeScreenInstructions.get(position).add(new InstructionCollection(instruction, item));
         gridAdapter.notifyItemChanged(position);
     }
 
@@ -276,7 +276,7 @@ public class InstalledAppsManager {
 
     static public PackageManager getPackageManager() { return packageManager; }
 
-    static public String dragging;
+    static public PinItem dragging;
     static public List<Drawable> availableIcons;
     static public Map<Integer, List<InstructionCollection>> homeScreenInstructions;
     static public AppShadowBuilder shadowBuilder;

@@ -92,6 +92,8 @@ public class PinItem {
     }
 
     public View.OnTouchListener getOnTouchListener() {
+        PinItem temp = this;
+
         return new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -103,7 +105,7 @@ public class PinItem {
                     view.startDrag(data, InstalledAppsManager.shadowBuilder, view, 0);
                     ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
                     stationary = false;
-                    InstalledAppsManager.dragging = identifier;
+                    InstalledAppsManager.dragging = temp;
 
                     return true;
                 }

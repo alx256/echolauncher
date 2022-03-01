@@ -67,7 +67,7 @@ public class DropTarget extends GridLayout {
 
                 if (event.getAction() == DragEvent.ACTION_DROP) {
                     setBackgroundColor(Color.GRAY);
-                    onDropListener.onDrop(InstalledAppsManager.get(InstalledAppsManager.dragging));
+                    onDropListener.onDrop(InstalledAppsManager.dragging);
                 }
 
                 return true;
