@@ -1,14 +1,19 @@
 package com.example.echolauncher;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.gridlayout.widget.GridLayout;
 
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
@@ -51,13 +56,63 @@ public class HomeScreenGrid extends Fragment {
         delete.setY(-Globals.metricsFull.heightPixels + delete.getLayoutParams().height);
         delete.setVisibility(View.INVISIBLE);
 
+        final long ANIMATION_DURATION = 212;
+
+        shrinkAnimation = new ScaleAnimation(1.0f, SHRINK_SCALE,
+                1.0f, SHRINK_SCALE,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        shrinkAnimation.setDuration(ANIMATION_DURATION);
+        shrinkAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (recyclerView.getScaleX() != SHRINK_SCALE &&
+                    recyclerView.getScaleY() != SHRINK_SCALE)
+                    animation.cancel();
+                recyclerView.setScaleX(SHRINK_SCALE);
+                recyclerView.setScaleY(SHRINK_SCALE);
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) { }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
+
+        expandAnimation = new ScaleAnimation(1.0f, 1.0f + (1.0f - SHRINK_SCALE),
+                1.0f, 1.0f + (1.0f - SHRINK_SCALE),
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        expandAnimation.setDuration(ANIMATION_DURATION);
+        expandAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (recyclerView.getScaleX() != 1.0f &&
+                    recyclerView.getScaleY() != 1.0f)
+                    animation.cancel();
+
+                recyclerView.setScaleX(1.0f);
+                recyclerView.setScaleY(1.0f);
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) { }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+        });
+
         recyclerView.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 delete.setVisibility(View.VISIBLE);
+                shrink(view);
 
-                if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED)
+                if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
                     delete.setVisibility(View.INVISIBLE);
+                    expand(view);
+                }
 
                 return true;
             }
@@ -86,5 +141,29 @@ public class HomeScreenGrid extends Fragment {
         return view;
     }
 
+    private void shrink(View view) {
+        if (multiplePageMode)
+            return;
+
+        view.clearAnimation();
+        view.startAnimation(shrinkAnimation);
+        view.setBackgroundColor(0x33FFFFFF);
+        multiplePageMode = true;
+    }
+
+    private void expand(View view) {
+        if (!multiplePageMode)
+            return;
+
+        view.clearAnimation();
+        view.startAnimation(expandAnimation);
+        view.setBackgroundColor(Color.TRANSPARENT);
+        multiplePageMode = false;
+    }
+
+    public final static float SHRINK_SCALE = 0.8f;
+
     private View view;
+    private Animation shrinkAnimation, expandAnimation;
+    private static boolean multiplePageMode;
 }
