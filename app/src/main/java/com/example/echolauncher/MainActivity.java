@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Add snapping behaviour to scroll view
         ScrollView scrollView = findViewById(R.id.masterScrollView);
-        Scroll.Init(scrollView);
+        Scroll.init(scrollView);
 
         Resources resources = getResources();
         int id = resources.getIdentifier("status_bar_height", "dimen", "android");

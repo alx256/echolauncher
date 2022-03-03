@@ -7,7 +7,7 @@ import android.widget.ScrollView;
 import androidx.fragment.app.FragmentContainerView;
 
 public class Scroll {
-    public static void Init(View view) {
+    public static void init(View view) {
         master = view.findViewById(R.id.masterScrollView);
         appDrawer = view.findViewById(R.id.appDrawerFragment);
         widgetDrawer = view.findViewById(R.id.widgetDrawerFragment);
