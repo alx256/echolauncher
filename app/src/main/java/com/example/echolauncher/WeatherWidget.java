@@ -1,7 +1,6 @@
 package com.example.echolauncher;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +44,6 @@ public class WeatherWidget extends Widget {
         } catch (IOException e) {
             temperature = "Error getting weather!\nPlease check your connection";
             state = "";
-            Log.d("WEATHER_WIDGET", e.toString());
         } catch (JSONException e) {
             temperature = "Failed to parse JSON";
             state = "";

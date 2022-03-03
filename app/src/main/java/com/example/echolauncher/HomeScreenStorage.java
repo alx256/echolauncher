@@ -1,31 +1,14 @@
 package com.example.echolauncher;
 
-import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HomeScreenStorage {
-    public static class SavedItem {
-        public SavedItem(String identifier, int position, int screen) {
-            this.identifier = identifier;
-            this.position = position;
-            this.screen = screen;
-        }
-
-        public String identifier;
-        public int position, screen;
-    }
-
-    public static void Init(Context context) {
+    public static void init(Context context) {
         // Create file if necessary, but don't overwrite any data
         try {
             outputStream = context.openFileOutput(FILE_NAME, Context.MODE_APPEND);
@@ -40,7 +23,7 @@ public class HomeScreenStorage {
         }
     }
 
-    public static void WriteItem(String identifier, int position, int screen, Context context) throws IOException {
+    public static void writeItem(String identifier, int position, int screen, Context context) throws IOException {
         try {
             outputStream = context.openFileOutput(FILE_NAME, Context.MODE_APPEND);
         } catch (FileNotFoundException e) {
@@ -48,7 +31,6 @@ public class HomeScreenStorage {
         }
 
         String data = identifier + ',' + position + ',' + screen + '\n';
-        SavedItem item = new SavedItem(identifier, position, screen);
 
         for (char c : data.toCharArray())
             outputStream.write(c);
@@ -56,7 +38,7 @@ public class HomeScreenStorage {
         outputStream.close();
     }
 
-    public static void ReadItems(Context context) throws IOException {
+    public static void readItems(Context context) throws IOException {
         try {
             inputStream = context.openFileInput(FILE_NAME);
         } catch (FileNotFoundException e) {
@@ -67,16 +49,6 @@ public class HomeScreenStorage {
         String identifier = "", position = "", screen = "";
         int segment = 0, value;
 
-//        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//        for (ActivityManager.RunningServiceInfo serviceInfo : manager.getRunningServices(Integer.MAX_VALUE)) {
-//            if (service.getClass().getName().equals(serviceInfo.service.getClassName())) {
-//                // Service is already running
-//                return;
-//            }
-//        }
-
-        int i = 0;
-
         while ((value = inputStream.read()) != -1) {
             c = (char) value;
             switch (c) {
@@ -84,7 +56,7 @@ public class HomeScreenStorage {
                     // Newline
                     int positionInt = toInt(position), screenInt = toInt(screen);
 
-                    InstalledAppsManager.updateGrid(positionInt, Instruction.ADD, InstalledAppsManager.get(identifier));
+                    HomeScreenGrid.updateGrid(positionInt, HomeScreenGridAdapter.Instruction.ADD, Search.get(identifier));
 
                     identifier = "";
                     position = "";
@@ -109,12 +81,7 @@ public class HomeScreenStorage {
             }
         }
 
-        isRead = true;
         inputStream.close();
-    }
-
-    public static boolean isRead() {
-        return isRead;
     }
 
     private static int toInt(String value) {
@@ -132,6 +99,5 @@ public class HomeScreenStorage {
 
     private static FileOutputStream outputStream;
     private static FileInputStream inputStream;
-    private static boolean isRead = false;
     private static final String FILE_NAME = "echolauncher_homescreen";
 }

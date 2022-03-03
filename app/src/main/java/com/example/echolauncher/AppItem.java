@@ -5,10 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 public class AppItem extends PinItem {
-    public AppItem(Name name, String packageName, int iconIndex) {
+    public AppItem(Name name, String packageName) {
         super.name = name;
         super.identifier = packageName;
-        super.iconIndex = iconIndex;
+        super.drawable = Library.getDrawable(packageName);
         setSuper();
 
         empty = false;

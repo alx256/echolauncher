@@ -3,16 +3,11 @@ package com.example.echolauncher;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.gridlayout.widget.GridLayout;
-
-import java.util.List;
 
 public class DropTarget extends GridLayout {
     public interface OnDropListener {
@@ -29,8 +24,8 @@ public class DropTarget extends GridLayout {
         init();
     }
 
-    public void setOnDropListener(OnDropListener onDropListener) {
-        this.onDropListener = onDropListener;
+    public void setOnDropListener(OnDropListener listener) {
+        this.listener = listener;
     }
 
     public void setBackgroundText(String text) {
@@ -56,26 +51,21 @@ public class DropTarget extends GridLayout {
     private void init() {
         setBackgroundColor(Color.GRAY);
 
-        super.setOnDragListener(new OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent event) {
-                if (event.getAction() == DragEvent.ACTION_DRAG_ENTERED)
-                    setBackgroundColor(Color.DKGRAY);
+        super.setOnDragListener((view, event) -> {
+            if (event.getAction() == DragEvent.ACTION_DRAG_ENTERED)
+                setBackgroundColor(Color.DKGRAY);
 
-                if (event.getAction() == DragEvent.ACTION_DRAG_EXITED)
-                    setBackgroundColor(Color.GRAY);
+            if (event.getAction() == DragEvent.ACTION_DRAG_EXITED)
+                setBackgroundColor(Color.GRAY);
 
-                if (event.getAction() == DragEvent.ACTION_DROP) {
-                    setBackgroundColor(Color.GRAY);
-                    onDropListener.onDrop(InstalledAppsManager.dragging);
-                }
-
-                return true;
+            if (event.getAction() == DragEvent.ACTION_DROP) {
+                setBackgroundColor(Color.GRAY);
+                listener.onDrop(Library.getDragging());
             }
+
+            return true;
         });
     }
 
-    private OnDropListener onDropListener;
-    private boolean droppable;
-    private List<View> children;
+    private OnDropListener listener;
 }

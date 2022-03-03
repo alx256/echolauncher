@@ -1,49 +1,24 @@
 package com.example.echolauncher;
 
-import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
-
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
 public class WidgetAdapter extends BaseAdapter {
     public WidgetAdapter(Context context, List<WidgetItem> items) {
-        this.context = context;
-        this.items = items;
+        CONTEXT = context;
+        ITEMS = items;
     }
 
     @Override
-    public int getCount() { return items.size(); }
+    public int getCount() { return ITEMS.size(); }
 
     @Override
     public Object getItem(int position) {
-        return items.get(position);
+        return ITEMS.get(position);
     }
 
     @Override
@@ -53,10 +28,10 @@ public class WidgetAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View finalView = items.get(position).toView(context);
+        View finalView = ITEMS.get(position).toView(CONTEXT);
         return finalView;
     }
 
-    private Context context;
-    private List<WidgetItem> items;
+    private final Context CONTEXT;
+    private final List<WidgetItem> ITEMS;
 }

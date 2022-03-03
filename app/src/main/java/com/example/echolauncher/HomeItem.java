@@ -1,20 +1,11 @@
 package com.example.echolauncher;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import java.util.List;
-
-import kotlin.UnsafeVariance;
 
 public class HomeItem extends PinItem {
     public HomeItem() {
@@ -46,14 +37,14 @@ public class HomeItem extends PinItem {
             public boolean onDrag(View view, DragEvent dragEvent) {
                 switch (dragEvent.getAction()) {
                     case DragEvent.ACTION_DRAG_ENTERED:
-                        updateGrid(Instruction.HOVER);
+                        updateGrid(HomeScreenGridAdapter.Instruction.HOVER);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
-                        updateGrid(Instruction.CLEAR);
+                        updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
                         break;
                     case DragEvent.ACTION_DROP:
-                        updateGrid(Instruction.CLEAR);
-                        updateGrid(Instruction.PIN);
+                        updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
+                        updateGrid(HomeScreenGridAdapter.Instruction.PIN);
                         break;
                 }
 
@@ -64,9 +55,7 @@ public class HomeItem extends PinItem {
         return finalView;
     }
 
-    private void updateGrid(Instruction instruction) {
-        InstalledAppsManager.updateGrid(getGridIndex(), instruction, InstalledAppsManager.dragging);
+    private void updateGrid(HomeScreenGridAdapter.Instruction instruction) {
+        HomeScreenGrid.updateGrid(getGridIndex(), instruction, Library.getDragging());
     }
-
-    public int dragEventStatus = -1;
 }

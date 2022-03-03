@@ -1,15 +1,9 @@
 package com.example.echolauncher;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class WidgetItem extends PinItem {
@@ -18,17 +12,14 @@ public class WidgetItem extends PinItem {
         super.identifier = widget.getIdentifier();
         super.iconIndex = -1;
         this.widget = widget;
-        setSuper();
+
+        imageHeight = IMAGE_HEIGHT;
+        imageWidth = IMAGE_WIDTH;
+        textHeight = TEXT_HEIGHT;
+        textSize = TEXT_SIZE;
+        isWidget = true;
 
         empty = false;
-    }
-
-    private void setSuper() {
-        super.imageHeight = imageHeight;
-        super.imageWidth = imageWidth;
-        super.textHeight = textHeight;
-        super.textSize = textSize;
-        super.isWidget = true;
     }
 
     public View toView(Context context) {
@@ -40,7 +31,7 @@ public class WidgetItem extends PinItem {
         super.initView(finalView);
 
         ImageView icon = finalView.findViewById(R.id.appIcon);
-        icon.setColorFilter(widget.color);
+        icon.setColorFilter(widget.getColor());
 
         for (char c : new char[]{'L', 'R', 'U', 'D'})
             populate(finalView, c);
@@ -71,9 +62,9 @@ public class WidgetItem extends PinItem {
 
         textView = finalView.findViewById(textID);
 
-        if (widget.textPositions.get(character) != null) {
+        if (widget.getPosition(character) != null) {
             textView.setVisibility(View.VISIBLE);
-            textView.setText(widget.textPositions.get(character));
+            textView.setText(widget.getPosition(character));
         } else if (textID != - 1) {
             if (textView.getVisibility() != View.INVISIBLE)
                 textView.setVisibility(View.INVISIBLE);
@@ -88,9 +79,8 @@ public class WidgetItem extends PinItem {
         return widget;
     }
 
-    private int imageHeight = 150, imageWidth = 150 * 4, textSize = 12,
-            textHeight = 55;
+    private final int IMAGE_HEIGHT = 150, IMAGE_WIDTH = 150 * 4, TEXT_SIZE = 12,
+            TEXT_HEIGHT = 55;
     private Widget widget;
     private TextView textView;
-    private Runnable tick;
 }

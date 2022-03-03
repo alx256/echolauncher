@@ -1,39 +1,31 @@
 package com.example.echolauncher;
 
-import android.graphics.Rect;
-import android.os.Build;
-import android.os.CountDownTimer;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.ScrollView;
 
 import androidx.fragment.app.FragmentContainerView;
-import androidx.viewpager2.widget.ViewPager2;
 
-public class ScrollManager {
+public class Scroll {
     public static void Init(View view) {
-        masterScrollView = view.findViewById(R.id.masterScrollView);
+        master = view.findViewById(R.id.masterScrollView);
+        appDrawer = view.findViewById(R.id.appDrawerFragment);
         widgetDrawer = view.findViewById(R.id.widgetDrawerFragment);
         homeScreen = view.findViewById(R.id.homeScreenFragment);
-        appDrawer = view.findViewById(R.id.appDrawerFragment);
 
         x = 0;
         y = 0;
         lastX = 0;
         lastY = 0;
 
-        masterScrollView.setVerticalScrollBarEnabled(false);
+        master.setVerticalScrollBarEnabled(false);
 
-        ViewTreeObserver observer = masterScrollView.getViewTreeObserver();
+        ViewTreeObserver observer = master.getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                masterScrollView.scrollTo((int) homeScreen.getX(), (int) homeScreen.getY());
-                ViewTreeObserver temp = masterScrollView.getViewTreeObserver();
+                master.scrollTo((int) homeScreen.getX(), (int) homeScreen.getY());
+                ViewTreeObserver temp = master.getViewTreeObserver();
                 temp.removeOnPreDrawListener(this);
                 return true;
             }
@@ -69,14 +61,11 @@ public class ScrollManager {
 
         canScroll = false;
 
-        masterScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                lastX = masterScrollView.getScrollX();
-                lastY = masterScrollView.getScrollY();
-                masterScrollView.smoothScrollTo(x, y);
-                canScroll = true;
-            }
+        master.post(() -> {
+            lastX = master.getScrollX();
+            lastY = master.getScrollY();
+            master.smoothScrollTo(x, y);
+            canScroll = true;
         });
     }
 
@@ -84,9 +73,8 @@ public class ScrollManager {
         HOME_SCREEN = 1,
         APP_DRAWER = 2;
 
-    public static boolean canScroll = true;
-
-    private static ScrollView masterScrollView;
-    private static FragmentContainerView widgetDrawer, homeScreen, appDrawer;
+    private static ScrollView master;
+    private static FragmentContainerView appDrawer, widgetDrawer, homeScreen;
     private static int x, y, lastX, lastY;
+    private static boolean canScroll = true;
 }

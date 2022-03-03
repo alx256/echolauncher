@@ -5,27 +5,13 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.util.Pair;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.gridlayout.widget.GridLayout;
-import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-
-import okhttp3.CertificatePinner;
 
 public class PinItem {
     public static class Name {
@@ -72,7 +58,7 @@ public class PinItem {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PackageManager packageManager = InstalledAppsManager.getPackageManager();
+                PackageManager packageManager = Library.getPackageManager();
                 Log.d("AppAdapter", "Opening " + identifier + "...");
                 Intent intent = packageManager.getLaunchIntentForPackage(identifier);
 
@@ -101,11 +87,11 @@ public class PinItem {
                 if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
                     ClipData data = ClipData.newPlainText(identifier,
                             identifier);
-                    InstalledAppsManager.shadowBuilder = new AppShadowBuilder(view);
-                    view.startDrag(data, InstalledAppsManager.shadowBuilder, view, 0);
-                    ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    view.startDrag(data, shadowBuilder, view, 0);
+                    Scroll.scrollTo(Scroll.HOME_SCREEN);
                     stationary = false;
-                    InstalledAppsManager.dragging = temp;
+                    Library.setDragging(temp.identifier);
 
                     return true;
                 }
@@ -124,7 +110,7 @@ public class PinItem {
                     return true;
 
                 if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
-                    ScrollManager.scrollBack();
+                    Scroll.scrollBack();
                     stationary = true;
                 }
 
@@ -142,12 +128,8 @@ public class PinItem {
         textView.setTextSize(textSize);
         textView.getLayoutParams().height = textHeight;
 
-        if (iconIndex >= 0)
-            drawable = InstalledAppsManager.availableIcons.get(iconIndex);
-        else
-            drawable = image.getDrawable();
-
-        image.setImageDrawable(drawable);
+        if (drawable != null)
+            image.setImageDrawable(drawable);
         textView.setText(name.shortened());
 
         view.setOnClickListener(getOnClickListener());

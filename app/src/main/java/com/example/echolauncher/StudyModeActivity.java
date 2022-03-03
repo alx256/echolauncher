@@ -1,11 +1,9 @@
 package com.example.echolauncher;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.gridlayout.widget.GridLayout;
 
 public class StudyModeActivity extends Activity {
@@ -18,17 +16,17 @@ public class StudyModeActivity extends Activity {
 
         GridLayout allowedApps = findViewById(R.id.allowedApps);
         allowedApps.getLayoutParams().height = (int) (Globals.appHeight * 1.5f);
-        StudyModeManager.updateGrid(allowedApps, false);
+        StudyMode.updateGrid(allowedApps, false);
 
         updateThread = new Thread() {
             @Override
             public void run() {
                 while (enabled) {
                     if (remaining != null) {
-                        long remainingMinutes = StudyModeManager.remainingTime() / (60 * 1000);
+                        long remainingMinutes = StudyMode.remainingTime() / (60 * 1000);
 
                         minutes = Long.toString(remainingMinutes);
-                        seconds = Long.toString((StudyModeManager.remainingTime() - (remainingMinutes * 60 * 1000))
+                        seconds = Long.toString((StudyMode.remainingTime() - (remainingMinutes * 60 * 1000))
                                 / (1000));
 
                         if (minutes.length() < 2)
@@ -46,8 +44,11 @@ public class StudyModeActivity extends Activity {
         updateThread.start();
     }
 
-    public static boolean enabled = false;
+    public static void setEnabled(boolean enabled) {
+        StudyModeActivity.enabled = enabled;
+    }
 
+    private static boolean enabled = false;
     private Thread updateThread;
     private String minutes, seconds;
 }

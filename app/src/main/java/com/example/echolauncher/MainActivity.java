@@ -1,43 +1,23 @@
 package com.example.echolauncher;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
-
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -57,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        InstalledAppsManager.Init(getApplicationContext());
-        HomeScreenStorage.Init(getApplicationContext());
+        Library.init(getApplicationContext());
+        HomeScreenStorage.init(getApplicationContext());
 
         // Request READ_EXTERNAL_STORAGE permission (needed for accessing wallpaper)
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -83,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Add snapping behaviour to scroll view
         ScrollView scrollView = findViewById(R.id.masterScrollView);
-        ScrollManager.Init(scrollView);
+        Scroll.Init(scrollView);
 
         Resources resources = getResources();
         int id = resources.getIdentifier("status_bar_height", "dimen", "android");
@@ -117,36 +97,36 @@ public class MainActivity extends AppCompatActivity {
                     switch (focus) {
                         case 0:
                             if (yPosHomeScreen < lower) {
-                                ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
+                                Scroll.scrollTo(Scroll.HOME_SCREEN);
                                 focus = 1;
                                 return true;
                             }
                             break;
                         case 1:
                             if (yPosHomeScreen > higher) {
-                                ScrollManager.scrollTo(ScrollManager.WIDGET_DRAWER);
+                                Scroll.scrollTo(Scroll.WIDGET_DRAWER);
                                 focus = 0;
                                 return true;
                             }
 
                             if (yPosAppDrawer < lower) {
-                                ScrollManager.scrollTo(ScrollManager.APP_DRAWER);
+                                Scroll.scrollTo(Scroll.APP_DRAWER);
                                 focus = 2;
                                 return true;
                             }
                             break;
                         case 2:
                             if (yPosAppDrawer > higher) {
-                                ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
+                                Scroll.scrollTo(Scroll.HOME_SCREEN);
                                 focus = 1;
                                 return true;
                             }
                             break;
                     }
 
-                    if (focus == 0) ScrollManager.scrollTo(ScrollManager.WIDGET_DRAWER);
-                    if (focus == 1) ScrollManager.scrollTo(ScrollManager.HOME_SCREEN);
-                    if (focus == 2) ScrollManager.scrollTo(ScrollManager.APP_DRAWER);
+                    if (focus == 0) Scroll.scrollTo(Scroll.WIDGET_DRAWER);
+                    if (focus == 1) Scroll.scrollTo(Scroll.HOME_SCREEN);
+                    if (focus == 2) Scroll.scrollTo(Scroll.APP_DRAWER);
 
                     return true;
                 }

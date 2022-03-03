@@ -2,14 +2,10 @@ package com.example.echolauncher;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.gridlayout.widget.GridLayout;
 
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
@@ -22,22 +18,38 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.flexbox.AlignItems;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxItemDecoration;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.CertificatePinner;
+import java.util.Map;
 
 public class HomeScreenGrid extends Fragment {
+    public static class InstructionCollection {
+        public InstructionCollection(HomeScreenGridAdapter.Instruction instruction, PinItem item) {
+            this.instruction = instruction;
+            this.item = item;
+        }
+
+        public HomeScreenGridAdapter.Instruction getInstruction() {
+            return instruction;
+        }
+
+        public PinItem getItem() {
+            return item;
+        }
+
+        private HomeScreenGridAdapter.Instruction instruction;
+        private PinItem item;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.home_screen_grid, container, false);
 
-        final RecyclerView recyclerView = view.findViewById(R.id.homeScreenGrid);
+        recyclerView = view.findViewById(R.id.homeScreenGrid);
 
         FlexboxLayoutManager manager = new FlexboxLayoutManager(getContext());
         manager.setFlexWrap(FlexWrap.WRAP);
@@ -49,8 +61,8 @@ public class HomeScreenGrid extends Fragment {
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(manager);
 
-        InstalledAppsManager.gridAdapter = new HomeScreenGridAdapter(getContext());
-        recyclerView.setAdapter(InstalledAppsManager.gridAdapter);
+        HomeScreenGridAdapter adapter = new HomeScreenGridAdapter(getContext());
+        recyclerView.setAdapter(adapter);
 
         ImageView delete = view.findViewById(R.id.cross);
         delete.setY(-Globals.metricsFull.heightPixels + delete.getLayoutParams().height);
@@ -128,7 +140,7 @@ public class HomeScreenGrid extends Fragment {
                 adapter.notifyItemChanged(0);
 
                 try {
-                    HomeScreenStorage.ReadItems(getContext());
+                    HomeScreenStorage.readItems(getContext());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -141,29 +153,39 @@ public class HomeScreenGrid extends Fragment {
         return view;
     }
 
+    static public void updateGrid(int position, HomeScreenGridAdapter.Instruction instruction,
+                                  PinItem item) {
+        if (homeScreenInstructions.get(position) == null)
+            homeScreenInstructions.put(position, new ArrayList<>());
+        homeScreenInstructions.get(position).add(new InstructionCollection(instruction, item));
+        recyclerView.getAdapter().notifyItemChanged(position);
+    }
+
     private void shrink(View view) {
-        if (multiplePageMode)
+        if (isMultiplePageMode)
             return;
 
         view.clearAnimation();
         view.startAnimation(shrinkAnimation);
         view.setBackgroundColor(0x33FFFFFF);
-        multiplePageMode = true;
+        isMultiplePageMode = true;
     }
 
     private void expand(View view) {
-        if (!multiplePageMode)
+        if (!isMultiplePageMode)
             return;
 
         view.clearAnimation();
         view.startAnimation(expandAnimation);
         view.setBackgroundColor(Color.TRANSPARENT);
-        multiplePageMode = false;
+        isMultiplePageMode = false;
     }
 
     public final static float SHRINK_SCALE = 0.8f;
+    public static Map<Integer, List<InstructionCollection>> homeScreenInstructions;
 
     private View view;
     private Animation shrinkAnimation, expandAnimation;
-    private static boolean multiplePageMode;
+    private static boolean isMultiplePageMode;
+    private static RecyclerView recyclerView;
 }

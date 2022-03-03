@@ -1,45 +1,22 @@
 package com.example.echolauncher;
 
-import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
-
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
 public class AppAdapter extends BaseAdapter {
     public AppAdapter(Context context, List<AppItem> items) {
-        this.context = context;
+        CONTEXT = context;
         this.items = items;
     }
 
     @Override
-    public int getCount() { return items.size(); }
+    public int getCount() {
+        return items.size();
+    }
 
     @Override
     public Object getItem(int position) {
@@ -53,10 +30,10 @@ public class AppAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View finalView = items.get(position).toView(context);
-        return finalView;
+        return items.get(position).toView(CONTEXT);
     }
 
-    private Context context;
+    private final Context CONTEXT;
+    // All items
     private List<AppItem> items;
 }

@@ -1,10 +1,6 @@
 package com.example.echolauncher;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -16,6 +12,12 @@ public class Widget {
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    public int getColor() { return color; }
+
+    public String getPosition(char position) {
+        return textPositions.get(position);
     }
 
     public void Tick() {}

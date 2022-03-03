@@ -2,34 +2,22 @@ package com.example.echolauncher;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewManager;
-import android.view.ViewParent;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.gridlayout.widget.GridLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudyModeManager {
-    public static boolean isEnabled() {
-        return enabled;
-    }
-
+public class StudyMode {
     public static void enable(int minutes, int seconds, Context context) {
-        enabled = true;
-        StudyModeManager.context = context;
-
         waitThread = new Thread() {
             @Override
             public void run() {
                 while (true) {
                     if (System.currentTimeMillis() >= endTime) {
-                        disable();
+                        disable(context);
                         return;
                     }
                 }
@@ -40,14 +28,13 @@ public class StudyModeManager {
 
         Intent intent = new Intent(context, StudyModeActivity.class);
         endTime = System.currentTimeMillis() + ((long) minutes * 60 * 1000) + ((long) seconds * 1000);
-        StudyModeActivity.enabled = true;
+        StudyModeActivity.setEnabled(true);
         context.startActivity(intent);
     }
 
-    public static void disable() {
-        enabled = false;
+    public static void disable(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
-        StudyModeActivity.enabled = false;
+        StudyModeActivity.setEnabled(false);
         context.startActivity(intent);
     }
 
@@ -66,7 +53,7 @@ public class StudyModeManager {
         initAllowedApps();
         grid.removeAllViews();
 
-        for (AppItem item : StudyModeManager.allowedApps) {
+        for (AppItem item : allowedApps) {
             AppItem itemCopy = item;
             itemCopy.moveable = moveable;
             grid.addView(itemCopy.copyView());
@@ -85,7 +72,7 @@ public class StudyModeManager {
     }
 
     public static void setDropTarget(DropTarget dropTarget) {
-        StudyModeManager.dropTarget = dropTarget;
+        StudyMode.dropTarget = dropTarget;
         deleteCross = dropTarget.findViewById(R.id.delete);
         deleteCross = ((View) dropTarget.getParent()).findViewById(R.id.delete);
         deleteCrossParams = new LinearLayout.LayoutParams(
@@ -138,15 +125,11 @@ public class StudyModeManager {
         deleteCross.getLayoutParams().width = deleteCrossWidth;
     }
 
-    private static boolean enabled;
     private static Thread waitThread;
     private static long endTime;
-    private static Context context;
     private static List<AppItem> allowedApps;
-    private static DropTarget dropTarget;
-    private static DropTarget deleteCross;
+    private static DropTarget dropTarget, deleteCross;
     private static LinearLayout.LayoutParams deleteCrossParams;
     private static int deleteCrossWidth;
-
     private static final int MAX_APPS = 4;
 }
