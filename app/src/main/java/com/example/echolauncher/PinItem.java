@@ -8,10 +8,14 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.os.Handler;
+
+import androidx.constraintlayout.widget.ConstraintSet;
 
 public class PinItem {
     public static class Name {
@@ -44,6 +48,27 @@ public class PinItem {
         private String name;
     }
 
+    public class LongPressRunnable implements Runnable {
+        public LongPressRunnable(View view, PinItem item) {
+            VIEW = view;
+            ITEM = item;
+        }
+
+        @Override
+        public void run() {
+            ClipData data = ClipData.newPlainText(identifier,
+                    identifier);
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(VIEW);
+            VIEW.startDrag(data, shadowBuilder, VIEW, 0);
+            Scroll.scrollTo(Scroll.HOME_SCREEN);
+            stationary = false;
+            Library.setDragging(ITEM.identifier);
+        }
+
+        private final View VIEW;
+        private final PinItem ITEM;
+    }
+
     public Name getName() { return name; }
     public String getIdentifier() { return identifier; }
     public Drawable getDrawable() { return drawable; }
@@ -58,21 +83,7 @@ public class PinItem {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PackageManager packageManager = Library.getPackageManager();
-                Log.d("AppAdapter", "Opening " + identifier + "...");
-                Intent intent = packageManager.getLaunchIntentForPackage(identifier);
 
-                if (intent == null) {
-                    Log.d("AppAdapter", "Intent was null");
-                    return;
-                }
-
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                // Open the app with a custom animation
-                activity = (Activity) context;
-                activity.startActivity(intent);
-                activity.finish();
-                activity.overridePendingTransition(R.transition.open_app, 0);
             }
         };
     }
@@ -80,23 +91,42 @@ public class PinItem {
     public View.OnTouchListener getOnTouchListener() {
         PinItem temp = this;
 
+        Handler handler = new Handler();
+
         return new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                // User is moving the app. Start dragging the app that they have tapped on
-                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    ClipData data = ClipData.newPlainText(identifier,
-                            identifier);
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
-                    Scroll.scrollTo(Scroll.HOME_SCREEN);
-                    stationary = false;
-                    Library.setDragging(temp.identifier);
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        hold = new LongPressRunnable(view, temp);
+                        handler.postDelayed(hold, LONG_PRESS_DELAY);
+                        break;
+                    case MotionEvent.ACTION_SCROLL:
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        handler.removeCallbacks(hold);
 
-                    return true;
+                        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                            PackageManager packageManager = Library.getPackageManager();
+                            Log.d("AppAdapter", "Opening " + identifier + "...");
+                            Intent intent = packageManager.getLaunchIntentForPackage(identifier);
+
+                            if (intent == null) {
+                                Log.d("AppAdapter", "Intent was null");
+                                return false;
+                            }
+
+                            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                            // Open the app with a custom animation
+                            activity = (Activity) context;
+                            activity.startActivity(intent);
+                            activity.finish();
+                            activity.overridePendingTransition(R.transition.open_app, 0);
+                        }
+                        break;
                 }
 
-                return false;
+                return true;
             }
         };
     }
@@ -144,12 +174,6 @@ public class PinItem {
 
     public boolean empty = false, isHomeScreen = false, moveable = true;
 
-    private Activity activity;
-    private ImageView image;
-    private TextView textView;
-    private boolean stationary;
-    private int gridIndex = -1;
-
     protected int textID;
     protected int imageHeight, imageWidth, textSize, textHeight, iconIndex;
     protected Context context;
@@ -158,4 +182,12 @@ public class PinItem {
     protected Name name;
     protected Drawable drawable;
     protected boolean isWidget = false;
+
+    private Activity activity;
+    private ImageView image;
+    private TextView textView;
+    private boolean stationary;
+    private int gridIndex = -1;
+    private Runnable hold = null;
+    private final int LONG_PRESS_DELAY = 400;
 }
