@@ -166,7 +166,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
                         holder.itemView.setOnDragListener(item.getOnDragListener());
                         holder.itemView.setOnTouchListener(item.getOnTouchListener());
-                        holder.itemView.setOnClickListener(item.getOnClickListener());
 
                         if (instructionCollection.getInstruction() == Instruction.PIN) {
                             try {

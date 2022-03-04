@@ -8,14 +8,11 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.DragEvent;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Handler;
-
-import androidx.constraintlayout.widget.ConstraintSet;
 
 public class PinItem {
     public static class Name {
@@ -76,16 +73,6 @@ public class PinItem {
 
     public void setGridIndex(int gridIndex) {
         this.gridIndex = gridIndex;
-    }
-
-    public View.OnClickListener getOnClickListener() {
-        // User has done one short tap. Open the app that they have tapped on
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        };
     }
 
     public View.OnTouchListener getOnTouchListener() {
@@ -161,8 +148,6 @@ public class PinItem {
         if (drawable != null)
             image.setImageDrawable(drawable);
         textView.setText(name.shortened());
-
-        view.setOnClickListener(getOnClickListener());
 
         if (moveable) {
             view.setOnTouchListener(getOnTouchListener());
