@@ -1,5 +1,6 @@
 package com.example.echolauncher;
 
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
@@ -19,6 +20,7 @@ public class Scroll {
         lastY = 0;
 
         master.setVerticalScrollBarEnabled(false);
+        master.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
         ViewTreeObserver observer = master.getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
