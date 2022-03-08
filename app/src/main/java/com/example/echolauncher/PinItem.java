@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -53,6 +54,10 @@ public class PinItem {
 
         @Override
         public void run() {
+            // Vibrate phone
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(55);
+
             ClipData data = ClipData.newPlainText(identifier,
                     identifier);
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(VIEW);
