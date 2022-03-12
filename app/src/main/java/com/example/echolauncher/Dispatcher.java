@@ -21,8 +21,6 @@ public class Dispatcher extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        android.util.Log.d("test", "test");
-
         // Set the layout to the layout stored in activity_main.xml
         if (StudyMode.isEnabled()) {
             setContentView(R.layout.study_mode);

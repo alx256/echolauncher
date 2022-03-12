@@ -90,8 +90,10 @@ public class PinItem {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        hold = new LongPressRunnable(view, temp);
-                        handler.postDelayed(hold, LONG_PRESS_DELAY);
+                        if (movable) {
+                            hold = new LongPressRunnable(view, temp);
+                            handler.postDelayed(hold, LONG_PRESS_DELAY);
+                        }
                         break;
                     case MotionEvent.ACTION_SCROLL:
                     case MotionEvent.ACTION_CANCEL:
@@ -129,7 +131,10 @@ public class PinItem {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 if (stationary)
-                    return true;
+                    return false;
+
+                if (!movable)
+                    return false;
 
                 if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
                     Scroll.scrollBack();
@@ -154,15 +159,12 @@ public class PinItem {
             image.setImageDrawable(drawable);
         textView.setText(name.shortened());
 
-        if (moveable) {
-            view.setOnTouchListener(getOnTouchListener());
-
-            // Handle dragging events
-            view.setOnDragListener(getOnDragListener());
-        }
+        view.setOnTouchListener(getOnTouchListener());
+        // Handle dragging events
+        view.setOnDragListener(getOnDragListener());
     }
 
-    public boolean empty = false, isHomeScreen = false, moveable = true;
+    public boolean empty = false, isHomeScreen = false, movable = true;
 
     protected int textID;
     protected int imageHeight, imageWidth, textSize, textHeight, iconIndex;

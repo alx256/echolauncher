@@ -32,8 +32,4 @@ public class AppItem extends PinItem {
 
         return finalView;
     }
-
-    public View copyView() {
-        return toView(context);
-    }
 }

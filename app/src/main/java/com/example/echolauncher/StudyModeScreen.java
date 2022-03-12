@@ -32,14 +32,13 @@ public class StudyModeScreen extends Fragment {
 
         TextView timeView = view.findViewById(R.id.timeView);
 
-        TimePickerDialog.OnTimeSetListener timeSetListener = (v, hourOfDay, minute) -> {
-            hours = hourOfDay;
-            minutes = minute;
+        TimePickerDialog.OnTimeSetListener timeSetListener = (v, hours, minutes) -> {
+            this.hours = hours;
+            String hoursString = hours + " " +((hours == 1) ? "hour" : " hours");
+            this.minutes = minutes;
+            String minutesString = minutes + " " + ((minutes == 1) ? "minute" : "minutes");
 
-            String str = hours +
-                    " hours, " +
-                    minutes +
-                    " minutes";
+            String str = hoursString + " and " + minutesString;
             timeView.setText(str);
         };
 

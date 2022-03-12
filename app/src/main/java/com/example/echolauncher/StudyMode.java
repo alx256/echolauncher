@@ -1,7 +1,6 @@
 package com.example.echolauncher;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -45,8 +44,8 @@ public class StudyMode {
 
         for (AppItem item : allowedApps) {
             AppItem itemCopy = item;
-            itemCopy.moveable = moveable;
-            grid.addView(itemCopy.copyView());
+            itemCopy.movable = moveable;
+            grid.addView(itemCopy.toView(item.context));
         }
     }
 
@@ -71,14 +70,6 @@ public class StudyMode {
                 0.25f
         );
         dropTarget.removeAllViews();
-    }
-
-    public static DropTarget getDropTarget() {
-        return dropTarget;
-    }
-
-    public static List<AppItem> getAllowedApps() {
-        return allowedApps;
     }
 
     public static void removeAllowedApp(PinItem item) {
