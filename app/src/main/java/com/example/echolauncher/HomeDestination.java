@@ -1,9 +1,11 @@
 package com.example.echolauncher;
 
 import androidx.fragment.app.FragmentContainerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.os.Build;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
@@ -25,9 +27,6 @@ public class HomeDestination {
         homeScreen.getLayoutParams().height = Globals.metrics.heightPixels;
         appDrawer.getLayoutParams().height = Globals.metrics.heightPixels;
 
-        // 0 = Widgets, 1 = Home Screen, 2 = App Drawer
-        focus = 1;
-
         // Add snapping behaviour to scroll view
         ScrollView scrollView = activity.findViewById(R.id.mainScrollView);
         Scroll.init(scrollView);
@@ -40,6 +39,9 @@ public class HomeDestination {
         else
             Globals.statusBarHeight = 0;
 
+        ViewPager2 pager = homeScreen.findViewById(R.id.homeScreenPager);
+        Scroll.setPagerAlphaAnimation(pager);
+
         scrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -50,7 +52,7 @@ public class HomeDestination {
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     // Don't allow snapping if the app drawer or widgets drawer has been reached
-                    if (focus == 2 && appDrawerPosition[1] < 0)
+                    if (Scroll.getFocus() == 2 && appDrawerPosition[1] < 0)
                         return false;
 
                     int yPosHomeScreen = homeScreenPosition[1];
@@ -62,39 +64,33 @@ public class HomeDestination {
                             lower = mid + offset,
                             higher = mid - offset;
 
-                    switch (focus) {
+                    switch (Scroll.getFocus()) {
                         case 0:
                             if (yPosHomeScreen < lower) {
                                 Scroll.scrollTo(Scroll.HOME_SCREEN);
-                                focus = 1;
                                 return true;
                             }
                             break;
                         case 1:
                             if (yPosHomeScreen > higher) {
                                 Scroll.scrollTo(Scroll.WIDGET_DRAWER);
-                                focus = 0;
                                 return true;
                             }
 
                             if (yPosAppDrawer < lower) {
                                 Scroll.scrollTo(Scroll.APP_DRAWER);
-                                focus = 2;
                                 return true;
                             }
                             break;
                         case 2:
                             if (yPosAppDrawer > higher) {
                                 Scroll.scrollTo(Scroll.HOME_SCREEN);
-                                focus = 1;
                                 return true;
                             }
                             break;
                     }
 
-                    if (focus == 0) Scroll.scrollTo(Scroll.WIDGET_DRAWER);
-                    if (focus == 1) Scroll.scrollTo(Scroll.HOME_SCREEN);
-                    if (focus == 2) Scroll.scrollTo(Scroll.APP_DRAWER);
+                    Scroll.snap();
 
                     return true;
                 }
@@ -103,6 +99,4 @@ public class HomeDestination {
             }
         });
     }
-
-    private static int focus;
 }
