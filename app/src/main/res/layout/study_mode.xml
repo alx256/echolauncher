@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#717171"
-    tools:context=".MainActivity">
+    tools:context=".HomeDestination">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             android:text="0:00 remaining"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
-            android:textSize="25sp" />
+            android:textSize="19sp" />
 
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/allowedApps"

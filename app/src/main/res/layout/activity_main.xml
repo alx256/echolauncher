@@ -6,7 +6,7 @@
     android:id="@+id/masterConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".HomeDestination">
 
     <!-- The main scroll view, this is used to store the home screen pages, the
     app drawer and the widget drawer -->

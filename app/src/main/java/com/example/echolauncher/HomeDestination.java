@@ -1,25 +1,14 @@
 package com.example.echolauncher;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentContainerView;
 
-import android.Manifest;
-import android.content.Context;
+import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ScrollView;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeDestination {
 
     /*
     * This class is the entry point of the app, containing the home screen pages,
@@ -27,40 +16,11 @@ public class MainActivity extends AppCompatActivity {
     * to initialise the app
     * */
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Remove the app's title from always being shown
-        getSupportActionBar().hide();
-
-        final Window WINDOW = getWindow();
-        // Make app fullscreen
-        WINDOW.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        // Use entire screen area
-        WINDOW.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        // Hide status bar
-        WINDOW.setStatusBarColor(Color.TRANSPARENT);
-
-        // Set the layout to the layout stored in activity_main.xml
-        setContentView(R.layout.activity_main);
-
-        Library.init(getApplicationContext());
-        HomeScreenStorage.init(getApplicationContext());
-
-        // Request READ_EXTERNAL_STORAGE permission (needed for accessing wallpaper)
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-
-        // Get screen size
-        Globals.metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metrics);
-
+    public static void setup(Activity activity) {
         // Set fragments to sizes which means that they can be scrolled by ScrollView
-        FragmentContainerView widgetDrawer = findViewById(R.id.widgetDrawerFragment),
-            homeScreen = findViewById(R.id.homeScreenFragment),
-            appDrawer = findViewById(R.id.appDrawerFragment);
+        FragmentContainerView widgetDrawer = activity.findViewById(R.id.widgetDrawerFragment),
+            homeScreen = activity.findViewById(R.id.homeScreenFragment),
+            appDrawer = activity.findViewById(R.id.appDrawerFragment);
         widgetDrawer.getLayoutParams().height = Globals.metrics.heightPixels;
         homeScreen.getLayoutParams().height = Globals.metrics.heightPixels;
         appDrawer.getLayoutParams().height = Globals.metrics.heightPixels;
@@ -69,11 +29,11 @@ public class MainActivity extends AppCompatActivity {
         focus = 1;
 
         // Add snapping behaviour to scroll view
-        ScrollView scrollView = findViewById(R.id.mainScrollView);
+        ScrollView scrollView = activity.findViewById(R.id.mainScrollView);
         Scroll.init(scrollView);
 
         // Get status bar height
-        Resources resources = getResources();
+        Resources resources = activity.getResources();
         int id = resources.getIdentifier("status_bar_height", "dimen", "android");
         if (id > 0)
             Globals.statusBarHeight = resources.getDimensionPixelSize(id);
@@ -144,24 +104,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Deselect textviews when the user taps outside of them
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View view = getCurrentFocus();
-            if (view instanceof EditText) {
-                Rect outRect = new Rect();
-                view.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    view.clearFocus();
-                    InputMethodManager i = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    i.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-            }
-        }
-
-        return super.dispatchTouchEvent(event);
-    }
-
-    private int focus;
+    private static int focus;
 }

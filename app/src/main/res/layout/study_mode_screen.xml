@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".MainActivity">
+    tools:context=".HomeDestination">
 
     <LinearLayout
         android:id="@+id/masterLayout"
@@ -41,42 +41,17 @@
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/editTextTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <TextView
+                android:id="@+id/timeView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:ems="10"
-                android:inputType="time" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/minutesInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/minutesInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Minutes"
-                    android:inputType="number"
-                    android:textAlignment="center" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/secondsInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/secondsInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Seconds"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:background="#7A5FA19B"
+                android:text="0 hours, 0 minutes"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="20sp" />
 
         </LinearLayout>
 

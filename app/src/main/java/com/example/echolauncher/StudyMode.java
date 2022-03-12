@@ -1,5 +1,6 @@
 package com.example.echolauncher;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -11,31 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudyMode {
-    public static void enable(int minutes, int seconds, Context context) {
-        waitThread = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    if (System.currentTimeMillis() >= endTime) {
-                        disable(context);
-                        return;
-                    }
-                }
-            }
-        };
+    public static void enable(int hours, int minutes, Activity activity) {
+        endTime = System.currentTimeMillis() +
+                ((long) hours * 60 * 60 * 1000) +
+                ((long) minutes * 60 * 1000);
+        isEnabled = true;
 
-        waitThread.start();
-
-        Intent intent = new Intent(context, StudyModeActivity.class);
-        endTime = System.currentTimeMillis() + ((long) minutes * 60 * 1000) + ((long) seconds * 1000);
-        StudyModeActivity.setEnabled(true);
-        context.startActivity(intent);
+        Intent intent = new Intent(activity, activity.getClass());
+        activity.finish();
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        activity.startActivity(intent);
     }
 
-    public static void disable(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        StudyModeActivity.setEnabled(false);
-        context.startActivity(intent);
+    public static void disable() {
+        isEnabled = false;
     }
 
     public static long remainingTime() {
@@ -125,7 +115,11 @@ public class StudyMode {
         deleteCross.getLayoutParams().width = deleteCrossWidth;
     }
 
-    private static Thread waitThread;
+    public static boolean isEnabled() {
+        return isEnabled;
+    }
+
+    private static boolean isEnabled;
     private static long endTime;
     private static List<AppItem> allowedApps;
     private static DropTarget dropTarget, deleteCross;
