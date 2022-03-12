@@ -20,21 +20,31 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 
 public class MainActivity extends AppCompatActivity {
+
+    /*
+    * This class is the entry point of the app, containing the home screen pages,
+    * the app and widget drawers and the study mode screen. It is primarily used
+    * to initialise the app
+    * */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
+        // Remove the app's title from always being shown
         getSupportActionBar().hide();
 
-        final Window window = getWindow();
-        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+        final Window WINDOW = getWindow();
+        // Make app fullscreen
+        WINDOW.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        // Use entire screen area
+        WINDOW.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        window.setStatusBarColor(Color.TRANSPARENT);
+        // Hide status bar
+        WINDOW.setStatusBarColor(Color.TRANSPARENT);
 
+        // Set the layout to the layout stored in activity_main.xml
         setContentView(R.layout.activity_main);
 
         Library.init(getApplicationContext());
@@ -44,27 +54,25 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 
         // Get screen size
-        Globals.metricsFit = new DisplayMetrics();
-        Globals.metricsFull = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metricsFull);
-        getWindowManager().getDefaultDisplay().getMetrics(Globals.metricsFit);
+        Globals.metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metrics);
 
         // Set fragments to sizes which means that they can be scrolled by ScrollView
         FragmentContainerView widgetDrawer = findViewById(R.id.widgetDrawerFragment),
             homeScreen = findViewById(R.id.homeScreenFragment),
             appDrawer = findViewById(R.id.appDrawerFragment);
-
-        widgetDrawer.getLayoutParams().height = Globals.metricsFull.heightPixels;
-        homeScreen.getLayoutParams().height = Globals.metricsFull.heightPixels;
-        appDrawer.getLayoutParams().height = Globals.metricsFull.heightPixels;
+        widgetDrawer.getLayoutParams().height = Globals.metrics.heightPixels;
+        homeScreen.getLayoutParams().height = Globals.metrics.heightPixels;
+        appDrawer.getLayoutParams().height = Globals.metrics.heightPixels;
 
         // 0 = Widgets, 1 = Home Screen, 2 = App Drawer
         focus = 1;
 
         // Add snapping behaviour to scroll view
-        ScrollView scrollView = findViewById(R.id.masterScrollView);
+        ScrollView scrollView = findViewById(R.id.mainScrollView);
         Scroll.init(scrollView);
 
+        // Get status bar height
         Resources resources = getResources();
         int id = resources.getIdentifier("status_bar_height", "dimen", "android");
         if (id > 0)
@@ -75,9 +83,8 @@ public class MainActivity extends AppCompatActivity {
         scrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                int appDrawerPosition[] = new int[2],
-                        homeScreenPosition[] = new int[2],
-                        offset = Globals.metricsFull.heightPixels / 4;
+                int[] appDrawerPosition = new int[2],
+                        homeScreenPosition = new int[2];
                 appDrawer.getLocationOnScreen(appDrawerPosition);
                 homeScreen.getLocationOnScreen(homeScreenPosition);
 
@@ -90,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
                     int yPosAppDrawer = appDrawerPosition[1];
 
                     // Lower yPos means that it is closer to the top of the screen
-                    float mid = Globals.metricsFull.heightPixels / 2,
+                    double mid = Globals.metrics.heightPixels / 2,
+                            offset = Globals.metrics.heightPixels / 2.5,
                             lower = mid + offset,
                             higher = mid - offset;
 
@@ -136,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Deselect textviews when the user taps outside of them
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {

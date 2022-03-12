@@ -65,7 +65,7 @@ public class HomeScreenGrid extends Fragment {
         recyclerView.setAdapter(adapter);
 
         ImageView delete = view.findViewById(R.id.cross);
-        delete.setY(-Globals.metricsFull.heightPixels + delete.getLayoutParams().height);
+        delete.setY(-Globals.metrics.heightPixels + delete.getLayoutParams().height);
         delete.setVisibility(View.INVISIBLE);
 
         final long ANIMATION_DURATION = 212;

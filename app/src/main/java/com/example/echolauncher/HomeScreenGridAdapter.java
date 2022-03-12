@@ -59,8 +59,8 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         // views can be measured
         total = 1;
 
-        LAYOUT_WIDTH_APPS = Globals.metricsFull.widthPixels / NUM_ROW_APPS;
-        LAYOUT_WIDTH_WIDGETS = Globals.metricsFull.widthPixels / NUM_ROW_WIDGETS;
+        LAYOUT_WIDTH_APPS = Globals.metrics.widthPixels / NUM_ROW_APPS;
+        LAYOUT_WIDTH_WIDGETS = Globals.metrics.widthPixels / NUM_ROW_WIDGETS;
 
         HomeScreenGrid.homeScreenInstructions = new Hashtable<>();
     }
@@ -120,7 +120,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         if (height == 0)
             return;
 
-        int columns = Globals.metricsFull.heightPixels / height;
+        int columns = Globals.metrics.heightPixels / height;
         total = columns * NUM_ROW_APPS;
     }
 

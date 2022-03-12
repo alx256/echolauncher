@@ -1,6 +1,5 @@
 package com.example.echolauncher;
 
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
@@ -9,7 +8,7 @@ import androidx.fragment.app.FragmentContainerView;
 
 public class Scroll {
     public static void init(View view) {
-        master = view.findViewById(R.id.masterScrollView);
+        master = view.findViewById(R.id.mainScrollView);
         appDrawer = view.findViewById(R.id.appDrawerFragment);
         widgetDrawer = view.findViewById(R.id.widgetDrawerFragment);
         homeScreen = view.findViewById(R.id.homeScreenFragment);
