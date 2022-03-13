@@ -2,6 +2,7 @@ package com.example.echolauncher;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.view.View;
@@ -36,6 +37,8 @@ public class DropTarget extends GridLayout {
 
         infoTextView.setText(text);
         infoTextView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "KumbhSans-Light.ttf");
+        infoTextView.setTypeface(font);
         infoTextView.setLayoutParams(params);
         infoTextView.setTextSize(20.0f);
         addView(infoTextView);

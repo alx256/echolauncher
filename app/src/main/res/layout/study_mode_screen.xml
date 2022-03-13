@@ -21,6 +21,7 @@
             android:id="@+id/remainingTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/kumbhsans"
             android:text="Study Mode"
             android:textColor="#FFFFFF"
             android:textSize="45sp" />
@@ -36,6 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:fontFamily="@font/kumbhsans"
                 android:text="Duration"
                 android:textAlignment="viewStart"
                 android:textColor="#FFFFFF"
@@ -47,6 +49,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="#7A5FA19B"
+                android:fontFamily="@font/kumbhsans"
                 android:text="0 hours, 0 minutes"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
@@ -97,6 +100,7 @@
             android:id="@+id/startButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/kumbhsans"
             android:text="Start" />
 
     </LinearLayout>
