@@ -21,14 +21,26 @@ public class WeatherWidget extends Widget {
         request = new Request.Builder()
                 .url(URL)
                 .build();
+
+        networkThread = new Thread() {
+            @Override
+            public void run() {
+                getWeather();
+                WeatherWidget.super.textPositions.put('L', temperature);
+                WeatherWidget.super.textPositions.put('R', status);
+                try {
+                    networkThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 
     @Override
-    public void Tick() {
-        getWeather();
-
-        super.textPositions.put('L', temperature);
-        super.textPositions.put('R', state);
+    public void tick() {
+        if (!networkThread.isAlive())
+            networkThread.start();
     }
 
     private void getWeather() {
@@ -40,13 +52,13 @@ public class WeatherWidget extends Widget {
             reader = new JSONObject(httpResponse);
             temperature = reader.getJSONObject("main").getString("temp");
             temperature += "°C";
-            state = reader.getJSONArray("weather").getJSONObject(0).getString("main");
+            status = reader.getJSONArray("weather").getJSONObject(0).getString("main");
         } catch (IOException e) {
             temperature = "Error getting weather!\nPlease check your connection";
-            state = "";
+            status = "";
         } catch (JSONException e) {
             temperature = "Failed to parse JSON";
-            state = "";
+            status = "";
         }
     }
 
@@ -55,5 +67,6 @@ public class WeatherWidget extends Widget {
     private OkHttpClient client;
     private Request request;
     private JSONObject reader;
-    private String temperature, state;
+    private String temperature, status;
+    private Thread networkThread;
 }

@@ -33,22 +33,8 @@ public class StudyModeDestination {
                             break;
                         }
 
-                        hours = remainingHours + " " + ((remainingHours > 1) ? "hours" : "hour");
-                        if (remainingMinutes >= 1)
-                            minutes = remainingMinutes + " " + ((remainingMinutes > 1) ? "minutes" : "minute");
-                        else if (remainingHours <= 0)
-                            minutes = "Less than 1 minute";
-                        else
-                            minutes = "less that 1 minute";
-
-                        if (remainingHours <= 0)
-                            remaining.setText(String.format("%s remaining", minutes));
-                        else if (remainingMinutes <= 0)
-                            remaining.setText(String.format("%s remaining", hours));
-                        else
-                            remaining.setText(String.format(
-                                    "%s and %s remaining",
-                                    hours, minutes));
+                        remaining.setText(String.format("%s remaining",
+                                TimeSetter.NaturalLanguage.get((int) remainingHours, (int) remainingMinutes)));
 
                         // Sleep for a minute
                         try {
@@ -65,5 +51,4 @@ public class StudyModeDestination {
     }
 
     private static Thread updateThread;
-    private static String hours, minutes;
 }

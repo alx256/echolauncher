@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 public class HomeItem extends PinItem {
     public HomeItem() {
-        super.empty = true;
+        super.isEmpty = true;
         super.imageHeight = Globals.appIconHeight;
         super.imageWidth = Globals.appIconWidth;
         super.textHeight = Globals.appTextHeight;

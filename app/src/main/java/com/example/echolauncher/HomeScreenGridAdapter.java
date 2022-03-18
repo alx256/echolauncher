@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -38,8 +39,8 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             type = Type.NONE;
         }
 
-        public void setType(Type type) { type = type; }
-        public void setItem(PinItem item) { item = item; }
+        public void setType(Type type) { this.type = type; }
+        public void setItem(PinItem item) { this.item = item; }
         public void setGridIndex(int gridIndex) { item.setGridIndex(gridIndex); }
 
         public PinItem getItem() {
@@ -63,6 +64,9 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         LAYOUT_WIDTH_WIDGETS = Globals.metrics.widthPixels / NUM_ROW_WIDGETS;
 
         HomeScreenGrid.homeScreenInstructions = new Hashtable<>();
+        occupiedIndices = new ArrayList<>();
+
+        storage = new Storage(CONTEXT, "identifier,position,screen", "echolauncher_homescreen");
     }
 
     @NonNull
@@ -124,13 +128,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         total = columns * NUM_ROW_APPS;
     }
 
-    private void setImageViewWidth(ImageView imageView, int width) {
-        if (imageView.getLayoutParams().width > LAYOUT_WIDTH_APPS)
-            imageView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-        else
-            imageView.getLayoutParams().width = width;
-    }
-
     private void updateItem(ViewHolder holder) {
         int position = holder.getAdapterPosition();
 
@@ -148,28 +145,62 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             for (HomeScreenGrid.InstructionCollection instructionCollection : instructionCollections) {
                 PinItem item = instructionCollection.getItem();
 
+                if (type(item) == Type.WIDGET) {
+                    boolean ignore = false;
+
+                    if (occupiedIndices.contains(item.getGridIndex() + 1) &&
+                        (item.getGridIndex() - 3) % 4 == 0)
+                        ignore = true;
+
+                    if (occupiedIndices.contains(item.getGridIndex() - 1) &&
+                            item.getGridIndex() % 4 == 0)
+                        ignore = true;
+
+                    if (ignore) {
+                        android.util.Log.d("ignore", "" + occupiedIndices.size());
+                        HomeScreenGrid.homeScreenInstructions.remove(position);
+                        continue;
+                    }
+                }
+
                 switch (instructionCollection.getInstruction()) {
                     case ADD:
                     case PIN:
                         // Item needs to be pinned to home screen
+                        occupiedIndices.add(item.getGridIndex());
+
                         holder.setItem(item);
                         holder.setType(type(item));
 
-                        setImageViewWidth(imageView, item.imageWidth);
-
                         drawable = item.drawable;
-                        drawable.clearColorFilter();
+                        if (type(item) != Type.WIDGET)
+                            drawable.clearColorFilter();
                         drawable.setAlpha(0xFF);
                         imageView.setImageDrawable(drawable);
 
-                        textView.setText(item.name.shortened());
+                        if (type(item) != Type.WIDGET)
+                            textView.setText(item.name.shortened());
+
+                        if (type(item) == Type.WIDGET) {
+                            ((WidgetItem) item).addReferenceView(holder.itemView);
+                        }
 
                         holder.itemView.setOnDragListener(item.getOnDragListener());
                         holder.itemView.setOnTouchListener(item.getOnTouchListener());
 
+                        if (type(item) == Type.WIDGET) {
+                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
+                            imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
+                        } else {
+                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
+                            imageView.getLayoutParams().width = Globals.appIconWidth;
+                        }
+
                         if (instructionCollection.getInstruction() == Instruction.PIN) {
                             try {
-                                HomeScreenStorage.writeItem(item.identifier, position, 0, CONTEXT);
+                                storage.writeItem(item.identifier,
+                                        Integer.toString(position),
+                                        "0");
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -181,30 +212,36 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         holder.setItem(item);
                         holder.setType(type(item));
 
-                        setImageViewWidth(imageView, item.imageWidth);
+                        if (type(item) == Type.WIDGET) {
+                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
+                            imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
+                        } else {
+                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
+                            imageView.getLayoutParams().width = Globals.appIconWidth;
+                        }
 
                         drawable = item.drawable;
                         imageView.setImageDrawable(drawable);
-                        imageView.getDrawable().setColorFilter(0, PorterDuff.Mode.DARKEN);
+                        if (type(item) != Type.WIDGET)
+                            imageView.getDrawable().setColorFilter(0, PorterDuff.Mode.DARKEN);
                         imageView.getDrawable().setAlpha(0x62);
 
                         textView.setText("");
+
                         break;
                     case CLEAR:
                         // Item needs to be cleared
                         holder.setItem(new HomeItem());
                         holder.setType(Type.NONE);
 
-                        setImageViewWidth(imageView, Globals.appIconWidth);
+                        holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
+                        imageView.getLayoutParams().width = Globals.appIconWidth;
 
                         imageView.setImageDrawable(null);
                         textView.setText("");
 
                         break;
                 }
-                
-                ConstraintLayout layout = holder.itemView.findViewById(R.id.constraintLayout);
-                scaleItems(layout, holder);
 
                 HomeScreenGrid.homeScreenInstructions.remove(position);
             }
@@ -219,18 +256,21 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         return Type.APP;
     }
 
-    private void scaleItems(ConstraintLayout layout, ViewHolder holder) {
-        if (layout.getLayoutParams().width != LAYOUT_WIDTH_APPS &&
+    private void scaleItems(ViewHolder holder) {
+        if (holder.itemView.getLayoutParams().width != LAYOUT_WIDTH_APPS &&
                 holder.getType() == Type.APP)
-            layout.getLayoutParams().width = LAYOUT_WIDTH_APPS;
+            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
 
-        if (layout.getLayoutParams().width != LAYOUT_WIDTH_WIDGETS &&
-                holder.getType() == Type.WIDGET)
-            layout.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
+        if (holder.itemView.getLayoutParams().width != LAYOUT_WIDTH_WIDGETS &&
+                holder.getType() == Type.WIDGET) {
+            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
+        }
     }
 
     private final Context CONTEXT;
     private final int NUM_ROW_APPS = 4, NUM_ROW_WIDGETS = 2,
             LAYOUT_WIDTH_APPS, LAYOUT_WIDTH_WIDGETS;
     private int total;
+    private List<Integer> occupiedIndices;
+    private Storage storage;
 }

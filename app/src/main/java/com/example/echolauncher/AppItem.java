@@ -1,6 +1,10 @@
 package com.example.echolauncher;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -11,7 +15,7 @@ public class AppItem extends PinItem {
         super.drawable = Library.getDrawable(packageName);
         setSuper();
 
-        empty = false;
+        isEmpty = false;
     }
 
     private void setSuper() {
@@ -31,5 +35,24 @@ public class AppItem extends PinItem {
         super.initView(finalView);
 
         return finalView;
+    }
+
+    @Override
+    protected void onTap() {
+        PackageManager packageManager = Library.getPackageManager();
+        Log.d("AppAdapter", "Opening " + identifier + "...");
+        Intent intent = packageManager.getLaunchIntentForPackage(identifier);
+
+        if (intent == null) {
+            Log.d("AppAdapter", "Intent was null");
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            return;
+        }
+
+        // Open the app with a custom animation
+        Activity activity = (Activity) context;
+        activity.startActivity(intent);
+        activity.finish();
+        activity.overridePendingTransition(R.transition.open_app, 0);
     }
 }

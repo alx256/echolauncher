@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 
 public class Dispatcher extends AppCompatActivity {
     @Override
@@ -49,7 +50,6 @@ public class Dispatcher extends AppCompatActivity {
         WINDOW.setStatusBarColor(Color.TRANSPARENT);
 
         Library.init(getApplicationContext());
-        HomeScreenStorage.init(getApplicationContext());
 
         // Request READ_EXTERNAL_STORAGE permission (needed for accessing wallpaper)
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -57,6 +57,8 @@ public class Dispatcher extends AppCompatActivity {
         // Get screen size
         Globals.metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metrics);
+
+        fragmentManager = getSupportFragmentManager();
     }
 
     // Deselect textviews when the user taps outside of them
@@ -86,4 +88,10 @@ public class Dispatcher extends AppCompatActivity {
 
         super.onBackPressed();
     }
+
+    public static FragmentManager getSavedFragmentManager() {
+        return fragmentManager;
+    }
+
+    private static FragmentManager fragmentManager;
 }

@@ -1,5 +1,6 @@
 package com.example.echolauncher;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import java.util.Dictionary;
@@ -20,7 +21,9 @@ public class Widget {
         return textPositions.get(position);
     }
 
-    public void Tick() {}
+    public void tick() {}
+
+    public void onTap() {}
 
     protected String identifier;
     protected int color;

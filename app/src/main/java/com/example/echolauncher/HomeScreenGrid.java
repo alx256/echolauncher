@@ -29,20 +29,20 @@ import java.util.Map;
 public class HomeScreenGrid extends Fragment {
     public static class InstructionCollection {
         public InstructionCollection(HomeScreenGridAdapter.Instruction instruction, PinItem item) {
-            this.instruction = instruction;
-            this.item = item;
+            INSTRUCTION = instruction;
+            ITEM = item;
         }
 
         public HomeScreenGridAdapter.Instruction getInstruction() {
-            return instruction;
+            return INSTRUCTION;
         }
 
         public PinItem getItem() {
-            return item;
+            return ITEM;
         }
 
-        private HomeScreenGridAdapter.Instruction instruction;
-        private PinItem item;
+        private final HomeScreenGridAdapter.Instruction INSTRUCTION;
+        private final PinItem ITEM;
     }
 
     @Override
@@ -130,6 +130,8 @@ public class HomeScreenGrid extends Fragment {
             }
         });
 
+        storage = new Storage(getContext(), "identifier,position,screen,segment", "echolauncher_homescreen");
+
         ViewTreeObserver observer = recyclerView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -140,7 +142,12 @@ public class HomeScreenGrid extends Fragment {
                 adapter.notifyItemChanged(0);
 
                 try {
-                    HomeScreenStorage.readItems(getContext());
+                    List<Storage.Line> contents = storage.readItems();
+                    for (Storage.Line line : contents) {
+                        HomeScreenGrid.updateGrid(line.getInt("position"),
+                                HomeScreenGridAdapter.Instruction.ADD,
+                                Search.get(line.getString("identifier")));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -186,6 +193,7 @@ public class HomeScreenGrid extends Fragment {
 
     private View view;
     private Animation shrinkAnimation, expandAnimation;
+    private static Storage storage;
     private static boolean isMultiplePageMode;
     private static RecyclerView recyclerView;
 }

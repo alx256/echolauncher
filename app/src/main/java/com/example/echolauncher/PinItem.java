@@ -31,11 +31,10 @@ public class PinItem {
 
         public String shortened() {
             // Maximum number of characters before shortening the text
-            int maxChars = 6;
             String shortenedString;
 
-            if (name.length() >= maxChars) {
-                shortenedString = name.substring(0, maxChars);
+            if (name.length() >= MAX_CHARS) {
+                shortenedString = name.substring(0, MAX_CHARS);
                 shortenedString += "...";
                 return shortenedString;
             }
@@ -44,6 +43,7 @@ public class PinItem {
         }
 
         private String name;
+        private final int MAX_CHARS = 6;
     }
 
     public class LongPressRunnable implements Runnable {
@@ -90,7 +90,7 @@ public class PinItem {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        if (movable) {
+                        if (isMovable) {
                             hold = new LongPressRunnable(view, temp);
                             handler.postDelayed(hold, LONG_PRESS_DELAY);
                         }
@@ -101,21 +101,7 @@ public class PinItem {
                         handler.removeCallbacks(hold);
 
                         if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                            PackageManager packageManager = Library.getPackageManager();
-                            Log.d("AppAdapter", "Opening " + identifier + "...");
-                            Intent intent = packageManager.getLaunchIntentForPackage(identifier);
-
-                            if (intent == null) {
-                                Log.d("AppAdapter", "Intent was null");
-                                return false;
-                            }
-
-                            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                            // Open the app with a custom animation
-                            activity = (Activity) context;
-                            activity.startActivity(intent);
-                            activity.finish();
-                            activity.overridePendingTransition(R.transition.open_app, 0);
+                            onTap();
                         }
                         break;
                 }
@@ -133,7 +119,7 @@ public class PinItem {
                 if (stationary)
                     return false;
 
-                if (!movable)
+                if (!isMovable)
                     return false;
 
                 if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
@@ -147,16 +133,19 @@ public class PinItem {
     }
 
     protected void initView(View view) {
-        image = view.findViewById(R.id.appIcon);
+        imageView = view.findViewById(R.id.appIcon);
         textView = view.findViewById(R.id.textView);
 
-        image.getLayoutParams().height = imageHeight;
-        image.getLayoutParams().width = imageWidth;
+        imageView.getLayoutParams().height = imageHeight;
+        imageView.getLayoutParams().width = imageWidth;
         textView.setTextSize(textSize);
         textView.getLayoutParams().height = textHeight;
 
         if (drawable != null)
-            image.setImageDrawable(drawable);
+            imageView.setImageDrawable(drawable);
+        else
+            drawable = imageView.getDrawable();
+
         textView.setText(name.shortened());
 
         view.setOnTouchListener(getOnTouchListener());
@@ -164,8 +153,9 @@ public class PinItem {
         view.setOnDragListener(getOnDragListener());
     }
 
-    public boolean empty = false, isHomeScreen = false, movable = true;
+    protected void onTap() {}
 
+    protected boolean isEmpty = false, isHomeScreen = false, isMovable = true;
     protected int textID;
     protected int imageHeight, imageWidth, textSize, textHeight, iconIndex;
     protected Context context;
@@ -175,8 +165,7 @@ public class PinItem {
     protected Drawable drawable;
     protected boolean isWidget = false;
 
-    private Activity activity;
-    private ImageView image;
+    private ImageView imageView;
     private TextView textView;
     private boolean stationary;
     private int gridIndex = -1;

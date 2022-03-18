@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WidgetItem extends PinItem {
     public WidgetItem(Name name, Widget widget) {
         super.name = name;
@@ -19,11 +22,11 @@ public class WidgetItem extends PinItem {
         textSize = TEXT_SIZE;
         isWidget = true;
 
-        empty = false;
+        isEmpty = false;
+        references = new ArrayList<>();
     }
 
     public View toView(Context context) {
-        View finalView;
         super.context = context;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -33,16 +36,38 @@ public class WidgetItem extends PinItem {
         ImageView icon = finalView.findViewById(R.id.appIcon);
         icon.setColorFilter(widget.getColor());
 
-        for (char c : new char[]{'L', 'R', 'U', 'D'})
-            populate(finalView, c);
-
         TextView textView = finalView.findViewById(R.id.textView);
         textView.setVisibility(View.INVISIBLE);
 
         return finalView;
     }
 
-    protected void populate(View finalView, char character) {
+    public Widget getWidget() {
+        return widget;
+    }
+
+    public void addReferenceView(View view) {
+        references.add(view);
+    }
+
+    public void update() {
+        for (char c : new char[]{'L', 'R', 'U', 'D'})
+            populate(c);
+    }
+
+    protected void populate(char character) {
+        if (finalView == null) {
+            // toView has not been called yet
+            return;
+        }
+
+        character = Character.toUpperCase(character);
+
+        // Finds the textView that we are trying to update
+        // L = Left textView
+        // R = Right textView
+        // U = Up textView
+        // Down = Down textView
         switch (character) {
             case 'L':
                 textID = R.id.leftText;
@@ -60,14 +85,24 @@ public class WidgetItem extends PinItem {
                 textID = -1;
         }
 
-        textView = finalView.findViewById(textID);
+        // Get all the textViews that need to be updated,
+        // the textViews belonging to the widget in the
+        // widget drawer along with any other instances
+        // of pinned widgets
+        List<TextView> textViews = new ArrayList<>();
+        textViews.add(finalView.findViewById(textID));
 
-        if (widget.getPosition(character) != null) {
-            textView.setVisibility(View.VISIBLE);
-            textView.setText(widget.getPosition(character));
-        } else if (textID != - 1) {
-            if (textView.getVisibility() != View.INVISIBLE)
-                textView.setVisibility(View.INVISIBLE);
+        for (View view : references)
+            textViews.add(view.findViewById(textID));
+
+        for (TextView textView : textViews) {
+            if (widget.getPosition(character) != null) {
+                textView.setVisibility(View.VISIBLE);
+                textView.setText(widget.getPosition(character));
+            } else if (textID != -1) {
+                if (textView.getVisibility() != View.INVISIBLE)
+                    textView.setVisibility(View.INVISIBLE);
+            }
         }
 
 //        if (widget.drawablePositions.get(character) != null) {
@@ -75,12 +110,14 @@ public class WidgetItem extends PinItem {
 //        }
     }
 
-    public Widget getWidget() {
-        return widget;
+    @Override
+    protected void onTap() {
+        widget.onTap();
     }
 
-    private final int IMAGE_HEIGHT = 150, IMAGE_WIDTH = 150 * 4, TEXT_SIZE = 12,
+    private final int IMAGE_HEIGHT = 162, IMAGE_WIDTH = 150 * 4, TEXT_SIZE = 12,
             TEXT_HEIGHT = 55;
     private Widget widget;
-    private TextView textView;
+    private List<View> references;
+    private View finalView;
 }

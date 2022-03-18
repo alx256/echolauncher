@@ -44,7 +44,7 @@ public class StudyMode {
 
         for (AppItem item : allowedApps) {
             AppItem itemCopy = item;
-            itemCopy.movable = moveable;
+            itemCopy.isMovable = moveable;
             grid.addView(itemCopy.toView(item.context));
         }
     }

@@ -41,8 +41,12 @@ public class Library {
 
         // Add all widgets
         widgets = new ArrayList<>();
+        // Time widget
+        widgets.add(new WidgetItem(new PinItem.Name("Time"), new TimeWidget()));
         // Weather widget
         widgets.add(new WidgetItem(new PinItem.Name("Weather"), new WeatherWidget()));
+        // Events widget
+        widgets.add(new WidgetItem(new PinItem.Name("Events"), new EventsWidget()));
 
         Sort.mergeSort(Comparison.APP_NAME);
     }

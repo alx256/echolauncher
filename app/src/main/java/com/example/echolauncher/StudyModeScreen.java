@@ -31,21 +31,14 @@ public class StudyModeScreen extends Fragment {
         layout.setY(Globals.statusBarHeight);
 
         TextView timeView = view.findViewById(R.id.timeView);
+        TimeSetter timeSetter = new TimeSetter(timeView, getContext());
 
-        TimePickerDialog.OnTimeSetListener timeSetListener = (v, hours, minutes) -> {
-            this.hours = hours;
-            String hoursString = hours + " " +((hours == 1) ? "hour" : " hours");
-            this.minutes = minutes;
-            String minutesString = minutes + " " + ((minutes == 1) ? "minute" : "minutes");
-
-            String str = hoursString + " and " + minutesString;
-            timeView.setText(str);
-        };
-
-        timeView.setOnClickListener(v -> {
-            TimePickerDialog dialog = new TimePickerDialog(getContext(),
-                    timeSetListener, hours, minutes, true);
-            dialog.show();
+        timeSetter.setOnFinishListener(new TimeSetter.OnFinishListener() {
+            @Override
+            public void onFinish(int h, int m) {
+                hours = h;
+                minutes = m;
+            }
         });
 
         DropTarget target = view.findViewById(R.id.allowedApps);
