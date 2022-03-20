@@ -2,7 +2,6 @@ package com.example.echolauncher;
 
 import android.content.Context;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,7 +12,18 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Allows storing data on a local file.
+ * Used to store home screen layouts,
+ * the timetable and study mode allowed apps
+ * **/
+
 public class Storage {
+    // Wrapper class around a hashmap that is returned
+    // when data is read. This class is used purely
+    // for so that receiving a string value and an
+    // int value is easier with the getString and
+    // getInt methods
     public static class Line {
         public Line() {
             map = new Hashtable<>();
@@ -24,11 +34,29 @@ public class Storage {
         }
 
         public String getString(String name) {
-            return map.get(name);
+            return get(name);
         }
 
         public int getInt(String name) {
-            return Integer.parseInt(map.get(name));
+            return Integer.parseInt(get(name));
+        }
+
+        public long getLong(String name) {
+            return Long.parseLong(get(name));
+        }
+
+        private String get(String name) {
+            String string = map.get(name);
+
+            if (string == null) {
+                // Report a message for debugging
+                android.util.Log.i("Storage",
+                        "Accessed string " + name +
+                                " is null! There could be a typo or this data has not been saved.");
+                return "-1";
+            }
+
+            return string;
         }
 
         Map<String, String> map;
@@ -50,8 +78,15 @@ public class Storage {
             e.printStackTrace();
         }
 
+        // The format is a string that tells the Storage class
+        // how the data should be formatted. For example,
+        // identifier,position,screen means that each line will
+        // have the identifier as the first value stored, the position
+        // as the second value stored and so on, with each value being
+        // separated by a comma.
         this.format = format;
 
+        // Find the character separating values
         for (char c : format.toCharArray()) {
             if (!Character.isLetter(c)) {
                 delimiter = c;
@@ -66,6 +101,7 @@ public class Storage {
     }
 
     public void writeItem(Object... args) throws IOException {
+        // Open in append mode to append data to the end of the file
         try {
             outputStream = CONTEXT.openFileOutput(FILE_NAME, Context.MODE_APPEND);
         } catch (FileNotFoundException e) {
@@ -87,7 +123,7 @@ public class Storage {
         outputStream.close();
     }
 
-    // Returns multi dimensional array containing all stored items
+    // Returns list containing all stored items, stored as a Line instance
     public List<Line> readItems() throws IOException {
         try {
             inputStream = CONTEXT.openFileInput(FILE_NAME);
@@ -104,22 +140,20 @@ public class Storage {
         while ((value = inputStream.read()) != -1) {
             c = (char) value;
 
-            switch (c) {
-                case '\n':
-                    // Newline
-                    list.add(line);
-                    line = new Line();
-                    segment = 0;
+            if (c == '\n') {
+                // Newline
+                list.add(line);
+                line = new Line();
+                segment = 0;
+                str = "";
+            } else {
+                if (c == delimiter) {
+                    line.put(formatNames.get(segment++), str);
                     str = "";
-                    break;
-                default:
-                    if (c == delimiter) {
-                        line.put(formatNames.get(segment++), str);
-                        str = "";
-                        break;
-                    }
+                    continue;
+                }
 
-                    str += c;
+                str += c;
             }
         }
 

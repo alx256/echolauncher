@@ -16,9 +16,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
             android:fontFamily="@font/kumbhsans"
-            android:text="Create New Event"
+            android:text="Create New Timetable Activity"
             android:textAlignment="center"
-            android:textSize="55sp" />
+            android:textSize="35sp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/eventName"

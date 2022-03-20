@@ -10,9 +10,18 @@ import android.widget.TextView;
 
 import androidx.gridlayout.widget.GridLayout;
 
+/**
+ * This class is a custom version of Android's GridLayout.
+ * It allows the user to pass in a listener that is called
+ * when an app is dropped on the view and pins apps to it.
+ * This is primarily used for the study mode interface in
+ * order to allow the user to pin apps that can override
+ * study mode
+ * **/
+
 public class DropTarget extends GridLayout {
     public interface OnDropListener {
-        void onDrop(PinItem item);
+        void onDrop(Item item);
     }
 
     public DropTarget(Context context) {
@@ -54,6 +63,8 @@ public class DropTarget extends GridLayout {
     private void init() {
         setBackgroundColor(Color.GRAY);
 
+        // Darken or lighten the view depending on if an app is being dragged
+        // over it and call the drop listener when the app is dropped on it
         super.setOnDragListener((view, event) -> {
             if (event.getAction() == DragEvent.ACTION_DRAG_ENTERED)
                 setBackgroundColor(Color.DKGRAY);

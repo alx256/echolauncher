@@ -1,13 +1,9 @@
 package com.example.echolauncher;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Handler;
 
-public class PinItem {
+/**
+ * Generic item class
+ * **/
+
+public class Item {
+    // Contains full and shortened app name
     public static class Name {
         public Name(String name) {
             this.name = name;
@@ -46,8 +47,11 @@ public class PinItem {
         private final int MAX_CHARS = 6;
     }
 
+    // Runnable implementation that is used for determining
+    // when the user has done a long press so that an item
+    // can be dragged
     public class LongPressRunnable implements Runnable {
-        public LongPressRunnable(View view, PinItem item) {
+        public LongPressRunnable(View view, Item item) {
             VIEW = view;
             ITEM = item;
         }
@@ -58,6 +62,7 @@ public class PinItem {
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(55);
 
+            // Start dragging the app
             ClipData data = ClipData.newPlainText(identifier,
                     identifier);
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(VIEW);
@@ -68,7 +73,7 @@ public class PinItem {
         }
 
         private final View VIEW;
-        private final PinItem ITEM;
+        private final Item ITEM;
     }
 
     public Name getName() { return name; }
@@ -81,54 +86,51 @@ public class PinItem {
     }
 
     public View.OnTouchListener getOnTouchListener() {
-        PinItem temp = this;
+        Item temp = this;
 
         Handler handler = new Handler();
 
-        return new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        if (isMovable) {
-                            hold = new LongPressRunnable(view, temp);
-                            handler.postDelayed(hold, LONG_PRESS_DELAY);
-                        }
-                        break;
-                    case MotionEvent.ACTION_SCROLL:
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_UP:
-                        handler.removeCallbacks(hold);
+        return (view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (isMovable) {
+                        hold = new LongPressRunnable(view, temp);
+                        // Begin checking for long press
+                        handler.postDelayed(hold, LONG_PRESS_DELAY);
+                    }
+                    break;
+                case MotionEvent.ACTION_SCROLL:
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    // User has lifted their finger- abort long press
+                    handler.removeCallbacks(hold);
 
-                        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                            onTap();
-                        }
-                        break;
-                }
-
-                return true;
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        view.performClick();
+                        onTap();
+                    }
+                    break;
             }
+
+            return true;
         };
     }
 
     public View.OnDragListener getOnDragListener() {
         // Handle dragging events
-        return new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
-                if (stationary)
-                    return false;
+        return (view, dragEvent) -> {
+            if (stationary)
+                return false;
 
-                if (!isMovable)
-                    return false;
+            if (!isMovable)
+                return false;
 
-                if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
-                    Scroll.scrollBack();
-                    stationary = true;
-                }
-
-                return true;
+            if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
+                Scroll.scrollBack();
+                stationary = true;
             }
+
+            return true;
         };
     }
 
@@ -149,17 +151,23 @@ public class PinItem {
         textView.setText(name.shortened());
 
         view.setOnTouchListener(getOnTouchListener());
-        // Handle dragging events
         view.setOnDragListener(getOnDragListener());
     }
 
+    // Method that can be overridden to return a usable
+    // View component for the Item
+    public View toView(Context context) {
+        return null;
+    }
+
+    // Method that can be overridden to perform custom tap
+    // functionality
     protected void onTap() {}
 
     protected boolean isEmpty = false, isHomeScreen = false, isMovable = true;
     protected int textID;
     protected int imageHeight, imageWidth, textSize, textHeight, iconIndex;
     protected Context context;
-    // Uniquely identifies this item
     protected String identifier;
     protected Name name;
     protected Drawable drawable;

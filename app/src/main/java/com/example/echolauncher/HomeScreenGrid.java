@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class HomeScreenGrid extends Fragment {
     public static class InstructionCollection {
-        public InstructionCollection(HomeScreenGridAdapter.Instruction instruction, PinItem item) {
+        public InstructionCollection(HomeScreenGridAdapter.Instruction instruction, Item item) {
             INSTRUCTION = instruction;
             ITEM = item;
         }
@@ -37,12 +37,12 @@ public class HomeScreenGrid extends Fragment {
             return INSTRUCTION;
         }
 
-        public PinItem getItem() {
+        public Item getItem() {
             return ITEM;
         }
 
         private final HomeScreenGridAdapter.Instruction INSTRUCTION;
-        private final PinItem ITEM;
+        private final Item ITEM;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class HomeScreenGrid extends Fragment {
             }
         });
 
-        storage = new Storage(getContext(), "identifier,position,screen,segment", "echolauncher_homescreen");
+        storage = new Storage(getContext(), "identifier,position,screen", "echolauncher_homescreen");
 
         ViewTreeObserver observer = recyclerView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -160,8 +160,9 @@ public class HomeScreenGrid extends Fragment {
         return view;
     }
 
-    static public void updateGrid(int position, HomeScreenGridAdapter.Instruction instruction,
-                                  PinItem item) {
+    public static void updateGrid(int position, HomeScreenGridAdapter.Instruction instruction,
+                                  Item item) {
+        assert item != null;
         if (homeScreenInstructions.get(position) == null)
             homeScreenInstructions.put(position, new ArrayList<>());
         homeScreenInstructions.get(position).add(new InstructionCollection(instruction, item));

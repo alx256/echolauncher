@@ -8,24 +8,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
-public class AppItem extends PinItem {
+/**
+ * Class that represents an app
+ * **/
+
+public class AppItem extends Item {
     public AppItem(Name name, String packageName) {
         super.name = name;
-        super.identifier = packageName;
-        super.drawable = Library.getDrawable(packageName);
-        setSuper();
-
+        identifier = packageName;
+        drawable = Library.getDrawable(packageName);
+        imageHeight = Globals.APP_ICON_HEIGHT;
+        imageWidth = Globals.APP_ICON_WIDTH;
+        textHeight = Globals.APP_TEXT_HEIGHT;
+        textSize = Globals.APP_TEXT_SIZE;
+        isWidget = false;
         isEmpty = false;
     }
 
-    private void setSuper() {
-        super.imageHeight = Globals.appIconHeight;
-        super.imageWidth = Globals.appIconWidth;
-        super.textHeight = Globals.appTextHeight;
-        super.textSize = Globals.appTextSize;
-        super.isWidget = false;
-    }
-
+    @Override
     public View toView(Context context) {
         View finalView;
         super.context = context;

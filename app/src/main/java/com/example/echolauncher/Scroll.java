@@ -8,9 +8,14 @@ import android.widget.ScrollView;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+/**
+ * Handles scrolling, used to snap the app and widget
+ * drawers into place
+ */
+
 public class Scroll {
     public static void init(View view) {
-        master = view.findViewById(R.id.mainScrollView);
+        mainScrollView = view.findViewById(R.id.mainScrollView);
         appDrawer = view.findViewById(R.id.appDrawerFragment);
         widgetDrawer = view.findViewById(R.id.widgetDrawerFragment);
         homeScreen = view.findViewById(R.id.homeScreenFragment);
@@ -21,16 +26,21 @@ public class Scroll {
         lastY = 0;
         focus = HOME_SCREEN;
 
-        master.setVerticalScrollBarEnabled(false);
-        master.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        // Disable unnecessary scrolling effects
+        mainScrollView.setVerticalScrollBarEnabled(false);
+        mainScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
-        ViewTreeObserver observer = master.getViewTreeObserver();
+        // By default the scrollView will be on the widget drawer.
+        // Scroll to the home screen whenever scrolling becomes
+        // available
+        ViewTreeObserver observer = mainScrollView.getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                master.scrollTo((int) homeScreen.getX(), (int) homeScreen.getY());
+                mainScrollView.scrollTo((int) homeScreen.getX(), (int) homeScreen.getY());
                 isUserScroll = true;
-                ViewTreeObserver temp = master.getViewTreeObserver();
+
+                ViewTreeObserver temp = mainScrollView.getViewTreeObserver();
                 temp.removeOnPreDrawListener(this);
                 return true;
             }
@@ -65,7 +75,7 @@ public class Scroll {
 
     public static void setPagerAlphaAnimation(ViewPager2 pager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            master.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            mainScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     float alpha = pager.getAlpha(),
@@ -75,7 +85,7 @@ public class Scroll {
                     if (!isUserScroll)
                         return;
 
-                    direction = (short) ((scrollY > (master.getBottom()) ? -1 : 1));
+                    direction = (short) ((scrollY > (mainScrollView.getBottom()) ? -1 : 1));
 
                     switch (focus) {
                         case WIDGET_DRAWER:
@@ -130,10 +140,10 @@ public class Scroll {
 
         canScroll = false;
 
-        master.post(() -> {
-            lastX = master.getScrollX();
-            lastY = master.getScrollY();
-            master.smoothScrollTo(x, y);
+        mainScrollView.post(() -> {
+            lastX = mainScrollView.getScrollX();
+            lastY = mainScrollView.getScrollY();
+            mainScrollView.smoothScrollTo(x, y);
             canScroll = true;
         });
     }
@@ -142,7 +152,7 @@ public class Scroll {
         HOME_SCREEN = 1,
         APP_DRAWER = 2;
 
-    private static ScrollView master;
+    private static ScrollView mainScrollView;
     private static FragmentContainerView appDrawer, widgetDrawer, homeScreen;
     private static int x, y, lastX, lastY, focus;
     private static short direction;

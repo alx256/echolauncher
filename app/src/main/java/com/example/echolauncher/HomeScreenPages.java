@@ -12,7 +12,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-public class HomeScreen extends Fragment {
+/**
+ * This class implements the functionality of the home
+ * screen pages fragment which contains the pages where
+ * apps and widgets can be pinned
+ * **/
+
+public class HomeScreenPages extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

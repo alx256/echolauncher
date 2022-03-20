@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.Locale;
 
-public class Event {
-    Event(String name, int year, int month, int day, int hours, int minutes) {
+public class TimetableSlot {
+    TimetableSlot(String name, int year, int month, int day, int hours, int minutes, long dateMillis) {
         this.name = name;
 
         this.year = year;
@@ -17,10 +15,15 @@ public class Event {
         this.day = day;
         this.hours = hours;
         this.minutes = minutes;
+        this.dateMillis = dateMillis;
     }
 
     public String getName() {
         return name;
+    }
+
+    public long getMillis() {
+        return dateMillis;
     }
 
     public TextView getNameTextView(Context context) {
@@ -51,4 +54,5 @@ public class Event {
 
     private String name;
     private int year, month, day, hours, minutes;
+    private long dateMillis;
 }

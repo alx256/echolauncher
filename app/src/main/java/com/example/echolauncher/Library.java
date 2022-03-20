@@ -7,15 +7,25 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This app is used to store the available apps and
+ * widgets as well as provide the functionality to
+ * search and order them
+ * **/
+
 public class Library {
+    // Used to determine how items should be compared when
+    // searching or sorting through them
     public enum Comparison {
-        APP_NAME,
-        APP_IDENTIFIER,
-        WIDGET_NAME,
-        WIDGET_IDENTIFIER,
+        APP_NAME, // The name of the app that is shown to the user
+        APP_IDENTIFIER, // The package name that uniquely identifies the app
+        WIDGET_NAME, // The name of the widget
+        WIDGET_IDENTIFIER, // The name that uniquely identifies the widget
+        DATE, // The date associated with the item (used for sorting events)
         NONE
     }
 
@@ -35,20 +45,21 @@ public class Library {
             if (info.packageName.equals(context.getPackageName()))
                 continue;
 
-            PinItem.Name name = new PinItem.Name(packageManager.getApplicationLabel(info).toString());
+            Item.Name name = new Item.Name(packageManager.getApplicationLabel(info).toString());
             apps.add(new AppItem(name, info.packageName));
         }
 
         // Add all widgets
         widgets = new ArrayList<>();
         // Time widget
-        widgets.add(new WidgetItem(new PinItem.Name("Time"), new TimeWidget()));
+        widgets.add(new WidgetItem(new Item.Name("Time"), new TimeWidget()));
         // Weather widget
-        widgets.add(new WidgetItem(new PinItem.Name("Weather"), new WeatherWidget()));
-        // Events widget
-        widgets.add(new WidgetItem(new PinItem.Name("Events"), new EventsWidget()));
+        widgets.add(new WidgetItem(new Item.Name("Weather"), new WeatherWidget()));
+        // TimetableSlots widget
+        widgets.add(new WidgetItem(new Item.Name("TimetableSlots"), new TimetableWidget()));
 
-        Sort.mergeSort(Comparison.APP_NAME);
+        // Order apps by app name so that they in alphabetical order
+        Sort.sortApps(Comparison.APP_NAME);
     }
 
     public static Drawable getDrawable(String packageName) {
@@ -61,16 +72,38 @@ public class Library {
         return null;
     }
 
-    public static List<AppItem> getAllApps() {return apps; };
-    public static List<WidgetItem> getAllWidgets() { return widgets; }
-    public static PackageManager getPackageManager() { return packageManager; }
-    public static PinItem getDragging() { return Search.get(draggingIdentifier); }
+    public static List<AppItem> getAllApps() {
+        return apps;
+    }
 
-    public static AppItem appAt(int index) { return apps.get(index); }
-    public static WidgetItem widgetAt(int index) { return widgets.get(index); }
+    public static List<WidgetItem> getAllWidgets() {
+        return widgets;
+    }
 
-    public static void setDragging(String identfier) {
-        draggingIdentifier = identfier;
+    public static PackageManager getPackageManager() {
+        return packageManager;
+    }
+
+    public static Item getDragging() {
+        try {
+            return Search.get(draggingIdentifier);
+        } catch (InvalidObjectException e) {
+            // No valid app or widget found
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static AppItem appAt(int index) {
+        return apps.get(index);
+    }
+
+    public static WidgetItem widgetAt(int index) {
+        return widgets.get(index);
+    }
+
+    public static void setDragging(String identifier) {
+        draggingIdentifier = identifier;
     }
 
     private static List<AppItem> apps;

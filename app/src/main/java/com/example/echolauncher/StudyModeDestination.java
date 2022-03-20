@@ -2,53 +2,60 @@ package com.example.echolauncher;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.gridlayout.widget.GridLayout;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class StudyModeDestination {
     public static void setup(Activity activity) {
-        TextView remaining = activity.findViewById(R.id.remainingTime);
+        remainingTextView = activity.findViewById(R.id.remainingTime);
 
         GridLayout allowedApps = activity.findViewById(R.id.allowedApps);
-        allowedApps.getLayoutParams().height = (int) (Globals.appHeight * 1.5f);
+        allowedApps.getLayoutParams().height = (int) (Globals.APP_HEIGHT * 1.5f);
         StudyMode.updateGrid(allowedApps,false);
 
-        updateThread = new Thread() {
+        updateText();
+
+        updateTimer = new Timer();
+        // Task that updates the time remaining
+        updateTask = new TimerTask() {
             @Override
             public void run() {
-                while (true) {
-                    if (remaining != null) {
-                        long remainingTime = StudyMode.remainingTime(),
-                                remainingHours = remainingTime / (60 * 60 * 1000),
-                                remainingMinutes = (remainingTime - (remainingHours * 60 * 60 *1000)) / (60 * 1000);
+                // Time is up, return to home screen
+                if (StudyMode.remainingTime() <= 0) {
+                    Intent intent = new Intent(activity, activity.getClass());
+                    StudyMode.disable();
+                    updateTimer.cancel();
 
-                        if (remainingTime <= 0) {
-                            Intent intent = new Intent(activity, activity.getClass());
-                            StudyMode.disable();
-                            activity.finish();
-                            activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            activity.startActivity(intent);
-                            break;
-                        }
-
-                        remaining.setText(String.format("%s remaining",
-                                TimeSetter.NaturalLanguage.get((int) remainingHours, (int) remainingMinutes)));
-
-                        // Sleep for a minute
-                        try {
-                            sleep(60000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    activity.finish();
+                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    activity.startActivity(intent);
+                    return;
                 }
+
+                updateText();
             }
         };
 
-        updateThread.start();
+        // Every minute run the updateTask
+        updateTimer.schedule(updateTask, 1000,60000);
     }
 
-    private static Thread updateThread;
+    private static void updateText() {
+        // Calculate the remaining time from milliseconds to hours
+        // and minutes
+        long remainingTime = StudyMode.remainingTime(),
+                remainingHours = remainingTime / (60 * 60 * 1000),
+                remainingMinutes = (remainingTime - (remainingHours * 60 * 60 * 1000)) / (60 * 1000);
+
+        remainingTextView.setText(String.format("%s remaining",
+                TimeSetter.NaturalLanguage.get((int) remainingHours, (int) remainingMinutes)));
+    }
+
+    private static Timer updateTimer;
+    private static TimerTask updateTask;
+    private static TextView remainingTextView;
 }

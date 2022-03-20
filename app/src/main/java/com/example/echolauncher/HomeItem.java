@@ -7,13 +7,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class HomeItem extends PinItem {
+public class HomeItem extends Item {
     public HomeItem() {
         super.isEmpty = true;
-        super.imageHeight = Globals.appIconHeight;
-        super.imageWidth = Globals.appIconWidth;
-        super.textHeight = Globals.appTextHeight;
-        super.textSize = Globals.appTextSize;
+        super.imageHeight = Globals.APP_ICON_HEIGHT;
+        super.imageWidth = Globals.APP_ICON_WIDTH;
+        super.textHeight = Globals.APP_TEXT_HEIGHT;
+        super.textSize = Globals.APP_TEXT_SIZE;
         super.isHomeScreen = true;
         super.isWidget = false;
     }

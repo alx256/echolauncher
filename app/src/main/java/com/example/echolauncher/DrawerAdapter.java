@@ -7,8 +7,14 @@ import android.widget.BaseAdapter;
 
 import java.util.List;
 
-public class AppAdapter extends BaseAdapter {
-    public AppAdapter(Context context, List<AppItem> items) {
+/**
+ * This class is an adapter class that
+ * is used to populate the app and
+ * widget drawer GridViews
+ */
+
+public class DrawerAdapter extends BaseAdapter {
+    public DrawerAdapter(Context context, List<? extends Item> items) {
         CONTEXT = context;
         this.items = items;
     }
@@ -35,5 +41,5 @@ public class AppAdapter extends BaseAdapter {
 
     private final Context CONTEXT;
     // All items
-    private List<AppItem> items;
+    private List<? extends Item> items;
 }

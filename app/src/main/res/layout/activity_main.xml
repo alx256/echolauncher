@@ -3,7 +3,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/masterConstraintLayout"
+    android:id="@+id/mainConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeDestination">
@@ -30,14 +30,16 @@
                 android:id="@+id/widgetDrawerFragment"
                 android:name="com.example.echolauncher.WidgetDrawer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                tools:layout="@layout/widget_drawer" />
 
             <!-- Home screen fragment -->
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/homeScreenFragment"
-                android:name="com.example.echolauncher.HomeScreen"
+                android:name="com.example.echolauncher.HomeScreenPages"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:layout="@layout/home_screen" />
 
             <!-- App drawer fragment -->
             <androidx.fragment.app.FragmentContainerView

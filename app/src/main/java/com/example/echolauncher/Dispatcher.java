@@ -2,6 +2,7 @@ package com.example.echolauncher;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -17,12 +18,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
+/**
+ * This is the main entry point of the application.
+ * It configures basic features of the app and opens
+ * the home screen or study mode depending on if
+ * study mode is enabled or not.
+ */
+
 public class Dispatcher extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
 
-        // Set the layout to the layout stored in activity_main.xml
+        // Check if study mode is enabled and open it if necessary
         if (StudyMode.isEnabled()) {
             setContentView(R.layout.study_mode);
             StudyModeDestination.setup(this);
@@ -49,19 +57,31 @@ public class Dispatcher extends AppCompatActivity {
         // Hide status bar
         WINDOW.setStatusBarColor(Color.TRANSPARENT);
 
+        // Initialise the app and widget library
         Library.init(getApplicationContext());
 
         // Request READ_EXTERNAL_STORAGE permission (needed for accessing wallpaper)
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        ActivityCompat.requestPermissions(this,
+                new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE },
+                1);
 
         // Get screen size
         Globals.metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metrics);
 
+        // Required for opening widget dialogs
         fragmentManager = getSupportFragmentManager();
+
+        // Get status bar height
+        Resources resources = getResources();
+        int id = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (id > 0)
+            Globals.statusBarHeight = resources.getDimensionPixelSize(id);
+        else
+            Globals.statusBarHeight = 0;
     }
 
-    // Deselect textviews when the user taps outside of them
+    // Deselect TextViews when the user taps outside of them
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -82,7 +102,7 @@ public class Dispatcher extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Disable pressing back
+        // Disable pressing back if study mode is enabled
         if (StudyMode.isEnabled())
             return;
 

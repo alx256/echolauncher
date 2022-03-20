@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WidgetItem extends PinItem {
+public class WidgetItem extends Item {
     public WidgetItem(Name name, Widget widget) {
         super.name = name;
         super.identifier = widget.getIdentifier();
@@ -26,6 +26,7 @@ public class WidgetItem extends PinItem {
         references = new ArrayList<>();
     }
 
+    @Override
     public View toView(Context context) {
         super.context = context;
 

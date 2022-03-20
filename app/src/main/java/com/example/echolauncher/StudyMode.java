@@ -10,13 +10,25 @@ import androidx.gridlayout.widget.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for managing study mode.
+ * Used to enable it, disable it and keep
+ * track of how much time is remaining
+ * **/
+
 public class StudyMode {
     public static void enable(int hours, int minutes, Activity activity) {
+        // Calculate the system time of when
+        // study mode will end, stored in
+        // milliseconds
         endTime = System.currentTimeMillis() +
                 ((long) hours * 60 * 60 * 1000) +
                 ((long) minutes * 60 * 1000);
+        // Enable study mode so that the Dispatcher can
+        // start it when the launcher is first started
         isEnabled = true;
 
+        // Fade in the study mode activity
         Intent intent = new Intent(activity, activity.getClass());
         activity.finish();
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -38,13 +50,14 @@ public class StudyMode {
             allowedApps.add(allowedApp);
     }
 
-    public static void updateGrid(GridLayout grid, boolean moveable) {
+    // Update necessary grid with the allowed apps
+    public static void updateGrid(GridLayout grid, boolean movable) {
         initAllowedApps();
         grid.removeAllViews();
 
         for (AppItem item : allowedApps) {
             AppItem itemCopy = item;
-            itemCopy.isMovable = moveable;
+            itemCopy.isMovable = movable;
             grid.addView(itemCopy.toView(item.context));
         }
     }
@@ -65,14 +78,14 @@ public class StudyMode {
         deleteCross = dropTarget.findViewById(R.id.delete);
         deleteCross = ((View) dropTarget.getParent()).findViewById(R.id.delete);
         deleteCrossParams = new LinearLayout.LayoutParams(
-                Globals.appIconWidth,
-                Globals.appHeight,
+                Globals.APP_ICON_WIDTH,
+                Globals.APP_HEIGHT,
                 0.25f
         );
         dropTarget.removeAllViews();
     }
 
-    public static void removeAllowedApp(PinItem item) {
+    public static void removeAllowedApp(Item item) {
         initAllowedApps();
 
         for (int i = 0; i < allowedApps.size(); i++) {
@@ -84,6 +97,10 @@ public class StudyMode {
                 return;
             }
         }
+    }
+
+    public static boolean isEnabled() {
+        return isEnabled;
     }
 
     private static void initAllowedApps() {
@@ -104,10 +121,6 @@ public class StudyMode {
 
         deleteCrossParams.weight = deleteCrossWidth;
         deleteCross.getLayoutParams().width = deleteCrossWidth;
-    }
-
-    public static boolean isEnabled() {
-        return isEnabled;
     }
 
     private static boolean isEnabled;

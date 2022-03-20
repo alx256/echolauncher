@@ -3,9 +3,7 @@ package com.example.echolauncher;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,10 +19,8 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Calendar;
 
-public class EventDialog extends DialogFragment {
+public class TimetableDialog extends DialogFragment {
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -33,10 +29,10 @@ public class EventDialog extends DialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         storage = new Storage(getContext(),
-                "name,year,month,day,hours,minutes",
-                "echolauncher_events");
+                "name,year,month,day,hours,minutes,dateMillis",
+                "echolauncher_timetable");
 
-        View view = inflater.inflate(R.layout.event_dialog, container);
+        View view = inflater.inflate(R.layout.timetable_dialog, container);
 
         ViewFlipper flipper = view.findViewById(R.id.eventsViewFlipper);
         View eventList = flipper.findViewById(R.id.eventList),
@@ -65,10 +61,12 @@ public class EventDialog extends DialogFragment {
         clearButton.setOnClickListener(v -> {
             // Reset
             storage.clear();
-            eventsGridView.setAdapter(new EventListAdapter(getContext(), storage));
+            eventsGridView.setAdapter(new TimetableListAdapter(getContext()));
         });
 
-        eventsGridView.setAdapter(new EventListAdapter(getContext(), storage));
+        eventsGridView.setAdapter(new TimetableListAdapter(getContext()));
+
+        TimetableSlots.read(storage);
 
         TimeSetter setter = new TimeSetter(eventTimeText, getContext());
         setter.setOnFinishListener((h, m) -> {
@@ -80,6 +78,7 @@ public class EventDialog extends DialogFragment {
             year = y;
             month = m;
             day = d;
+            dateMillis = calendarView.getDate();
         });
 
         eventNameInput.addTextChangedListener(new TextWatcher() {
@@ -117,10 +116,10 @@ public class EventDialog extends DialogFragment {
                 return;
             }
 
-            EventListAdapter.addNew(new Event(name, year, month, day, hours, minutes));
+            TimetableSlots.addNew(new TimetableSlot(name, year, month, day, hours, minutes, dateMillis));
             flipper.showPrevious();
             try {
-                storage.writeItem(name, year, month, day, hours, minutes);
+                storage.writeItem(name, year, month, day, hours, minutes, dateMillis);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -130,6 +129,7 @@ public class EventDialog extends DialogFragment {
     }
 
     private int hours, minutes, year, month, day;
+    private long dateMillis;
     private String name;
     private Storage storage;
 }

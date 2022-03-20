@@ -33,23 +33,37 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
     }
 
     public static class ViewHolder extends  RecyclerView.ViewHolder {
-        public ViewHolder(View view, PinItem item) {
+        public ViewHolder(View view, Item item) {
             super(view);
             this.item = item;
             type = Type.NONE;
         }
 
-        public void setType(Type type) { this.type = type; }
-        public void setItem(PinItem item) { this.item = item; }
-        public void setGridIndex(int gridIndex) { item.setGridIndex(gridIndex); }
+        public void setType(Type type) {
+            this.type = type;
+        }
 
-        public PinItem getItem() {
+        public void setItem(Item item) {
+            this.item = item;
+        }
+
+        public void setGridIndex(int gridIndex) {
+            item.setGridIndex(gridIndex);
+        }
+
+        public Item getItem() {
             return item;
         }
-        public int getGridIndex() { return item.getGridIndex(); }
-        public Type getType() { return type; }
 
-        private PinItem item;
+        public int getGridIndex() {
+            return item.getGridIndex();
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        private Item item;
         private Type type;
     }
 
@@ -129,11 +143,12 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
     }
 
     private void updateItem(ViewHolder holder) {
+        assert holder.item != null;
+
         int position = holder.getAdapterPosition();
 
-        if (holder.getItem() != null)
-            if (holder.getGridIndex() == -1)
-                holder.setGridIndex(position);
+        if (holder.getGridIndex() == -1)
+            holder.setGridIndex(position);
 
         ImageView imageView = holder.itemView.findViewById(R.id.appIcon);
         TextView textView = holder.itemView.findViewById(R.id.textView);
@@ -143,7 +158,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         if (instructionCollections != null) {
             for (HomeScreenGrid.InstructionCollection instructionCollection : instructionCollections) {
-                PinItem item = instructionCollection.getItem();
+                Item item = instructionCollection.getItem();
 
                 if (type(item) == Type.WIDGET) {
                     boolean ignore = false;
@@ -157,7 +172,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         ignore = true;
 
                     if (ignore) {
-                        android.util.Log.d("ignore", "" + occupiedIndices.size());
                         HomeScreenGrid.homeScreenInstructions.remove(position);
                         continue;
                     }
@@ -193,7 +207,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                             imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                         } else {
                             holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-                            imageView.getLayoutParams().width = Globals.appIconWidth;
+                            imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
                         }
 
                         if (instructionCollection.getInstruction() == Instruction.PIN) {
@@ -217,7 +231,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                             imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                         } else {
                             holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-                            imageView.getLayoutParams().width = Globals.appIconWidth;
+                            imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
                         }
 
                         drawable = item.drawable;
@@ -235,7 +249,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         holder.setType(Type.NONE);
 
                         holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-                        imageView.getLayoutParams().width = Globals.appIconWidth;
+                        imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
 
                         imageView.setImageDrawable(null);
                         textView.setText("");
@@ -248,23 +262,11 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         }
     }
 
-    private Type type(PinItem item) {
-        assert item != null;
+    private Type type(Item item) {
         if (item.isWidget)
             return Type.WIDGET;
 
         return Type.APP;
-    }
-
-    private void scaleItems(ViewHolder holder) {
-        if (holder.itemView.getLayoutParams().width != LAYOUT_WIDTH_APPS &&
-                holder.getType() == Type.APP)
-            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-
-        if (holder.itemView.getLayoutParams().width != LAYOUT_WIDTH_WIDGETS &&
-                holder.getType() == Type.WIDGET) {
-            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
-        }
     }
 
     private final Context CONTEXT;

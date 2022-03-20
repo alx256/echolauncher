@@ -8,7 +8,7 @@
     tools:context=".HomeDestination">
 
     <LinearLayout
-        android:id="@+id/masterLayout"
+        android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -22,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/kumbhsans"
+            android:padding="20sp"
             android:text="Study Mode"
             android:textColor="#FFFFFF"
             android:textSize="45sp" />
@@ -38,8 +39,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:fontFamily="@font/kumbhsans"
+                android:gravity="center"
                 android:text="Duration"
-                android:textAlignment="viewStart"
+                android:textAlignment="center"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp" />
 
@@ -50,6 +52,7 @@
                 android:layout_weight="1"
                 android:background="#7A5FA19B"
                 android:fontFamily="@font/kumbhsans"
+                android:gravity="center"
                 android:text="0 hours, 0 minutes"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
@@ -80,15 +83,15 @@
 
             <com.example.echolauncher.DropTarget
                 android:id="@+id/delete"
-                android:layout_width="81dp"
-                android:layout_height="81dp"
-                android:layout_weight="0.25"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
                 android:background="#FFFFFF">
 
                 <ImageView
                     android:id="@+id/imageView"
                     android:layout_width="match_parent"
-                    android:layout_height="66dp"
+                    android:layout_height="wrap_content"
                     app:layout_column="0"
                     app:layout_row="1"
                     app:srcCompat="@drawable/cross" />

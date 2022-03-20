@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
             android:fontFamily="@font/kumbhsans"
-            android:text="Events"
+            android:text="Timetable"
             android:textAlignment="center"
             android:textSize="55sp" />
 
