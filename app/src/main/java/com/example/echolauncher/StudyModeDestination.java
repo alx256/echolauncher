@@ -9,6 +9,11 @@ import androidx.gridlayout.widget.GridLayout;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * This class initialises study mode when it is
+ * opened by the Dispatcher class
+ */
+
 public class StudyModeDestination {
     public static void setup(Activity activity) {
         remainingTextView = activity.findViewById(R.id.remainingTime);
@@ -51,6 +56,7 @@ public class StudyModeDestination {
                 remainingHours = remainingTime / (60 * 60 * 1000),
                 remainingMinutes = (remainingTime - (remainingHours * 60 * 60 * 1000)) / (60 * 1000);
 
+        // Display time remaining to user
         remainingTextView.setText(String.format("%s remaining",
                 TimeSetter.NaturalLanguage.get((int) remainingHours, (int) remainingMinutes)));
     }

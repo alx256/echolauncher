@@ -70,47 +70,57 @@ public class Scroll {
     }
 
     public static void scrollBack() {
+        // Scroll back to the last position, used
+        // for when an item is dropped onto the
+        // home screen to return to the app
+        // or the widget drawer
         doScroll(lastX, lastY);
     }
 
     public static void setPagerAlphaAnimation(ViewPager2 pager) {
+        // This animation will only work if the app is being run
+        // on an android version newer than Marshmallow (Android 6.0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mainScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    float alpha = pager.getAlpha(),
-                            difference = scrollY - oldScrollY,
-                            adjust = Math.abs(difference * 0.001f);
+            mainScrollView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                float alpha = pager.getAlpha(),
+                        difference = scrollY - oldScrollY,
+                        adjust = Math.abs(difference * 0.001f);
 
-                    if (!isUserScroll)
-                        return;
+                if (!isUserScroll)
+                    return;
 
-                    direction = (short) ((scrollY > (mainScrollView.getBottom()) ? -1 : 1));
+                // Get direction of the scroll
+                direction = (short) ((scrollY > (mainScrollView.getBottom()) ? -1 : 1));
 
-                    switch (focus) {
-                        case WIDGET_DRAWER:
-                            if (difference > 0.0f && alpha < 1.0f)
-                                pager.setAlpha(alpha + adjust);
-                            break;
-                        case HOME_SCREEN:
-                            if (direction == -1) {
-                                if (difference > 0.0f && alpha > 0.0f)
-                                    pager.setAlpha(alpha - adjust);
-                                if (difference < 0.0f && alpha < 1.0f)
-                                    pager.setAlpha(alpha + adjust);
-                            } else {
-                                if (difference > 0.0f && alpha < 1.0f)
-                                    pager.setAlpha(alpha + adjust);
-                                if (difference < 0.0f && alpha > 0.0f)
-                                    pager.setAlpha(alpha - adjust);
-                            }
-
-                            break;
-                        case APP_DRAWER:
+                switch (focus) {
+                    case WIDGET_DRAWER:
+                        // Fade items in
+                        if (difference > 0.0f && alpha < 1.0f)
+                            pager.setAlpha(alpha + adjust);
+                        break;
+                    case HOME_SCREEN:
+                        if (direction == -1) {
+                            if (difference > 0.0f && alpha > 0.0f)
+                                // Fade items out
+                                pager.setAlpha(alpha - adjust);
                             if (difference < 0.0f && alpha < 1.0f)
-                                pager.setAlpha(pager.getAlpha() + adjust);
-                            break;
-                    }
+                                // Fade items in
+                                pager.setAlpha(alpha + adjust);
+                        } else {
+                            if (difference > 0.0f && alpha < 1.0f)
+                                // Fade items in
+                                pager.setAlpha(alpha + adjust);
+                            if (difference < 0.0f && alpha > 0.0f)
+                                // Fade items out
+                                pager.setAlpha(alpha - adjust);
+                        }
+
+                        break;
+                    case APP_DRAWER:
+                        // Fade items in
+                        if (difference < 0.0f && alpha < 1.0f)
+                            pager.setAlpha(pager.getAlpha() + adjust);
+                        break;
                 }
             });
         }
@@ -140,6 +150,7 @@ public class Scroll {
 
         canScroll = false;
 
+        // When possible, scroll the ScrollView
         mainScrollView.post(() -> {
             lastX = mainScrollView.getScrollX();
             lastY = mainScrollView.getScrollY();

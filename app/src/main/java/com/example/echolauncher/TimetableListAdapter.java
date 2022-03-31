@@ -6,6 +6,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 
+/**
+ * Adapter that populates the list
+ * of events with views displaying
+ * information about the events
+ */
+
 public class TimetableListAdapter extends BaseAdapter {
     public TimetableListAdapter(Context context) {
         super();
@@ -30,6 +36,8 @@ public class TimetableListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        // Display the timetable event as a view
+        // with the name, date and duration
         TimetableSlot timetableSlot = TimetableSlots.get(position);
         LinearLayout layout = new LinearLayout(CONTEXT);
         layout.setOrientation(LinearLayout.VERTICAL);

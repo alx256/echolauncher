@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 /**
- * Adapter that populate the home screen
+ * Adapter that populates the home screen
  * with 10 pages, the first of which
  * is the study mode configuration
  * screen

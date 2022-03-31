@@ -16,7 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
  * This class implements the functionality of the home
  * screen pages fragment which contains the pages where
  * apps and widgets can be pinned
- * **/
+ */
 
 public class HomeScreenPages extends Fragment {
     @Nullable
@@ -27,10 +27,13 @@ public class HomeScreenPages extends Fragment {
         ViewPager2 pager = view.findViewById(R.id.homeScreenPager);
         HomeScreenAdapter adapter = new HomeScreenAdapter(getActivity());
         pager.setAdapter(adapter);
+        // Start on page 1
         pager.setCurrentItem(1, false);
 
+        // Get the user's wallpaper
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
         ImageView wallpaperView = view.findViewById(R.id.wallpaperView);
+        // Set the background to the user's wallpaper
         wallpaperView.setImageDrawable(wallpaperManager.getDrawable());
 
         return view;

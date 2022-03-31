@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Searching algorithms
- * **/
+ * Binary search algorithm
+ */
 
 public class Search {
     // Returns all AppItems that match the string

@@ -42,8 +42,5 @@
                 android:numColumns="4"
                 android:verticalSpacing="20px" />
         </FrameLayout>
-
     </LinearLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

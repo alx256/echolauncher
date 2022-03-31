@@ -5,9 +5,15 @@ import java.util.List;
 
 /**
  * Merge sort algorithm
- * **/
+ */
 
 public class Sort {
+    // Interface used to get the version
+    // of the string that the list is
+    // being sorted by. Either the full
+    // name of the item, the identifier of
+    // the item or the date of the timetable
+    // event
     public interface StringVersion {
         String getString(int listNumber, int index);
     }

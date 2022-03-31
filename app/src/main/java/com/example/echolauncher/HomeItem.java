@@ -7,6 +7,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * Empty item that occupies home
+ * screen grid location if another
+ * item has not been dropped there
+ */
+
 public class HomeItem extends Item {
     public HomeItem() {
         super.isEmpty = true;
@@ -32,24 +38,21 @@ public class HomeItem extends Item {
         TextView textView = finalView.findViewById(R.id.textView);
         textView.setTextSize(textSize);
 
-        finalView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
-                switch (dragEvent.getAction()) {
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        updateGrid(HomeScreenGridAdapter.Instruction.HOVER);
-                        break;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
-                        break;
-                    case DragEvent.ACTION_DROP:
-                        updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
-                        updateGrid(HomeScreenGridAdapter.Instruction.PIN);
-                        break;
-                }
-
-                return true;
+        finalView.setOnDragListener((view, dragEvent) -> {
+            switch (dragEvent.getAction()) {
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    updateGrid(HomeScreenGridAdapter.Instruction.HOVER);
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
+                    break;
+                case DragEvent.ACTION_DROP:
+                    updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
+                    updateGrid(HomeScreenGridAdapter.Instruction.PIN);
+                    break;
             }
+
+            return true;
         });
 
         return finalView;

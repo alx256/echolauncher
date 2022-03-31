@@ -34,10 +34,15 @@ public class WeatherWidget extends Widget {
         networkThread = new Thread() {
             @Override
             public void run() {
-                while (true) {
+                while (networkThread.isAlive()) {
                     getWeather();
                     WeatherWidget.super.textPositions.put('L', temperature);
                     WeatherWidget.super.textPositions.put('R', status);
+                    try {
+                        sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -71,6 +76,7 @@ public class WeatherWidget extends Widget {
             temperature = "Error getting weather!\nPlease check your connection";
             status = "";
         } catch (JSONException e) {
+            e.printStackTrace();
             temperature = "Failed to parse JSON";
             status = "";
         }

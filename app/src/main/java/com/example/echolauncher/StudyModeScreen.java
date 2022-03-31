@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 /**
  * Handles the logic of the study mode
  * configuration screen fragment
- * **/
+ */
 
 public class StudyModeScreen extends Fragment {
     @Nullable
@@ -32,6 +32,8 @@ public class StudyModeScreen extends Fragment {
         TextView timeView = view.findViewById(R.id.timeView);
         TimeSetter timeSetter = new TimeSetter(timeView, getContext());
 
+        // Set hours and minutes to the values
+        // chosen by the TimeSetter
         timeSetter.setOnFinishListener((h, m) -> {
             hours = h;
             minutes = m;
@@ -39,7 +41,16 @@ public class StudyModeScreen extends Fragment {
 
         DropTarget target = view.findViewById(R.id.allowedApps);
         target.getLayoutParams().height = (int) (Globals.APP_HEIGHT * 1.5f);
+        // When an app is dropped on this
+        // DropTarget, add it to the allowed
+        // apps list and display it in
+        // the view
         target.setOnDropListener(item -> {
+            if (item instanceof WidgetItem) {
+                // Pinning widgets is not allowed
+                return;
+            }
+
             StudyMode.addAllowedApp((AppItem) item);
             StudyMode.updateDropTarget();
         });
@@ -58,6 +69,8 @@ public class StudyModeScreen extends Fragment {
                 "Need to set duration!",
                 Toast.LENGTH_LONG);
 
+        // If an hour or minute value has been entered
+        // then start StudyMode
         start.setOnClickListener(v -> {
             if (hours > 0 || minutes > 0)
                 StudyMode.enable(hours, minutes, getActivity());

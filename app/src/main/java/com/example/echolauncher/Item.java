@@ -12,8 +12,10 @@ import android.widget.TextView;
 import android.os.Handler;
 
 /**
- * Generic item class
- * **/
+ * The item class
+ * Represents generic item that can
+ * be pinned to the home screen
+ */
 
 public class Item {
     // Contains full and shortened app name
@@ -78,9 +80,10 @@ public class Item {
 
     public Name getName() { return name; }
     public String getIdentifier() { return identifier; }
-    public Drawable getDrawable() { return drawable; }
     public int getGridIndex() { return gridIndex; }
 
+    // The Grid Index is the index of
+    // the item in the home screen grid
     public void setGridIndex(int gridIndex) {
         this.gridIndex = gridIndex;
     }

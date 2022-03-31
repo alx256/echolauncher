@@ -62,6 +62,8 @@ public class StudyMode {
         }
     }
 
+    // Add apps that are allowed to the drop target
+    // so the user knows which apps are allowed
     public static void updateDropTarget() {
         initAllowedApps();
 

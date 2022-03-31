@@ -1,9 +1,7 @@
 package com.example.echolauncher;
 
-import android.graphics.drawable.Drawable;
-
-import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Abstract widget class
@@ -34,5 +32,5 @@ public class Widget {
 
     protected String identifier;
     protected int color;
-    protected Dictionary<Character, String> textPositions;
+    protected Map<Character, String> textPositions;
 }

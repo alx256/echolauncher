@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 /**
- * Class that represents an app
- * **/
+ * Item that represents an app
+ */
 
 public class AppItem extends Item {
     public AppItem(Name name, String packageName) {
@@ -43,6 +43,9 @@ public class AppItem extends Item {
         Log.d("AppAdapter", "Opening " + identifier + "...");
         Intent intent = packageManager.getLaunchIntentForPackage(identifier);
 
+        // This is extremely unlikely to happen
+        // but, just in case it does, display
+        // a debugging message
         if (intent == null) {
             Log.d("AppAdapter", "Intent was null");
             intent.addCategory(Intent.CATEGORY_LAUNCHER);

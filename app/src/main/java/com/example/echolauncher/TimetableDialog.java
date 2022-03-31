@@ -20,6 +20,13 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
 
+/**
+ * Dialog that is shown when the
+ * user taps on the timetable widget,
+ * allowing them to add and remove
+ * timetable events
+ */
+
 public class TimetableDialog extends DialogFragment {
     @NonNull
     @Override
@@ -34,6 +41,7 @@ public class TimetableDialog extends DialogFragment {
 
         View view = inflater.inflate(R.layout.timetable_dialog, container);
 
+        // Retrieve necessary UI elements
         ViewFlipper flipper = view.findViewById(R.id.eventsViewFlipper);
         View eventList = flipper.findViewById(R.id.eventList),
             eventNew = flipper.findViewById(R.id.eventNew);
@@ -46,6 +54,7 @@ public class TimetableDialog extends DialogFragment {
         CalendarView calendarView = eventNew.findViewById(R.id.calendarView);
         TextInputEditText eventNameInput = eventNew.findViewById(R.id.eventNameInput);
 
+        // Add animation
         flipper.setInAnimation(getContext(), android.R.anim.slide_in_left);
         flipper.setOutAnimation(getContext(), android.R.anim.slide_out_right);
 
@@ -54,7 +63,7 @@ public class TimetableDialog extends DialogFragment {
             eventNameInput.setText("");
             eventTimeText.setText("Tap here to set time");
             // Don't allow the user to set dates before the current date
-            calendarView.setMinDate(System.currentTimeMillis());
+            calendarView.setMinDate(System.currentTimeMillis() - (24 * 60 * 60 * 1000 * 10));
             calendarView.clearFocus();
         });
         doneButton.setOnClickListener(v -> dismiss());

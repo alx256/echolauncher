@@ -9,6 +9,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Item that represents a widget
+ */
+
 public class WidgetItem extends Item {
     public WidgetItem(Name name, Widget widget) {
         super.name = name;
@@ -48,6 +52,9 @@ public class WidgetItem extends Item {
     }
 
     public void addReferenceView(View view) {
+        // New view added that needs
+        // to be updated with every
+        // tick
         references.add(view);
     }
 
@@ -105,10 +112,6 @@ public class WidgetItem extends Item {
                     textView.setVisibility(View.INVISIBLE);
             }
         }
-
-//        if (widget.drawablePositions.get(character) != null) {
-//            // will do
-//        }
     }
 
     @Override

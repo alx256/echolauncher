@@ -26,7 +26,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * HomeScreenGrid is used to hold a
+ * Flexbox layout. This holds apps and
+ * widgets in a layout where widgets do
+ * not adjust the column size despite being
+ * longer
+ * */
+
 public class HomeScreenGrid extends Fragment {
+
+    // Contains the Instruction and the item which
+    // is having the instruction carried out on
+    // it
     public static class InstructionCollection {
         public InstructionCollection(HomeScreenGridAdapter.Instruction instruction, Item item) {
             INSTRUCTION = instruction;
@@ -52,11 +64,16 @@ public class HomeScreenGrid extends Fragment {
         recyclerView = view.findViewById(R.id.homeScreenGrid);
 
         FlexboxLayoutManager manager = new FlexboxLayoutManager(getContext());
+        // Multi-line
         manager.setFlexWrap(FlexWrap.WRAP);
+        // Widgets expand along the row
         manager.setFlexDirection(FlexDirection.ROW);
+        // Stretch to align items
         manager.setAlignItems(AlignItems.STRETCH);
+        // Evenly distribute items
         manager.setJustifyContent(JustifyContent.SPACE_EVENLY);
 
+        // Allow for easier navigation
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(manager);
@@ -70,6 +87,8 @@ public class HomeScreenGrid extends Fragment {
 
         final long ANIMATION_DURATION = 212;
 
+        // When an item is being dragged, shrink the grid
+        // as this is more intuitive for the user
         shrinkAnimation = new ScaleAnimation(1.0f, SHRINK_SCALE,
                 1.0f, SHRINK_SCALE,
                 Animation.RELATIVE_TO_SELF, 0.5f,
@@ -92,6 +111,9 @@ public class HomeScreenGrid extends Fragment {
             public void onAnimationRepeat(Animation animation) { }
         });
 
+
+        // When the item has finished being dragged, expand the
+        // grid to its normal size
         expandAnimation = new ScaleAnimation(1.0f, 1.0f + (1.0f - SHRINK_SCALE),
                 1.0f, 1.0f + (1.0f - SHRINK_SCALE),
                 Animation.RELATIVE_TO_SELF, 0.5f,
@@ -115,21 +137,22 @@ public class HomeScreenGrid extends Fragment {
             public void onAnimationRepeat(Animation animation) { }
         });
 
-        recyclerView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View view, DragEvent dragEvent) {
-                delete.setVisibility(View.VISIBLE);
-                shrink(view);
+        // Shrink or expand grid as necessary
+        recyclerView.setOnDragListener((view, dragEvent) -> {
+            delete.setVisibility(View.VISIBLE);
+            shrink(view);
 
-                if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
-                    delete.setVisibility(View.INVISIBLE);
-                    expand(view);
-                }
-
-                return true;
+            if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
+                delete.setVisibility(View.INVISIBLE);
+                expand(view);
             }
+
+            return true;
         });
 
+        // Retrieve information that has been stored
+        // in the "identifier,position,screen"
+        // format
         storage = new Storage(getContext(), "identifier,position,screen", "echolauncher_homescreen");
 
         ViewTreeObserver observer = recyclerView.getViewTreeObserver();
@@ -142,6 +165,8 @@ public class HomeScreenGrid extends Fragment {
                 adapter.notifyItemChanged(0);
 
                 try {
+                    // When app is opened, read the stored data and
+                    // add the items in their necessary positions
                     List<Storage.Line> contents = storage.readItems();
                     for (Storage.Line line : contents) {
                         HomeScreenGrid.updateGrid(line.getInt("position"),
@@ -152,6 +177,8 @@ public class HomeScreenGrid extends Fragment {
                     e.printStackTrace();
                 }
 
+                // This only needs to be carried out once, so
+                // delete this listener
                 ViewTreeObserver temp = view.getViewTreeObserver();
                 temp.removeOnGlobalLayoutListener(this);
             }
@@ -162,11 +189,28 @@ public class HomeScreenGrid extends Fragment {
 
     public static void updateGrid(int position, HomeScreenGridAdapter.Instruction instruction,
                                   Item item) {
+        // If item is null then something
+        // has gone wrong. Make sure that
+        // this is not the case
         assert item != null;
+
+        // Create homeScreenInstructions if it does not
+        // already exist
         if (homeScreenInstructions.get(position) == null)
             homeScreenInstructions.put(position, new ArrayList<>());
+
+        // Add the new instructions
         homeScreenInstructions.get(position).add(new InstructionCollection(instruction, item));
+        // Update the necessary item
         recyclerView.getAdapter().notifyItemChanged(position);
+    }
+
+    public static Map<Integer, List<InstructionCollection>> getHomeScreenInstructions() {
+        return homeScreenInstructions;
+    }
+
+    public static void setHomeScreenInstructions(Map<Integer, List<InstructionCollection>> map) {
+        homeScreenInstructions = map;
     }
 
     private void shrink(View view) {
@@ -175,7 +219,7 @@ public class HomeScreenGrid extends Fragment {
 
         view.clearAnimation();
         view.startAnimation(shrinkAnimation);
-        view.setBackgroundColor(0x33FFFFFF);
+        view.setBackgroundColor(0x33FFFFFF); // Light grey
         isMultiplePageMode = true;
     }
 
@@ -190,8 +234,8 @@ public class HomeScreenGrid extends Fragment {
     }
 
     public final static float SHRINK_SCALE = 0.8f;
-    public static Map<Integer, List<InstructionCollection>> homeScreenInstructions;
 
+    private static Map<Integer, List<InstructionCollection>> homeScreenInstructions;
     private View view;
     private Animation shrinkAnimation, expandAnimation;
     private static Storage storage;

@@ -12,20 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This app is used to store the available apps and
+ * This class is used to store the available apps and
  * widgets as well as provide the functionality to
  * search and order them
- * **/
+ */
 
 public class Library {
     // Used to determine how items should be compared when
     // searching or sorting through them
     public enum Comparison {
-        APP_NAME, // The name of the app that is shown to the user
-        APP_IDENTIFIER, // The package name that uniquely identifies the app
-        WIDGET_NAME, // The name of the widget
-        WIDGET_IDENTIFIER, // The name that uniquely identifies the widget
-        DATE, // The date associated with the item (used for sorting events)
+        // The name of the app that is shown to the user
+        APP_NAME,
+        // The package name that uniquely identifies the app
+        APP_IDENTIFIER,
+        // The name of the widget
+        WIDGET_NAME,
+        // The name that uniquely identifies the widget
+        WIDGET_IDENTIFIER,
+        // The date associated with the item (used for sorting events)
+        DATE,
         NONE
     }
 
@@ -41,7 +46,7 @@ public class Library {
         for (ResolveInfo resolveInfo : resolveInfos) {
             ApplicationInfo info = resolveInfo.activityInfo.applicationInfo;
 
-            // Don't show EchoLauncher app on all apps
+            // Don't show this launcher on all apps
             if (info.packageName.equals(context.getPackageName()))
                 continue;
 

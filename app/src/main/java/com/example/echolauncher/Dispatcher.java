@@ -81,7 +81,7 @@ public class Dispatcher extends AppCompatActivity {
             Globals.statusBarHeight = 0;
     }
 
-    // Deselect TextViews when the user taps outside of them
+    // Deselect text input boxes when the user taps outside of them
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -90,9 +90,11 @@ public class Dispatcher extends AppCompatActivity {
                 Rect outRect = new Rect();
                 view.getGlobalVisibleRect(outRect);
                 if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    // Deselect text input box
                     view.clearFocus();
-                    InputMethodManager i = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    i.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    // Hide keyboard
+                    InputMethodManager methodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    methodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         }

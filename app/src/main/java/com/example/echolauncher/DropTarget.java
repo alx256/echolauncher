@@ -17,8 +17,9 @@ import androidx.gridlayout.widget.GridLayout;
  * This is primarily used for the study mode interface in
  * order to allow the user to pin apps that can override
  * study mode
- * **/
+ */
 
+// Inherit GridLayout class
 public class DropTarget extends GridLayout {
     public interface OnDropListener {
         void onDrop(Item item);
@@ -56,6 +57,7 @@ public class DropTarget extends GridLayout {
     public void removeBackgroundText() {
         View text = findViewWithTag("infoTextView");
 
+        // Remove background text if this has not already been done
         if (text != null)
             removeView(text);
     }

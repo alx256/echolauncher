@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class containing all timetable
+ * events that the user has
+ * specified
+ */
+
 public class TimetableSlots {
     public static void read(Storage storage) {
         timetableSlots = new ArrayList<>();
@@ -14,6 +20,7 @@ public class TimetableSlots {
         try {
             List<Storage.Line> contents = storage.readItems();
 
+            // Retrieve from storage
             for (Storage.Line line : contents) {
                 timetableSlots.add(new TimetableSlot(line.getString("name"),
                         line.getInt("year"),
@@ -29,6 +36,7 @@ public class TimetableSlots {
     }
 
     public static void addNew(TimetableSlot timetableSlot) {
+        // Create list if necessary
         if (timetableSlots == null)
             timetableSlots = new ArrayList<>();
 
@@ -38,6 +46,7 @@ public class TimetableSlots {
     }
 
     public static String getNext() {
+        // Create list if necessary
         if (timetableSlots == null)
             timetableSlots = new ArrayList<>();
 
@@ -48,6 +57,7 @@ public class TimetableSlots {
     }
 
     public static List<TimetableSlot> getAll() {
+        // Create list if necessary
         if (timetableSlots == null)
             timetableSlots = new ArrayList<>();
 
@@ -55,6 +65,7 @@ public class TimetableSlots {
     }
 
     public static TimetableSlot get(int position) {
+        // Create list if necessary
         if (timetableSlots == null)
             timetableSlots = new ArrayList<>();
 

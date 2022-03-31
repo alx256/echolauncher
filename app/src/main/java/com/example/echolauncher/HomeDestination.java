@@ -4,15 +4,13 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ScrollView;
 
 /**
  * This class initialises the home screen when it is
  * opened by the Dispatcher class
- * **/
+ */
 
 public class HomeDestination {
     public static void setup(Activity activity) {
@@ -28,9 +26,12 @@ public class HomeDestination {
         ScrollView scrollView = activity.findViewById(R.id.mainScrollView);
         Scroll.init(scrollView);
 
+        // Get the view pager containing home screen pagers
         ViewPager2 pager = homeScreen.findViewById(R.id.homeScreenPager);
+        // Animation that fades items out as the user scrolls
         Scroll.setPagerAlphaAnimation(pager);
 
+        // Touch listener that snaps elements into place as the user drags
         scrollView.setOnTouchListener((view, motionEvent) -> {
             int[] appDrawerPosition = new int[2],
                     homeScreenPosition = new int[2];

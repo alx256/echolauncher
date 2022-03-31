@@ -16,21 +16,21 @@ import java.util.Map;
  * Allows storing data on a local file.
  * Used to store home screen layouts,
  * the timetable and study mode allowed apps
- * **/
+ */
 
 public class Storage {
     // Wrapper class around a hashmap that is returned
     // when data is read. This class is used purely
-    // for so that receiving a string value and an
+    // so that receiving a string value and an
     // int value is easier with the getString and
     // getInt methods
     public static class Line {
         public Line() {
-            map = new Hashtable<>();
+            table = new Hashtable<>();
         }
 
         public void put(String key, String value) {
-            map.put(key, value);
+            table.put(key, value);
         }
 
         public String getString(String name) {
@@ -46,7 +46,7 @@ public class Storage {
         }
 
         private String get(String name) {
-            String string = map.get(name);
+            String string = table.get(name);
 
             if (string == null) {
                 // Report a message for debugging
@@ -59,7 +59,7 @@ public class Storage {
             return string;
         }
 
-        Map<String, String> map;
+        Hashtable<String, String> table;
     }
 
     public Storage(Context context, String format, String fileName) {
@@ -123,7 +123,7 @@ public class Storage {
         outputStream.close();
     }
 
-    // Returns list containing all stored items, stored as a Line instance
+    // Returns list containing all stored items, stored as Line instances
     public List<Line> readItems() throws IOException {
         try {
             inputStream = CONTEXT.openFileInput(FILE_NAME);

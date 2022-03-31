@@ -6,6 +6,11 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
+/**
+ * Class containing information
+ * about a timetable event
+ */
+
 public class TimetableSlot {
     TimetableSlot(String name, int year, int month, int day, int hours, int minutes, long dateMillis) {
         this.name = name;

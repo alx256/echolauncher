@@ -7,7 +7,7 @@ import android.widget.TextView;
 /**
  * Class to display time setting
  * interface
- * **/
+ */
 
 public class TimeSetter {
     // Listener which is called when
@@ -32,7 +32,7 @@ public class TimeSetter {
             if (minutes >= 1)
                 minutesStr.append(minutes).append(" ").append((minutes > 1) ? "minutes" : "minute");
             else {
-                minutesStr.append("less than 1 minutes");
+                minutesStr.append("less than 1 minute");
 
                 // Capitalise "less" if necessary
                 minutesStr.setCharAt(0, (hours <= 0) ? 'L' : 'l');
