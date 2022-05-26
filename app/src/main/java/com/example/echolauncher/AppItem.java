@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -42,13 +43,13 @@ public class AppItem extends Item {
         PackageManager packageManager = Library.getPackageManager();
         Log.d("AppAdapter", "Opening " + identifier + "...");
         Intent intent = packageManager.getLaunchIntentForPackage(identifier);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         // This is extremely unlikely to happen
         // but, just in case it does, display
         // a debugging message
         if (intent == null) {
             Log.d("AppAdapter", "Intent was null");
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
             return;
         }
 
