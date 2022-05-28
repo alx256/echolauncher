@@ -57,10 +57,10 @@ public class HomeScreenPages extends Fragment {
                 case DragEvent.ACTION_DRAG_ENTERED:
                     cancelLayout.setBackgroundColor(getResources().getColor(R.color.transparent_gray_select));
                     break;
+                case DragEvent.ACTION_DRAG_ENDED:
                 case DragEvent.ACTION_DRAG_EXITED:
                     cancelLayout.setBackgroundColor(Color.TRANSPARENT);
                     break;
-                case DragEvent.ACTION_DRAG_ENDED:
                 case DragEvent.ACTION_DROP:
                     // User has decided to cancel the dragging operation.
                     // Move the dragging app back to the original location
@@ -81,12 +81,12 @@ public class HomeScreenPages extends Fragment {
         deleteLayout.setOnDragListener((v, event) -> {
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    cancelLayout.setBackgroundColor(getResources().getColor(R.color.transparent_gray_select));
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    cancelLayout.setBackgroundColor(Color.TRANSPARENT);
+                    deleteLayout.setBackgroundColor(getResources().getColor(R.color.transparent_gray_select));
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
+                case DragEvent.ACTION_DRAG_EXITED:
+                    deleteLayout.setBackgroundColor(Color.TRANSPARENT);
+                    break;
                 case DragEvent.ACTION_DROP:
                     // User has decided to delete the app that they
                     // are dragging. Show a confirmation interface
