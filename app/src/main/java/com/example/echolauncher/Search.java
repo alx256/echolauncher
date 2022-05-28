@@ -52,7 +52,7 @@ public class Search {
 
         // None match, meaning this function has been called
         // incorrectly, so return an exception instead
-        throw new InvalidObjectException("Invalid identifier for get() method!");
+        throw new InvalidObjectException("Invalid identifier '" + identifier + "' for get() method!");
     }
 
     private static int binarySearch(String string, int start, int end, Library.Comparison comparison) {
