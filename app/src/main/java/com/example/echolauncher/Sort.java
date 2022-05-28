@@ -18,6 +18,11 @@ public class Sort {
         String getString(int listNumber, int index);
     }
 
+    public static void init() {
+        appComparison = Library.Comparison.NONE;
+        widgetComparison = Library.Comparison.NONE;
+    }
+
     public static void sortApps(Library.Comparison comparison) {
         // Don't sort data again if it has already
         // been sorted
@@ -108,6 +113,5 @@ public class Sort {
             list.set(index++, list2.get(index2++));
     }
 
-    private static Library.Comparison appComparison = Library.Comparison.NONE,
-        widgetComparison = Library.Comparison.NONE;
+    private static Library.Comparison appComparison, widgetComparison;
 }

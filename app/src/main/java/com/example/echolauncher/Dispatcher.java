@@ -60,6 +60,9 @@ public class Dispatcher extends AppCompatActivity {
         // Initialise the app and widget library
         Library.init(getApplicationContext());
 
+        // Make sure sorting is properly initialised
+        Sort.init();
+
         // Request READ_EXTERNAL_STORAGE permission (needed for accessing wallpaper)
         ActivityCompat.requestPermissions(this,
                 new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE },
