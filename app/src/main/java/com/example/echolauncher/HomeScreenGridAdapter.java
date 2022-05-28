@@ -43,7 +43,11 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         // placed
         HOVER,
         // Clear the item
-        CLEAR
+        CLEAR,
+        // Clear the item and remove it
+        // Used for when an app is moved
+        // from one location to another
+        REMOVE
     }
 
     // Different types that
@@ -63,14 +67,27 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             super(view);
             this.item = item;
             type = Type.NONE;
+            isOccupied = false;
         }
 
         public void setType(Type type) {
             this.type = type;
         }
 
+        public void setPreview(Item item) {
+            this.item = item.clone();
+        }
+
         public void setItem(Item item) {
-            this.item = item;
+            this.item = item.clone();
+            this.item.setDuplicable(false);
+            isOccupied = true;
+        }
+
+        public void clearItem() {
+            item = new HomeItem();
+            type = Type.NONE;
+            isOccupied = false;
         }
 
         public void setGridIndex(int gridIndex) {
@@ -89,8 +106,13 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             return type;
         }
 
+        public boolean isOccupied() {
+            return isOccupied;
+        }
+
         private Item item;
         private Type type;
+        private boolean isOccupied;
     }
 
     public HomeScreenGridAdapter(Context context) {
@@ -105,10 +127,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         HomeScreenGrid.setHomeScreenInstructions(new Hashtable<>());
         occupiedIndices = new ArrayList<>();
-
-        storage = new Storage(CONTEXT,
-                "identifier,position,screen",
-                "echolauncher_homescreen");
+        locations = new HomeScreenLocations(context);
     }
 
     @NonNull
@@ -186,8 +205,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         int position = holder.getAdapterPosition();
 
-        if (holder.getGridIndex() == -1)
-            holder.setGridIndex(position);
+        holder.setGridIndex(position);
 
         ImageView imageView = holder.itemView.findViewById(R.id.appIcon);
         TextView textView = holder.itemView.findViewById(R.id.textView);
@@ -197,7 +215,9 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         if (instructionCollections != null) {
             for (HomeScreenGrid.InstructionCollection instructionCollection : instructionCollections) {
-                Item item = instructionCollection.getItem();
+                Item item = instructionCollection.getItem().clone();
+                item.setGridIndex(position);
+                Instruction instruction = instructionCollection.getInstruction();
 
                 if (type(item) == Type.WIDGET) {
                     boolean ignore = false;
@@ -218,7 +238,12 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                     }
                 }
 
-                switch (instructionCollection.getInstruction()) {
+                if (holder.isOccupied() && instruction != Instruction.REMOVE) {
+                    HomeScreenGrid.getHomeScreenInstructions().remove(position);
+                    return;
+                }
+
+                switch (instruction) {
                     case ADD:
                     case PIN:
                         // Item needs to be pinned to home screen
@@ -227,23 +252,22 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         holder.setItem(item);
                         holder.setType(type(item));
 
-                        drawable = item.drawable;
-                        if (type(item) != Type.WIDGET)
+                        drawable = holder.item.drawable;
+                        if (type(holder.item) != Type.WIDGET)
                             drawable.clearColorFilter();
                         // Fully visible
-                        drawable.setAlpha(0xFF);
+                        holder.item.drawable.setAlpha(0xFF);
                         imageView.setImageDrawable(drawable);
 
-                        if (type(item) != Type.WIDGET)
-                            textView.setText(item.name.shortened());
+                        if (type(holder.item) != Type.WIDGET)
+                            textView.setText(holder.item.name.shortened());
 
-                        if (type(item) == Type.WIDGET)
-                            ((WidgetItem) item).addReferenceView(holder.itemView);
+                        if (type(holder.item) == Type.WIDGET)
+                            ((WidgetItem) holder.item).addReferenceView(holder.itemView);
 
-                        holder.itemView.setOnDragListener(item.getOnDragListener());
-                        holder.itemView.setOnTouchListener(item.getOnTouchListener());
+                        holder.itemView.setOnTouchListener(holder.item.getOnTouchListener());
 
-                        if (type(item) == Type.WIDGET) {
+                        if (type(holder.item) == Type.WIDGET) {
                             holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                             imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                         } else {
@@ -252,23 +276,17 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         }
 
                         if (instructionCollection.getInstruction() == Instruction.PIN) {
-                            try {
-                                // Store this item
-                                storage.writeItem(item.identifier,
-                                        Integer.toString(position),
-                                        "0");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            // Store this item
+                            locations.writeItemToDatabase(holder.item);
                         }
 
                         break;
                     case HOVER:
                         // Item needs to display the hover effect
-                        holder.setItem(item);
+                        holder.setPreview(item);
                         holder.setType(type(item));
 
-                        if (type(item) == Type.WIDGET) {
+                        if (type(holder.item) == Type.WIDGET) {
                             holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                             imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                         } else {
@@ -276,19 +294,22 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                             imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
                         }
 
-                        drawable = item.drawable;
+                        drawable = holder.item.drawable;
                         imageView.setImageDrawable(drawable);
-                        if (type(item) != Type.WIDGET)
+                        if (type(holder.item) != Type.WIDGET)
                             imageView.getDrawable().setColorFilter(0, PorterDuff.Mode.DARKEN);
                         imageView.getDrawable().setAlpha(0x62);
 
                         textView.setText("");
 
                         break;
+                    case REMOVE:
                     case CLEAR:
                         // Item needs to be cleared
-                        holder.setItem(new HomeItem());
-                        holder.setType(Type.NONE);
+                        if (holder.isOccupied)
+                            locations.removeItemFromDatabase(holder.item);
+
+                        holder.clearItem();
 
                         holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
                         imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
@@ -316,5 +337,5 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             LAYOUT_WIDTH_APPS, LAYOUT_WIDTH_WIDGETS;
     private int total;
     private List<Integer> occupiedIndices;
-    private Storage storage;
+    private HomeScreenLocations locations;
 }

@@ -11,13 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
+
 /**
  * The item class
  * Represents generic item that can
  * be pinned to the home screen
  */
 
-public class Item {
+public class Item implements Cloneable {
     // Contains full and shortened app name
     public static class Name {
         public Name(String name) {
@@ -72,6 +74,9 @@ public class Item {
             Scroll.scrollTo(Scroll.HOME_SCREEN);
             stationary = false;
             Library.setDragging(ITEM.identifier);
+
+            // Custom move actions
+            onMove();
         }
 
         private final View VIEW;
@@ -137,6 +142,24 @@ public class Item {
         };
     }
 
+    @NonNull
+    public Item clone() {
+        Item c = null;
+
+        try {
+            c = (Item) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        assert c != null;
+        return c;
+    }
+
+    public void setDuplicable(boolean isDuplicable) {
+        this.isDuplicable = isDuplicable;
+    }
+
     protected void initView(View view) {
         imageView = view.findViewById(R.id.appIcon);
         textView = view.findViewById(R.id.textView);
@@ -167,7 +190,11 @@ public class Item {
     // functionality
     protected void onTap() {}
 
-    protected boolean isEmpty = false, isHomeScreen = false, isMovable = true;
+    // Method that can be overridden to perform custom functionality
+    // when the item is first moved
+    protected void onMove() {}
+
+    protected boolean isEmpty = false, isDuplicable = true, isMovable = true;
     protected int textID;
     protected int imageHeight, imageWidth, textSize, textHeight, iconIndex;
     protected Context context;

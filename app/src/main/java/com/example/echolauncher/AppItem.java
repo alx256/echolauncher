@@ -24,6 +24,7 @@ public class AppItem extends Item {
         textSize = Globals.APP_TEXT_SIZE;
         isWidget = false;
         isEmpty = false;
+        isDuplicable = true;
     }
 
     @Override
@@ -58,5 +59,14 @@ public class AppItem extends Item {
         activity.startActivity(intent);
         activity.finish();
         activity.overridePendingTransition(R.transition.open_app, 0);
+    }
+
+    @Override
+    protected void onMove() {
+        if (!isDuplicable) {
+            HomeScreenGrid.updateGrid(getGridIndex(),
+                    HomeScreenGridAdapter.Instruction.REMOVE,
+                    Library.getDragging());
+        }
     }
 }

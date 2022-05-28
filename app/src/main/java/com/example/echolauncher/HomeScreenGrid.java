@@ -1,5 +1,7 @@
 package com.example.echolauncher;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.DragEvent;
@@ -22,6 +24,8 @@ import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +88,13 @@ public class HomeScreenGrid extends Fragment {
         ImageView delete = view.findViewById(R.id.cross);
         delete.setY(-Globals.metrics.heightPixels + delete.getLayoutParams().height);
         delete.setVisibility(View.INVISIBLE);
+        View.OnDragListener dragListener = (v, event) -> {
+            if (event.getAction() == DragEvent.ACTION_DROP) {
+                locations.removeItemFromDatabase(Library.getDragging());
+            }
+
+            return true;
+        };
 
         final long ANIMATION_DURATION = 212;
 
@@ -140,20 +151,21 @@ public class HomeScreenGrid extends Fragment {
         // Shrink or expand grid as necessary
         recyclerView.setOnDragListener((view, dragEvent) -> {
             delete.setVisibility(View.VISIBLE);
+            delete.setOnDragListener(dragListener);
             shrink(view);
 
             if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
                 delete.setVisibility(View.INVISIBLE);
+                delete.setOnDragListener(null);
                 expand(view);
             }
 
             return true;
         });
 
-        // Retrieve information that has been stored
-        // in the "identifier,position,screen"
-        // format
-        storage = new Storage(getContext(), "identifier,position,screen", "echolauncher_homescreen");
+        // Open or create the database used to store
+        // items that are pinned to the home screen
+        locations = new HomeScreenLocations(getContext());
 
         ViewTreeObserver observer = recyclerView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -167,13 +179,8 @@ public class HomeScreenGrid extends Fragment {
                 try {
                     // When app is opened, read the stored data and
                     // add the items in their necessary positions
-                    List<Storage.Line> contents = storage.readItems();
-                    for (Storage.Line line : contents) {
-                        HomeScreenGrid.updateGrid(line.getInt("position"),
-                                HomeScreenGridAdapter.Instruction.ADD,
-                                Search.get(line.getString("identifier")));
-                    }
-                } catch (IOException e) {
+                    locations.readFromDatabase();
+                } catch (SQLException | InvalidObjectException e) {
                     e.printStackTrace();
                 }
 
@@ -238,7 +245,7 @@ public class HomeScreenGrid extends Fragment {
     private static Map<Integer, List<InstructionCollection>> homeScreenInstructions;
     private View view;
     private Animation shrinkAnimation, expandAnimation;
-    private static Storage storage;
+    private static HomeScreenLocations locations;
     private static boolean isMultiplePageMode;
     private static RecyclerView recyclerView;
 }

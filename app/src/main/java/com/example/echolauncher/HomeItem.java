@@ -20,8 +20,8 @@ public class HomeItem extends Item {
         super.imageWidth = Globals.APP_ICON_WIDTH;
         super.textHeight = Globals.APP_TEXT_HEIGHT;
         super.textSize = Globals.APP_TEXT_SIZE;
-        super.isHomeScreen = true;
         super.isWidget = false;
+        super.isDuplicable = false;
     }
 
     public View toView(Context context) {
