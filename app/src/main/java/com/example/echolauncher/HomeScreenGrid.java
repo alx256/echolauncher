@@ -1,7 +1,5 @@
 package com.example.echolauncher;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.DragEvent;
@@ -13,7 +11,10 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +24,6 @@ import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
-import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -85,16 +85,7 @@ public class HomeScreenGrid extends Fragment {
         HomeScreenGridAdapter adapter = new HomeScreenGridAdapter(getContext());
         recyclerView.setAdapter(adapter);
 
-        ImageView delete = view.findViewById(R.id.cross);
-        delete.setY(-Globals.metrics.heightPixels + delete.getLayoutParams().height);
-        delete.setVisibility(View.INVISIBLE);
-        View.OnDragListener dragListener = (v, event) -> {
-            if (event.getAction() == DragEvent.ACTION_DROP) {
-                locations.removeItemFromDatabase(Library.getDragging());
-            }
-
-            return true;
-        };
+        HomeScreenPages.hideActions();
 
         final long ANIMATION_DURATION = 212;
 
@@ -150,15 +141,25 @@ public class HomeScreenGrid extends Fragment {
 
         // Shrink or expand grid as necessary
         recyclerView.setOnDragListener((view, dragEvent) -> {
-            delete.setVisibility(View.VISIBLE);
-            delete.setOnDragListener(dragListener);
+            HomeScreenPages.showActions();
             shrink(view);
 
             if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
-                delete.setVisibility(View.INVISIBLE);
-                delete.setOnDragListener(null);
+                HomeScreenPages.hideActions();
                 expand(view);
             }
+
+            return true;
+        });
+
+        View unpinLayer = view.findViewById(R.id.unpinLayer);
+        unpinLayer.setOnDragListener((v, event) -> {
+            if (event.getAction() == DragEvent.ACTION_DRAG_ENTERED)
+                unpinLayer.setBackgroundColor(0x44FFFFFF);
+
+            if (event.getAction() == DragEvent.ACTION_DRAG_EXITED ||
+                    event.getAction() == DragEvent.ACTION_DRAG_ENDED)
+                unpinLayer.setBackgroundColor(Color.TRANSPARENT);
 
             return true;
         });
@@ -226,7 +227,7 @@ public class HomeScreenGrid extends Fragment {
 
         view.clearAnimation();
         view.startAnimation(shrinkAnimation);
-        view.setBackgroundColor(0x33FFFFFF); // Light grey
+        view.setBackgroundColor(getResources().getColor(R.color.light_gray_background)); // Light grey
         isMultiplePageMode = true;
     }
 

@@ -12,7 +12,7 @@ import android.util.DisplayMetrics;
 
 public class Globals {
     public static DisplayMetrics metrics;
-    public static int statusBarHeight;
+    public static int statusBarHeight, navigationBarHeight;
     public static final int APP_ICON_HEIGHT = 150,
             APP_ICON_WIDTH = 150,
             APP_TEXT_SIZE = 12,

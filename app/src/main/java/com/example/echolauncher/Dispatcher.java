@@ -79,6 +79,13 @@ public class Dispatcher extends AppCompatActivity {
             Globals.statusBarHeight = resources.getDimensionPixelSize(id);
         else
             Globals.statusBarHeight = 0;
+
+        // Get navigation bar height
+        id = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (id > 0)
+            Globals.navigationBarHeight = resources.getDimensionPixelSize(id);
+        else
+            Globals.navigationBarHeight = 0;
     }
 
     // Deselect text input boxes when the user taps outside of them

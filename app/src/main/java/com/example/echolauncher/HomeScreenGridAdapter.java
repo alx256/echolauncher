@@ -193,8 +193,11 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         // calculated, update the total so that
         // there are enough items to fit the
         // screen
-        int columns = Globals.metrics.heightPixels / height;
-        total = columns * NUM_ROW_APPS;
+        int rows = (Globals.metrics.heightPixels
+                - Globals.statusBarHeight
+                - Globals.navigationBarHeight) / height;
+        // (subtract 1 to account for when total was 1)
+        total = (rows * NUM_ROW_APPS) - 1;
     }
 
     private void updateItem(ViewHolder holder) {

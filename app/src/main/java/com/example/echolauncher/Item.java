@@ -73,7 +73,7 @@ public class Item implements Cloneable {
             VIEW.startDrag(data, shadowBuilder, VIEW, 0);
             Scroll.scrollTo(Scroll.HOME_SCREEN);
             stationary = false;
-            Library.setDragging(ITEM.identifier);
+            Library.setDragging(ITEM);
 
             // Custom move actions
             onMove();

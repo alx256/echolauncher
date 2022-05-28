@@ -90,13 +90,7 @@ public class Library {
     }
 
     public static Item getDragging() {
-        try {
-            return Search.get(draggingIdentifier);
-        } catch (InvalidObjectException e) {
-            // No valid app or widget found
-            e.printStackTrace();
-            return null;
-        }
+        return dragging;
     }
 
     public static AppItem appAt(int index) {
@@ -107,12 +101,12 @@ public class Library {
         return widgets.get(index);
     }
 
-    public static void setDragging(String identifier) {
-        draggingIdentifier = identifier;
+    public static void setDragging(Item item) {
+        dragging = item;
     }
 
     private static List<AppItem> apps;
     private static List<WidgetItem> widgets;
     private static PackageManager packageManager;
-    private static String draggingIdentifier;
+    private static Item dragging;
 }

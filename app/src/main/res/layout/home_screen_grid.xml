@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".HomeDestination">
 
-    <ImageView
-        android:id="@+id/cross"
-        android:layout_width="69dp"
-        android:layout_height="55dp"
+    <View
+        android:id="@+id/unpinLayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/cross" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeScreenGrid"
