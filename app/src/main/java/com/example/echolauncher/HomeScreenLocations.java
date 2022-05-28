@@ -41,6 +41,7 @@ public class HomeScreenLocations extends SQLiteOpenHelper {
         values.put("Position", item.getGridIndex());
         values.put("Screen", 0);
         db.insert("HomeScreenLocations", null, values);
+        db.close();
     }
 
     public void readFromDatabase() throws SQLException, InvalidObjectException {
