@@ -9,6 +9,8 @@ import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import java.io.InvalidObjectException;
+
 /**
  * Item that represents an app
  */
@@ -64,9 +66,14 @@ public class AppItem extends Item {
     @Override
     protected void onMove() {
         if (!isDuplicable) {
-            HomeScreenGrid.updateGrid(getGridIndex(),
-                    HomeScreenGridAdapter.Instruction.REMOVE,
-                    Library.getDragging());
+            try {
+                Pages.doInstruction(getGridIndex(),
+                        getPageNumber(),
+                        HomeScreenGridAdapter.Instruction.REMOVE,
+                        Library.getDragging());
+            } catch (InvalidObjectException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

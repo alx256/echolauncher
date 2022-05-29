@@ -83,14 +83,32 @@ public class Item implements Cloneable {
         private final Item ITEM;
     }
 
-    public Name getName() { return name; }
-    public String getIdentifier() { return identifier; }
-    public int getGridIndex() { return gridIndex; }
+    public Name getName() {
+        return name;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public int getGridIndex() {
+        return gridIndex;
+    }
+
+    public int getPageNumber() {
+        return pageNumber;
+    }
 
     // The Grid Index is the index of
     // the item in the home screen grid
     public void setGridIndex(int gridIndex) {
         this.gridIndex = gridIndex;
+    }
+
+    // The page number is the index for the
+    // page holding the item
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
     }
 
     public View.OnTouchListener getOnTouchListener() {
@@ -206,7 +224,7 @@ public class Item implements Cloneable {
     private ImageView imageView;
     private TextView textView;
     private boolean stationary;
-    private int gridIndex = -1;
+    private int gridIndex = -1, pageNumber = -1;
     private Runnable hold = null;
     private final int LONG_PRESS_DELAY = 400;
 }

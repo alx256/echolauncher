@@ -39,11 +39,10 @@ import java.util.Map;
  * */
 
 public class HomeScreenGrid extends Fragment {
-
     // Contains the Instruction and the item which
     // is having the instruction carried out on
     // it
-    public static class InstructionCollection {
+    public class InstructionCollection {
         public InstructionCollection(HomeScreenGridAdapter.Instruction instruction, Item item) {
             INSTRUCTION = instruction;
             ITEM = item;
@@ -59,6 +58,10 @@ public class HomeScreenGrid extends Fragment {
 
         private final HomeScreenGridAdapter.Instruction INSTRUCTION;
         private final Item ITEM;
+    }
+
+    public HomeScreenGrid(int pageNumber) {
+        this.pageNumber = pageNumber;
     }
 
     @Override
@@ -83,6 +86,7 @@ public class HomeScreenGrid extends Fragment {
         recyclerView.setLayoutManager(manager);
 
         HomeScreenGridAdapter adapter = new HomeScreenGridAdapter(getContext());
+        adapter.setPageNumber(pageNumber);
         recyclerView.setAdapter(adapter);
 
         HomeScreenPages.hideActions();
@@ -195,8 +199,7 @@ public class HomeScreenGrid extends Fragment {
         return view;
     }
 
-    public static void updateGrid(int position, HomeScreenGridAdapter.Instruction instruction,
-                                  Item item) {
+    public void updateGrid(int position, HomeScreenGridAdapter.Instruction instruction, Item item) {
         // If item is null then something
         // has gone wrong. Make sure that
         // this is not the case
@@ -210,14 +213,15 @@ public class HomeScreenGrid extends Fragment {
         // Add the new instructions
         homeScreenInstructions.get(position).add(new InstructionCollection(instruction, item));
         // Update the necessary item
-        recyclerView.getAdapter().notifyItemChanged(position);
+        if (recyclerView != null)
+            recyclerView.getAdapter().notifyItemChanged(position);
     }
 
-    public static Map<Integer, List<InstructionCollection>> getHomeScreenInstructions() {
+    public Map<Integer, List<InstructionCollection>> getHomeScreenInstructions() {
         return homeScreenInstructions;
     }
 
-    public static void setHomeScreenInstructions(Map<Integer, List<InstructionCollection>> map) {
+    public void setHomeScreenInstructions(Map<Integer, List<InstructionCollection>> map) {
         homeScreenInstructions = map;
     }
 
@@ -243,10 +247,11 @@ public class HomeScreenGrid extends Fragment {
 
     public final static float SHRINK_SCALE = 0.8f;
 
-    private static Map<Integer, List<InstructionCollection>> homeScreenInstructions;
+    private Map<Integer, List<InstructionCollection>> homeScreenInstructions;
     private View view;
     private Animation shrinkAnimation, expandAnimation;
-    private static HomeScreenLocations locations;
-    private static boolean isMultiplePageMode;
-    private static RecyclerView recyclerView;
+    private HomeScreenLocations locations;
+    private boolean isMultiplePageMode;
+    private RecyclerView recyclerView;
+    private int pageNumber;
 }

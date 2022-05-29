@@ -18,6 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import java.io.InvalidObjectException;
+
 /**
  * This class implements the functionality of the home
  * screen pages fragment which contains the pages where
@@ -30,13 +32,7 @@ public class HomeScreenPages extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_screen, null, false);
 
-        ViewPager2 pager = view.findViewById(R.id.homeScreenPager);
-        HomeScreenAdapter adapter = new HomeScreenAdapter(getActivity());
-        final int BARRIER_PADDING = 10;
-        pager.setPadding(0, Globals.statusBarHeight + BARRIER_PADDING, 0, Globals.navigationBarHeight + BARRIER_PADDING);
-        pager.setAdapter(adapter);
-        // Start on page 1
-        pager.setCurrentItem(1, false);
+        Pages.init(view, getActivity());
 
         // Get the user's wallpaper
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
@@ -69,9 +65,12 @@ public class HomeScreenPages extends Fragment {
                     if (dragging.getGridIndex() == -1)
                         return true;
 
-                    HomeScreenGrid.updateGrid(dragging.getGridIndex(),
-                            HomeScreenGridAdapter.Instruction.PIN,
-                            Library.getDragging());
+                    try {
+                        Pages.doInstruction(dragging.getGridIndex(), dragging.getPageNumber(),
+                                HomeScreenGridAdapter.Instruction.PIN, dragging);
+                    } catch (InvalidObjectException e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
 

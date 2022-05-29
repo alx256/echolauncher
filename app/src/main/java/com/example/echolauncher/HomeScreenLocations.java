@@ -39,7 +39,7 @@ public class HomeScreenLocations extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("Identifier", item.getIdentifier());
         values.put("Position", item.getGridIndex());
-        values.put("Screen", 0);
+        values.put("Screen", item.getPageNumber());
         db.insert("HomeScreenLocations", null, values);
         db.close();
     }
@@ -54,7 +54,8 @@ public class HomeScreenLocations extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            HomeScreenGrid.updateGrid(cursor.getInt(cursor.getColumnIndex("Position")),
+            Pages.doInstruction(cursor.getInt(cursor.getColumnIndex("Position")),
+                    cursor.getInt(cursor.getColumnIndex("Screen")),
                     HomeScreenGridAdapter.Instruction.ADD,
                     Search.get(cursor.getString(cursor.getColumnIndex("Identifier"))));
             cursor.moveToNext();

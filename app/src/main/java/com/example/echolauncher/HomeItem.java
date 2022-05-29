@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.InvalidObjectException;
+
 /**
  * Empty item that occupies home
  * screen grid location if another
@@ -59,6 +61,10 @@ public class HomeItem extends Item {
     }
 
     private void updateGrid(HomeScreenGridAdapter.Instruction instruction) {
-        HomeScreenGrid.updateGrid(getGridIndex(), instruction, Library.getDragging());
+        try {
+            Pages.doInstruction(getGridIndex(), getPageNumber(), instruction, Library.getDragging());
+        } catch (InvalidObjectException e) {
+            e.printStackTrace();
+        }
     }
 }

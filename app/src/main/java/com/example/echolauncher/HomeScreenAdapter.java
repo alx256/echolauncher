@@ -23,7 +23,7 @@ public class HomeScreenAdapter extends FragmentStateAdapter {
         if (position == 0)
             return new StudyModeScreen();
 
-        return new HomeScreenGrid();
+        return Pages.getPage(position - 1);
     }
 
     @Override

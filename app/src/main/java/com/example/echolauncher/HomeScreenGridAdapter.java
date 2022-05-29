@@ -94,6 +94,10 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             item.setGridIndex(gridIndex);
         }
 
+        public void setPageNumber(int pageNumber) {
+            item.setPageNumber(pageNumber);
+        }
+
         public Item getItem() {
             return item;
         }
@@ -125,7 +129,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         LAYOUT_WIDTH_APPS = Globals.metrics.widthPixels / NUM_ROW_APPS;
         LAYOUT_WIDTH_WIDGETS = Globals.metrics.widthPixels / NUM_ROW_WIDGETS;
 
-        HomeScreenGrid.setHomeScreenInstructions(new Hashtable<>());
         occupiedIndices = new ArrayList<>();
         locations = new HomeScreenLocations(context);
     }
@@ -137,6 +140,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         HomeItem item;
 
         item = new HomeItem();
+        item.setPageNumber(pageNumber);
         view = item.toView(CONTEXT);
 
         ImageView imageView = view.findViewById(R.id.appIcon);
@@ -200,6 +204,10 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         total = (rows * NUM_ROW_APPS) - 1;
     }
 
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
     private void updateItem(ViewHolder holder) {
         // If item is null then something
         // has gone wrong. Make sure that
@@ -209,17 +217,19 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         int position = holder.getAdapterPosition();
 
         holder.setGridIndex(position);
+        holder.setPageNumber(pageNumber);
 
         ImageView imageView = holder.itemView.findViewById(R.id.appIcon);
         TextView textView = holder.itemView.findViewById(R.id.textView);
         Drawable drawable;
         List<HomeScreenGrid.InstructionCollection> instructionCollections
-                = HomeScreenGrid.getHomeScreenInstructions().get(position);
+                = Pages.getInstructions(position, pageNumber);
 
         if (instructionCollections != null) {
             for (HomeScreenGrid.InstructionCollection instructionCollection : instructionCollections) {
                 Item item = instructionCollection.getItem().clone();
                 item.setGridIndex(position);
+                item.setPageNumber(pageNumber);
                 Instruction instruction = instructionCollection.getInstruction();
 
                 if (type(item) == Type.WIDGET) {
@@ -236,13 +246,13 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         ignore = true;
 
                     if (ignore) {
-                        HomeScreenGrid.getHomeScreenInstructions().remove(position);
+                        Pages.removeInstruction(position, pageNumber);
                         continue;
                     }
                 }
 
                 if (holder.isOccupied() && instruction != Instruction.REMOVE) {
-                    HomeScreenGrid.getHomeScreenInstructions().remove(position);
+                    Pages.removeInstruction(position, pageNumber);
                     return;
                 }
 
@@ -323,7 +333,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         break;
                 }
 
-                HomeScreenGrid.getHomeScreenInstructions().remove(position);
+                Pages.removeInstruction(position, pageNumber);
             }
         }
     }
@@ -338,7 +348,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
     private final Context CONTEXT;
     private final int NUM_ROW_APPS = 4, NUM_ROW_WIDGETS = 2,
             LAYOUT_WIDTH_APPS, LAYOUT_WIDTH_WIDGETS;
-    private int total;
+    private int total, pageNumber;
     private List<Integer> occupiedIndices;
     private HomeScreenLocations locations;
 }
