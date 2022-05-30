@@ -124,10 +124,13 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         // Starts off with 1, actual total is calculated once
         // views can be measured
-        total = 1;
+        int rows = (Globals.metrics.heightPixels
+                - Globals.statusBarHeight
+                - Globals.navigationBarHeight) / Item.getHeight();
+        total = rows * NUM_APPS_PER_ROW;
 
-        LAYOUT_WIDTH_APPS = Globals.metrics.widthPixels / NUM_ROW_APPS;
-        LAYOUT_WIDTH_WIDGETS = Globals.metrics.widthPixels / NUM_ROW_WIDGETS;
+        LAYOUT_WIDTH_APPS = Globals.metrics.widthPixels / NUM_APPS_PER_ROW;
+        LAYOUT_WIDTH_WIDGETS = Globals.metrics.widthPixels / NUM_WIDGETS_PER_ROW;
 
         occupiedIndices = new ArrayList<>();
         locations = new HomeScreenLocations(context);
@@ -187,21 +190,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
     @Override
     public int getItemCount() {
         return total;
-    }
-
-    public void updateTotal(int height) {
-        if (height == 0)
-            return;
-
-        // When the height of an item can be
-        // calculated, update the total so that
-        // there are enough items to fit the
-        // screen
-        int rows = (Globals.metrics.heightPixels
-                - Globals.statusBarHeight
-                - Globals.navigationBarHeight) / height;
-        // (subtract 1 to account for when total was 1)
-        total = (rows * NUM_ROW_APPS) - 1;
     }
 
     public void setPageNumber(int pageNumber) {
@@ -346,7 +334,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
     }
 
     private final Context CONTEXT;
-    private final int NUM_ROW_APPS = 4, NUM_ROW_WIDGETS = 2,
+    private final int NUM_APPS_PER_ROW = 4, NUM_WIDGETS_PER_ROW = 2,
             LAYOUT_WIDTH_APPS, LAYOUT_WIDTH_WIDGETS;
     private int total, pageNumber;
     private List<Integer> occupiedIndices;

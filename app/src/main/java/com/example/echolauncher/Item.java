@@ -204,6 +204,16 @@ public class Item implements Cloneable {
         return null;
     }
 
+    // Return the constant width
+    public static int getWidth() {
+        return WIDTH;
+    }
+
+    // Return the constant height
+    public static int getHeight() {
+        return HEIGHT;
+    }
+
     // Method that can be overridden to perform custom tap
     // functionality
     protected void onTap() {}
@@ -227,4 +237,5 @@ public class Item implements Cloneable {
     private int gridIndex = -1, pageNumber = -1;
     private Runnable hold = null;
     private final int LONG_PRESS_DELAY = 400;
+    private final static int WIDTH = 448, HEIGHT = 256;
 }

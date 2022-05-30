@@ -171,30 +171,11 @@ public class HomeScreenGrid extends Fragment {
         // Open or create the database used to store
         // items that are pinned to the home screen
         locations = new HomeScreenLocations(getContext());
-
-        ViewTreeObserver observer = recyclerView.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
-                HomeScreenGridAdapter adapter = (HomeScreenGridAdapter) recyclerView.getAdapter();
-                adapter.updateTotal(holder.itemView.getMeasuredHeight());
-                adapter.notifyItemChanged(0);
-
-                try {
-                    // When app is opened, read the stored data and
-                    // add the items in their necessary positions
-                    locations.readFromDatabase();
-                } catch (SQLException | InvalidObjectException e) {
-                    e.printStackTrace();
-                }
-
-                // This only needs to be carried out once, so
-                // delete this listener
-                ViewTreeObserver temp = view.getViewTreeObserver();
-                temp.removeOnGlobalLayoutListener(this);
-            }
-        });
+        try {
+            locations.readFromDatabase();
+        } catch (SQLException | InvalidObjectException e) {
+            e.printStackTrace();
+        }
 
         return view;
     }
