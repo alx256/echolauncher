@@ -3,7 +3,6 @@ package com.example.echolauncher;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.DragEvent;
@@ -16,7 +15,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import java.io.InvalidObjectException;
 
@@ -26,7 +24,7 @@ import java.io.InvalidObjectException;
  * apps and widgets can be pinned
  */
 
-public class HomeScreenPages extends Fragment {
+public class HomeScreen extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,9 +41,8 @@ public class HomeScreenPages extends Fragment {
         View statusBarBarrier = view.findViewById(R.id.statusBarBarrier);
         statusBarBarrier.getLayoutParams().height = Globals.statusBarHeight;
 
-        actions = view.findViewById(R.id.actions);
-
-        LinearLayout cancelLayout = actions.findViewById(R.id.cancelLayout),
+        LinearLayout actions = view.findViewById(R.id.actions),
+                cancelLayout = actions.findViewById(R.id.cancelLayout),
                 deleteLayout = actions.findViewById(R.id.deleteLayout);
 
         cancelLayout.setOnDragListener((v, event) -> {
@@ -104,15 +101,4 @@ public class HomeScreenPages extends Fragment {
 
         return view;
     }
-
-    public static void showActions() {
-        actions.setVisibility(View.VISIBLE);
-        actions.bringToFront();
-    }
-
-    public static void hideActions() {
-        actions.setVisibility(View.INVISIBLE);
-    }
-
-    private static LinearLayout actions;
 }

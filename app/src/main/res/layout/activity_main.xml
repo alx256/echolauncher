@@ -37,7 +37,7 @@
             <!-- Home screen fragment -->
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/homeScreenFragment"
-                android:name="com.example.echolauncher.HomeScreenPages"
+                android:name="com.example.echolauncher.HomeScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:layout="@layout/home_screen" />

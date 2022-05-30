@@ -7,14 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -89,7 +85,7 @@ public class HomeScreenGrid extends Fragment {
         adapter.setPageNumber(pageNumber);
         recyclerView.setAdapter(adapter);
 
-        HomeScreenPages.hideActions();
+        hideActions();
 
         final long ANIMATION_DURATION = 212;
 
@@ -145,11 +141,11 @@ public class HomeScreenGrid extends Fragment {
 
         // Shrink or expand grid as necessary
         recyclerView.setOnDragListener((view, dragEvent) -> {
-            HomeScreenPages.showActions();
+            showActions();
             shrink(view);
 
             if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
-                HomeScreenPages.hideActions();
+                hideActions();
                 expand(view);
             }
 
@@ -206,6 +202,13 @@ public class HomeScreenGrid extends Fragment {
         homeScreenInstructions = map;
     }
 
+    // This has to be done to prevent the HomeScreen class
+    // having a static LinearLayout attribute as that would
+    // be a potential memory leak
+    public void setActionsReference(LinearLayout actions) {
+        this.actions = actions;
+    }
+
     private void shrink(View view) {
         if (isMultiplePageMode)
             return;
@@ -226,6 +229,14 @@ public class HomeScreenGrid extends Fragment {
         isMultiplePageMode = false;
     }
 
+    private void showActions() {
+        actions.setVisibility(View.VISIBLE);
+    }
+
+    private void hideActions() {
+        actions.setVisibility(View.INVISIBLE);
+    }
+
     public final static float SHRINK_SCALE = 0.8f;
 
     private Map<Integer, List<InstructionCollection>> homeScreenInstructions;
@@ -235,4 +246,5 @@ public class HomeScreenGrid extends Fragment {
     private boolean isMultiplePageMode;
     private RecyclerView recyclerView;
     private int pageNumber;
+    private LinearLayout actions;
 }
