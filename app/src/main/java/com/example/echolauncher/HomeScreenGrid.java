@@ -142,10 +142,12 @@ public class HomeScreenGrid extends Fragment {
         // Shrink or expand grid as necessary
         recyclerView.setOnDragListener((view, dragEvent) -> {
             showActions();
+            hideDots();
             shrink(view);
 
             if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
                 hideActions();
+                showDots();
                 expand(view);
             }
 
@@ -209,6 +211,11 @@ public class HomeScreenGrid extends Fragment {
         this.actions = actions;
     }
 
+    // Also done to prevent a potential memory leak
+    public void setDotsReference(LinearLayout dots) {
+        this.dots = dots;
+    }
+
     private void shrink(View view) {
         if (isMultiplePageMode)
             return;
@@ -237,6 +244,14 @@ public class HomeScreenGrid extends Fragment {
         actions.setVisibility(View.INVISIBLE);
     }
 
+    private void showDots() {
+        dots.setVisibility(View.VISIBLE);
+    }
+
+    private void hideDots() {
+        dots.setVisibility(View.INVISIBLE);
+    }
+
     public final static float SHRINK_SCALE = 0.8f;
 
     private Map<Integer, List<InstructionCollection>> homeScreenInstructions;
@@ -246,5 +261,5 @@ public class HomeScreenGrid extends Fragment {
     private boolean isMultiplePageMode;
     private RecyclerView recyclerView;
     private int pageNumber;
-    private LinearLayout actions;
+    private LinearLayout actions, dots;
 }

@@ -41,6 +41,9 @@ public class HomeScreen extends Fragment {
         View statusBarBarrier = view.findViewById(R.id.statusBarBarrier);
         statusBarBarrier.getLayoutParams().height = Globals.statusBarHeight;
 
+        View navigationBarBarrier = view.findViewById(R.id.navigationBarBarrier);
+        navigationBarBarrier.getLayoutParams().height = Globals.navigationBarHeight + 10;
+
         LinearLayout actions = view.findViewById(R.id.actions),
                 cancelLayout = actions.findViewById(R.id.cancelLayout),
                 deleteLayout = actions.findViewById(R.id.deleteLayout);

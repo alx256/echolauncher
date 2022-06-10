@@ -1,6 +1,7 @@
 package com.example.echolauncher;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.fragment.app.FragmentActivity;
@@ -25,13 +26,72 @@ public class Pages {
 
         pages = new ArrayList<>();
 
-        LinearLayout actions = view.findViewById(R.id.actions);
+        LinearLayout actions = view.findViewById(R.id.actions),
+            dots = view.findViewById(R.id.dots);
+        ImageView dot = dots.findViewById(R.id.dot);
+        LinearLayout.LayoutParams dotParams = (LinearLayout.LayoutParams) dot.getLayoutParams();
 
         for (int i = 0; i <= 10; i++) {
             HomeScreenGrid grid = new HomeScreenGrid(i);
             grid.setActionsReference(actions);
+            grid.setDotsReference(dots);
+            dots.addView(getNewDot(dot));
             pages.add(grid);
         }
+
+        // Center the dots (leftMargin and half of the dot's width
+        // subtracted to prevent the dots from being slightly to the left)
+        dots.setX((Globals.metrics.widthPixels / 2.0f) - (dotParams.width / 2.0f)
+                - (dotParams.leftMargin));
+
+        pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            private boolean hasStarted = false;
+            private float goal, initialX, lastPositionOffset;
+            private int initialPosition, lastPositionOffsetPixels = -1, diff;
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (!hasStarted) {
+                    initialPosition = pager.getCurrentItem();
+                    initialX = dots.getX();
+                    goal = dot.getWidth() + dotParams.rightMargin + dotParams.leftMargin;
+                    hasStarted = true;
+                }
+
+                // Snap into place
+                if (positionOffsetPixels == 0) {
+                    if (position < initialPosition) {
+                        dots.setX(initialX + goal);
+                    } else if (position > initialPosition) {
+                        dots.setX(initialX - goal);
+                    } else {
+                        dots.setX(initialX);
+                    }
+
+                    hasStarted = false;
+                    lastPositionOffsetPixels = -1;
+                    lastPositionOffset = 0.0f;
+
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                    return;
+                }
+
+                if (lastPositionOffsetPixels != -1)
+                    diff = positionOffsetPixels - lastPositionOffsetPixels;
+                else
+                    diff = 0;
+
+                if (diff < 0)
+                    dots.setX(dots.getX() + (goal * Math.abs(positionOffset - lastPositionOffset)));
+                else if (diff > 0)
+                    dots.setX(dots.getX() - (goal * Math.abs(positionOffset - lastPositionOffset)));
+
+                lastPositionOffsetPixels = positionOffsetPixels;
+                lastPositionOffset = positionOffset;
+
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+        });
 
         clearInstructions();
     }
@@ -69,6 +129,13 @@ public class Pages {
 
     public static int getNumberOfPages() {
         return pages.size();
+    }
+
+    private static ImageView getNewDot(ImageView original) {
+        ImageView view = new ImageView(original.getContext());
+        view.setImageDrawable(original.getDrawable());
+        view.setLayoutParams(original.getLayoutParams());
+        return view;
     }
 
     private static List<HomeScreenGrid> pages;
