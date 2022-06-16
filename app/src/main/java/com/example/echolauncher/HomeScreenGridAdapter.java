@@ -13,9 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -50,15 +48,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         REMOVE
     }
 
-    // Different types that
-    // might be pinned to the
-    // home screen
-    public enum Type {
-        NONE,
-        APP,
-        WIDGET
-    }
-
     // Required by the adapter
     // Holds a view and the
     // corresponding item
@@ -66,12 +55,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         public ViewHolder(View view, Item item) {
             super(view);
             this.item = item;
-            type = Type.NONE;
             isOccupied = false;
-        }
-
-        public void setType(Type type) {
-            this.type = type;
         }
 
         public void setPreview(Item item) {
@@ -86,7 +70,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         public void clearItem() {
             item = new HomeItem();
-            type = Type.NONE;
             isOccupied = false;
         }
 
@@ -102,26 +85,15 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             return item;
         }
 
-        public int getGridIndex() {
-            return item.getGridIndex();
-        }
-
-        public Type getType() {
-            return type;
-        }
-
         public boolean isOccupied() {
             return isOccupied;
         }
 
         private Item item;
-        private Type type;
         private boolean isOccupied;
     }
 
     public HomeScreenGridAdapter(Context context) {
-        CONTEXT = context;
-
         // Starts off with 1, actual total is calculated once
         // views can be measured
         int rows = (Globals.metrics.heightPixels
@@ -138,13 +110,13 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
     @NonNull
     @Override
-    public HomeScreenGridAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HomeScreenGridAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         HomeItem item;
 
         item = new HomeItem();
         item.setPageNumber(pageNumber);
-        view = item.toView(CONTEXT);
+        view = item.toView(parent.getContext());
 
         ImageView imageView = view.findViewById(R.id.appIcon);
         TextView textView = view.findViewById(R.id.textView);
@@ -220,7 +192,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                 item.setPageNumber(pageNumber);
                 Instruction instruction = instructionCollection.getInstruction();
 
-                if (type(item) == Type.WIDGET) {
+                if (item instanceof WidgetItem) {
                     boolean ignore = false;
 
                     // Forbid placing on end of line
@@ -251,24 +223,23 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         occupiedIndices.add(item.getGridIndex());
 
                         holder.setItem(item);
-                        holder.setType(type(item));
 
                         drawable = holder.item.drawable;
-                        if (type(holder.item) != Type.WIDGET)
+                        if (holder.item instanceof WidgetItem)
                             drawable.clearColorFilter();
                         // Fully visible
                         holder.item.drawable.setAlpha(0xFF);
                         imageView.setImageDrawable(drawable);
 
-                        if (type(holder.item) != Type.WIDGET)
+                        if (holder.item instanceof AppItem)
                             textView.setText(holder.item.name.shortened());
 
-                        if (type(holder.item) == Type.WIDGET)
+                        if (holder.item instanceof WidgetItem)
                             ((WidgetItem) holder.item).addReferenceView(holder.itemView);
 
                         holder.itemView.setOnTouchListener(holder.item.getOnTouchListener());
 
-                        if (type(holder.item) == Type.WIDGET) {
+                        if (holder.item instanceof WidgetItem) {
                             holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                             imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                         } else {
@@ -285,9 +256,8 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                     case HOVER:
                         // Item needs to display the hover effect
                         holder.setPreview(item);
-                        holder.setType(type(item));
 
-                        if (type(holder.item) == Type.WIDGET) {
+                        if (holder.item instanceof WidgetItem) {
                             holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                             imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
                         } else {
@@ -297,7 +267,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
                         drawable = holder.item.drawable;
                         imageView.setImageDrawable(drawable);
-                        if (type(holder.item) != Type.WIDGET)
+                        if (holder.item instanceof WidgetItem)
                             imageView.getDrawable().setColorFilter(0, PorterDuff.Mode.DARKEN);
                         imageView.getDrawable().setAlpha(0x62);
 
@@ -326,14 +296,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         }
     }
 
-    private Type type(Item item) {
-        if (item.isWidget)
-            return Type.WIDGET;
-
-        return Type.APP;
-    }
-
-    private final Context CONTEXT;
     private final int NUM_APPS_PER_ROW = 4, NUM_WIDGETS_PER_ROW = 2,
             LAYOUT_WIDTH_APPS, LAYOUT_WIDTH_WIDGETS;
     private int total, pageNumber;
