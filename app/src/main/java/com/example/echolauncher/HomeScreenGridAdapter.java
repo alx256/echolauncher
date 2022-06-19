@@ -93,7 +93,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         private boolean isOccupied;
     }
 
-    public HomeScreenGridAdapter(Context context) {
+    public HomeScreenGridAdapter(Context context, List<Item> items) {
         // Starts off with 1, actual total is calculated once
         // views can be measured
         int rows = (Globals.metrics.heightPixels
@@ -106,6 +106,8 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
         occupiedIndices = new ArrayList<>();
         locations = new HomeScreenLocations(context);
+
+        isHovering = false;
     }
 
     @NonNull
@@ -300,5 +302,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
             LAYOUT_WIDTH_APPS, LAYOUT_WIDTH_WIDGETS;
     private int total, pageNumber;
     private List<Integer> occupiedIndices;
+    private List<Item> items;
     private HomeScreenLocations locations;
+    private boolean isHovering;
 }

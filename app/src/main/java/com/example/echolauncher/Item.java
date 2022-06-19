@@ -63,7 +63,7 @@ public class Item implements Cloneable {
         @Override
         public void run() {
             // Vibrate phone
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            Vibrator vibrator = (Vibrator) VIEW.getContext().getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(55);
 
             // Start dragging the app
@@ -176,6 +176,11 @@ public class Item implements Cloneable {
 
     public void setDuplicable(boolean isDuplicable) {
         this.isDuplicable = isDuplicable;
+    }
+
+    // Return the item's context
+    public Context getContext() {
+        return context;
     }
 
     protected void initView(View view) {

@@ -3,18 +3,12 @@ package com.example.echolauncher;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.InvalidObjectException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class HomeScreenLocations extends SQLiteOpenHelper {
     public HomeScreenLocations(@Nullable Context context) {
@@ -44,7 +38,7 @@ public class HomeScreenLocations extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void readFromDatabase() throws SQLException, InvalidObjectException {
+    public void readFromDatabase() throws InvalidObjectException {
         SQLiteDatabase db = getReadableDatabase();
 
         // Select all stored items
@@ -54,10 +48,12 @@ public class HomeScreenLocations extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            Pages.doInstruction(cursor.getInt(cursor.getColumnIndex("Position")),
-                    cursor.getInt(cursor.getColumnIndex("Screen")),
-                    HomeScreenGridAdapter.Instruction.ADD,
-                    Search.get(cursor.getString(cursor.getColumnIndex("Identifier"))));
+            String identifier = cursor.getString(cursor.getColumnIndex("Identifier"));
+            Item item = Search.get(identifier).clone();
+            item.setGridIndex(cursor.getInt(cursor.getColumnIndex("Position")));
+            item.setPageNumber(cursor.getInt(cursor.getColumnIndex("Screen")));
+
+            Pages.addItem(item);
             cursor.moveToNext();
         }
 

@@ -30,7 +30,7 @@ public class HomeScreen extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_screen, null, false);
 
-        Pages.init(view, getActivity());
+        Pages.init(view, getContext());
 
         // Get the user's wallpaper
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());

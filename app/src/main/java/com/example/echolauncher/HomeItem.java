@@ -1,6 +1,7 @@
 package com.example.echolauncher;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,13 +45,24 @@ public class HomeItem extends Item {
             switch (dragEvent.getAction()) {
                 case DragEvent.ACTION_DRAG_ENTERED:
                     updateGrid(HomeScreenGridAdapter.Instruction.HOVER);
+                    // The user is hovering, so don't display the unpin effect
+                    Pages.displayUnpinEffect(view, Color.TRANSPARENT);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
+                    // The user is no longer hovering
+                    // Display the unpin effect so that if the user does not
+                    // hover over another HomeItem instead, the effect will
+                    // occur
+                    Pages.displayUnpinEffect(view,
+                            context.getResources().getColor(R.color.transparent_gray_select));
                     break;
                 case DragEvent.ACTION_DROP:
                     updateGrid(HomeScreenGridAdapter.Instruction.CLEAR);
                     updateGrid(HomeScreenGridAdapter.Instruction.PIN);
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    Pages.displayUnpinEffect(view, Color.TRANSPARENT);
                     break;
             }
 

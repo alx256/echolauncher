@@ -1,6 +1,7 @@
 package com.example.echolauncher;
 
-import android.os.Bundle;
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +11,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
-/**
- * Handles the logic of the study mode
- * configuration screen fragment
- */
-
-public class StudyModeScreen extends Fragment {
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+public class StudyModeScreen {
+    @NonNull
+    public static View get(Context context) {
+        LayoutInflater inflater = (LayoutInflater)
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.study_mode_screen, null, false);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
 
         Button start = view.findViewById(R.id.startButton);
 
@@ -30,7 +27,7 @@ public class StudyModeScreen extends Fragment {
         layout.setY(Globals.statusBarHeight);
 
         TextView timeView = view.findViewById(R.id.timeView);
-        TimeSetter timeSetter = new TimeSetter(timeView, getContext());
+        TimeSetter timeSetter = new TimeSetter(timeView, context);
 
         // Set hours and minutes to the values
         // chosen by the TimeSetter
@@ -65,7 +62,7 @@ public class StudyModeScreen extends Fragment {
 
         // Message to be displayed if a duration
         // has not been set
-        Toast message = Toast.makeText(getContext(),
+        Toast message = Toast.makeText(context,
                 "Need to set duration!",
                 Toast.LENGTH_LONG);
 
@@ -73,7 +70,7 @@ public class StudyModeScreen extends Fragment {
         // then start StudyMode
         start.setOnClickListener(v -> {
             if (hours > 0 || minutes > 0)
-                StudyMode.enable(hours, minutes, getActivity());
+                StudyMode.enable(hours, minutes, (Activity) context);
             else
                 message.show();
         });
@@ -81,5 +78,5 @@ public class StudyModeScreen extends Fragment {
         return view;
     }
 
-    private int hours, minutes;
+    private static int hours, minutes;
 }
