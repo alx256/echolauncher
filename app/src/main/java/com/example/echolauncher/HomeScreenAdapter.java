@@ -31,6 +31,8 @@ public class HomeScreenAdapter extends RecyclerView.Adapter<HomeScreenAdapter.Vi
 
     public HomeScreenAdapter(Context context) {
         CONTEXT = context;
+
+        sharedPool = new RecyclerView.RecycledViewPool();
     }
 
     @NonNull
@@ -59,6 +61,10 @@ public class HomeScreenAdapter extends RecyclerView.Adapter<HomeScreenAdapter.Vi
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(manager);
+
+        // Use the same pool for inner recyclerViews
+        // for a small performance boost
+        recyclerView.setRecycledViewPool(sharedPool);
 
         return new ViewHolder(recyclerView);
     }
@@ -104,4 +110,6 @@ public class HomeScreenAdapter extends RecyclerView.Adapter<HomeScreenAdapter.Vi
     }
 
     private final Context CONTEXT;
+
+    private RecyclerView.RecycledViewPool sharedPool;
 }
