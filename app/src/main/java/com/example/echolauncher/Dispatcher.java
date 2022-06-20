@@ -72,6 +72,9 @@ public class Dispatcher extends AppCompatActivity {
         Globals.metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metrics);
 
+        Globals.layoutWidthApps = Globals.metrics.widthPixels / Globals.NUM_APPS_PER_ROW;
+        Globals.layoutWidthWidgets = Globals.metrics.widthPixels / Globals.NUM_WIDGETS_PER_ROW;
+
         // Required for opening widget dialogs
         fragmentManager = getSupportFragmentManager();
 

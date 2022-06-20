@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.view.DragEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -203,6 +204,27 @@ public class Item implements Cloneable {
         view.setOnDragListener(getOnDragListener());
     }
 
+    protected View getGenericView() {
+        if (genericView == null) {
+            LayoutInflater inflater = (LayoutInflater)
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            genericView = inflater.inflate(R.layout.item, null, false);
+            ImageView imageView = genericView.findViewById(R.id.appIcon);
+            TextView textView = genericView.findViewById(R.id.textView);
+
+            imageView.getLayoutParams().height = imageHeight;
+            imageView.getLayoutParams().width = imageWidth;
+            textView.setTextSize(textSize);
+            textView.getLayoutParams().height = textHeight;
+        }
+
+        return genericView;
+    }
+
+    protected void measureGenericView() {
+        genericView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+    }
+
     // Method that can be overridden to return a usable
     // View component for the Item
     public View toView(Context context) {
@@ -235,6 +257,7 @@ public class Item implements Cloneable {
     protected Name name;
     protected Drawable drawable;
     protected boolean isWidget = false;
+    private static View genericView;
 
     private ImageView imageView;
     private TextView textView;

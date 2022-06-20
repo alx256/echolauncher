@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
-import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 

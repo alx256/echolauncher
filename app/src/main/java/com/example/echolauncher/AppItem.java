@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.util.Log;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.InvalidObjectException;
 
@@ -31,14 +34,21 @@ public class AppItem extends Item {
 
     @Override
     public View toView(Context context) {
-        View finalView;
         super.context = context;
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        finalView = inflater.inflate(R.layout.item, null, false);
-        super.initView(finalView);
+        if (specificView != null)
+            return specificView;
 
-        return finalView;
+        specificView = new ImageView(context);
+
+        convertViewToBitmap();
+
+        specificView.setLayoutParams(new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight()));
+        specificView.setImageBitmap(bitmap);
+        specificView.setOnTouchListener(getOnTouchListener());
+        specificView.setOnDragListener(getOnDragListener());
+
+        return specificView;
     }
 
     @Override
@@ -76,4 +86,28 @@ public class AppItem extends Item {
             }
         }
     }
+
+    private void convertViewToBitmap() {
+        if (bitmap != null)
+            return;
+
+        View genericView = getGenericView();
+
+        ImageView imageView = genericView.findViewById(R.id.appIcon);
+        TextView textView = genericView.findViewById(R.id.textView);
+
+        imageView.setImageDrawable(drawable);
+        textView.setText(name.shortened());
+
+        measureGenericView();
+        bitmap = Bitmap.createBitmap(genericView.getMeasuredWidth(),
+                genericView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        genericView.layout(0, 0, genericView.getMeasuredWidth(),
+                genericView.getMeasuredHeight());
+        genericView.draw(canvas);
+    }
+
+    private Bitmap bitmap;
+    private ImageView specificView;
 }

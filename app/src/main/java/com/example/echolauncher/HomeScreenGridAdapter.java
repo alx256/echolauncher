@@ -2,12 +2,10 @@ package com.example.echolauncher;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -94,15 +92,14 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
     }
 
     public HomeScreenGridAdapter(Context context, List<Item> items) {
+        CONTEXT = context;
+
         // Starts off with 1, actual total is calculated once
         // views can be measured
         int rows = (Globals.metrics.heightPixels
                 - Globals.statusBarHeight
                 - Globals.navigationBarHeight) / Item.getHeight();
-        total = rows * NUM_APPS_PER_ROW;
-
-        LAYOUT_WIDTH_APPS = Globals.metrics.widthPixels / NUM_APPS_PER_ROW;
-        LAYOUT_WIDTH_WIDGETS = Globals.metrics.widthPixels / NUM_WIDGETS_PER_ROW;
+        total = rows * Globals.NUM_APPS_PER_ROW;
 
         occupiedIndices = new ArrayList<>();
         locations = new HomeScreenLocations(context);
@@ -120,11 +117,6 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         item.setPageNumber(pageNumber);
         view = item.toView(parent.getContext());
 
-        ImageView imageView = view.findViewById(R.id.appIcon);
-        TextView textView = view.findViewById(R.id.textView);
-        imageView.setImageDrawable(null);
-        textView.setText("");
-
         ViewTreeObserver observer = view.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -132,7 +124,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                 // When app is first launched, set
                 // the width to the app width
                 ConstraintLayout layout = view.findViewById(R.id.constraintLayout);
-                layout.getLayoutParams().width = LAYOUT_WIDTH_APPS;
+                layout.getLayoutParams().width = Globals.layoutWidthApps;
 
                 // Only needs to be done once, so
                 // remove when done
@@ -182,9 +174,14 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         holder.setGridIndex(position);
         holder.setPageNumber(pageNumber);
 
-        ImageView imageView = holder.itemView.findViewById(R.id.appIcon);
-        TextView textView = holder.itemView.findViewById(R.id.textView);
-        Drawable drawable;
+        // The ImageView belonging to the HomeItem
+        // that we are currently working on
+        ImageView client = holder.itemView.findViewById(R.id.imageView);
+        // The ImageView of the app that is dropped
+        // onto the client ImageView (assigned to
+        // when each instruction is applied)
+        ImageView server;
+
         List<HomeScreenGrid.InstructionCollection> instructionCollections
                 = Pages.getInstructions(position, pageNumber);
 
@@ -194,6 +191,8 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                 item.setGridIndex(position);
                 item.setPageNumber(pageNumber);
                 Instruction instruction = instructionCollection.getInstruction();
+
+                server = (ImageView) item.toView(CONTEXT);
 
                 if (item instanceof WidgetItem) {
                     boolean ignore = false;
@@ -227,28 +226,22 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
                         holder.setItem(item);
 
-                        drawable = holder.item.drawable;
-                        if (holder.item instanceof WidgetItem)
-                            drawable.clearColorFilter();
-                        // Fully visible
-                        holder.item.drawable.setAlpha(0xFF);
-                        imageView.setImageDrawable(drawable);
+                        client.setImageDrawable(server.getDrawable());
 
-                        if (holder.item instanceof AppItem)
-                            textView.setText(holder.item.name.shortened());
+                        if (holder.item instanceof WidgetItem)
+                            client.clearColorFilter();
+                        // Fully visible
+                        client.getDrawable().setAlpha(0xFF);
 
                         if (holder.item instanceof WidgetItem)
                             ((WidgetItem) holder.item).addReferenceView(holder.itemView);
 
-                        holder.itemView.setOnTouchListener(holder.item.getOnTouchListener());
+                        client.setOnTouchListener(holder.item.getOnTouchListener());
 
-                        if (holder.item instanceof WidgetItem) {
-                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
-                            imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
-                        } else {
-                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-                            imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
-                        }
+                        if (holder.item instanceof WidgetItem)
+                            client.getLayoutParams().width = Globals.layoutWidthWidgets;
+                        else
+                            client.getLayoutParams().width = Globals.layoutWidthApps;
 
                         if (instructionCollection.getInstruction() == Instruction.PIN) {
                             // Store this item
@@ -260,22 +253,17 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
                         // Item needs to display the hover effect
                         holder.setPreview(item);
 
+                        client.setImageDrawable(server.getDrawable());
+
+                        // Slightly transparent
+                        client.getDrawable().setAlpha(0x62);
+
                         if (holder.item instanceof WidgetItem) {
-                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
-                            imageView.getLayoutParams().width = LAYOUT_WIDTH_WIDGETS;
+                            client.getLayoutParams().width = Globals.layoutWidthWidgets;
+                            client.getDrawable().setColorFilter(0, PorterDuff.Mode.DARKEN);
                         } else {
-                            holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-                            imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
+                            client.getLayoutParams().width = Globals.layoutWidthApps;
                         }
-
-                        drawable = holder.item.drawable;
-                        imageView.setImageDrawable(drawable);
-                        if (holder.item instanceof WidgetItem)
-                            imageView.getDrawable().setColorFilter(0, PorterDuff.Mode.DARKEN);
-                        imageView.getDrawable().setAlpha(0x62);
-
-                        textView.setText("");
-
                         break;
                     case REMOVE:
                     case CLEAR:
@@ -285,11 +273,9 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
                         holder.clearItem();
 
-                        holder.itemView.getLayoutParams().width = LAYOUT_WIDTH_APPS;
-                        imageView.getLayoutParams().width = Globals.APP_ICON_WIDTH;
+                        client.setImageDrawable(null);
 
-                        imageView.setImageDrawable(null);
-                        textView.setText("");
+                        client.getLayoutParams().width = Globals.layoutWidthApps;
 
                         break;
                 }
@@ -299,8 +285,8 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
         }
     }
 
-    private final int NUM_APPS_PER_ROW = 4, NUM_WIDGETS_PER_ROW = 2,
-            LAYOUT_WIDTH_APPS, LAYOUT_WIDTH_WIDGETS;
+    private final Context CONTEXT;
+
     private int total, pageNumber;
     private List<Integer> occupiedIndices;
     private List<Item> items;

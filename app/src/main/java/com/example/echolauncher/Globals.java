@@ -12,10 +12,13 @@ import android.util.DisplayMetrics;
 
 public class Globals {
     public static DisplayMetrics metrics;
-    public static int statusBarHeight, navigationBarHeight;
+    public static int statusBarHeight, navigationBarHeight,
+            layoutWidthApps, layoutWidthWidgets;
     public static final int APP_ICON_HEIGHT = 150,
             APP_ICON_WIDTH = 150,
             APP_TEXT_SIZE = 12,
             APP_TEXT_HEIGHT = 55,
-            APP_HEIGHT = APP_ICON_HEIGHT + APP_TEXT_HEIGHT;
+            APP_HEIGHT = APP_ICON_HEIGHT + APP_TEXT_HEIGHT,
+            NUM_APPS_PER_ROW = 4,
+            NUM_WIDGETS_PER_ROW = 2;
 }
