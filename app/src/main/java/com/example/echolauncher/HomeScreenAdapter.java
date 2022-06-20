@@ -60,8 +60,6 @@ public class HomeScreenAdapter extends RecyclerView.Adapter<HomeScreenAdapter.Vi
         recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(manager);
 
-        recyclerView.setAdapter(Pages.getGridAdapter());
-
         return new ViewHolder(recyclerView);
     }
 
@@ -71,11 +69,12 @@ public class HomeScreenAdapter extends RecyclerView.Adapter<HomeScreenAdapter.Vi
             return;
 
         RecyclerView recyclerView = (RecyclerView) holder.itemView;
-        HomeScreenGridAdapter gridAdapter = (HomeScreenGridAdapter) recyclerView.getAdapter();
         HomeScreenGrid grid = Pages.getPage(position - 1);
+        recyclerView.setAdapter(grid.getAdapter());
+
+        HomeScreenGridAdapter gridAdapter = (HomeScreenGridAdapter) recyclerView.getAdapter();
         List<Item> items = grid.getItems();
 
-        assert gridAdapter != null;
         gridAdapter.setPageNumber(position - 1);
 
         if (!grid.getItems().isEmpty()) {

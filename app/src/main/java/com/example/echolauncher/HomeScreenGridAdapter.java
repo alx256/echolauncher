@@ -146,6 +146,7 @@ public class HomeScreenGridAdapter extends RecyclerView.Adapter<HomeScreenGridAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.item.setGridIndex(position);
         ConstraintLayout layout = holder.itemView.findViewById(R.id.constraintLayout);
         ViewTreeObserver observer = layout.getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

@@ -27,7 +27,7 @@ public class Pages {
                 - (dotParams.leftMargin));
 
         for (int i = 0 ; i <= 10; i++) {
-            pages.add(new HomeScreenGrid(i));
+            pages.add(new HomeScreenGrid(context, i));
             dots.addView(getNewDot(dot));
         }
 
@@ -114,8 +114,6 @@ public class Pages {
             }
         });
 
-        gridAdapter = new HomeScreenGridAdapter(context, null);
-
         isMultiplePageMode = false;
         actions.setVisibility(View.INVISIBLE);
     }
@@ -169,10 +167,6 @@ public class Pages {
         return pages.size();
     }
 
-    public static HomeScreenGridAdapter getGridAdapter() {
-        return gridAdapter;
-    }
-
     private static ImageView getNewDot(ImageView original) {
         ImageView view = new ImageView(original.getContext());
         view.setImageDrawable(original.getDrawable());
@@ -203,7 +197,6 @@ public class Pages {
     }
 
     private static List<HomeScreenGrid> pages;
-    private static HomeScreenGridAdapter gridAdapter;
     private static LinearLayout actions, dots;
     private static ImageView dot;
     private static ViewPager2 pager;

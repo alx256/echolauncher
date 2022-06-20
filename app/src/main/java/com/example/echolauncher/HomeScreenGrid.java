@@ -1,5 +1,7 @@
 package com.example.echolauncher;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +37,13 @@ public class HomeScreenGrid {
         private final Item ITEM;
     }
 
-    public HomeScreenGrid(int pageNumber) {
+    public HomeScreenGrid(Context context, int pageNumber) {
         this.pageNumber = pageNumber;
 
         items = new ArrayList<>();
         homeScreenInstructions = new HashMap<>();
+        adapter = new HomeScreenGridAdapter(context, null);
+        adapter.setPageNumber(pageNumber);
     }
 
     public void updateGrid(int position, HomeScreenGridAdapter.Instruction instruction, Item item) {
@@ -56,7 +60,7 @@ public class HomeScreenGrid {
         // Add the new instructions
         homeScreenInstructions.get(position).add(new InstructionCollection(instruction, item));
         // Update the necessary item
-        Pages.getGridAdapter().notifyItemChanged(position);
+        adapter.notifyItemChanged(position);
     }
 
     public void addItem(Item item) {
@@ -65,6 +69,10 @@ public class HomeScreenGrid {
 
     public void clearItems() {
         items.clear();
+    }
+
+    public HomeScreenGridAdapter getAdapter() {
+        return adapter;
     }
 
     public Map<Integer, List<InstructionCollection>> getHomeScreenInstructions() {
@@ -78,4 +86,5 @@ public class HomeScreenGrid {
     private Map<Integer, List<InstructionCollection>> homeScreenInstructions;
     private List<Item> items;
     private int pageNumber;
+    private HomeScreenGridAdapter adapter;
 }
