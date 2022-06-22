@@ -20,7 +20,6 @@ public class HomeDestination {
             appDrawer = activity.findViewById(R.id.appDrawerFragment);
         widgetDrawer.getLayoutParams().height = Globals.metrics.heightPixels;
         homeScreen.getLayoutParams().height = Globals.metrics.heightPixels;
-        appDrawer.getLayoutParams().height = 0xFFFFF;
 
         // Add snapping behaviour to scroll view
         ScrollView scrollView = activity.findViewById(R.id.mainScrollView);
