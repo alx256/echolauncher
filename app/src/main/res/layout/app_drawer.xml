@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeDestination">
+    tools:context=".home_screen.HomeDestination">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.example.echolauncher.AppDrawerGridView
+            <com.example.echolauncher.app_drawer.AppDrawerGridView
                 android:id="@+id/drawerGrid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

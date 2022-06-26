@@ -7,7 +7,7 @@
     android:id="@+id/mainConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeDestination">
+    tools:context=".home_screen.HomeDestination">
 
     <!-- The main scroll view, this is used to store the home screen pages, the
     app drawer and the widget drawer -->
@@ -29,7 +29,7 @@
             <!-- Widget drawer fragment -->
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/widgetDrawerFragment"
-                android:name="com.example.echolauncher.WidgetDrawer"
+                android:name="com.example.echolauncher.widget_drawer.WidgetDrawer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:layout="@layout/widget_drawer" />
@@ -37,7 +37,7 @@
             <!-- Home screen fragment -->
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/homeScreenFragment"
-                android:name="com.example.echolauncher.HomeScreen"
+                android:name="com.example.echolauncher.home_screen.HomeScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:layout="@layout/home_screen" />
@@ -45,7 +45,7 @@
             <!-- App drawer fragment -->
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/appDrawerFragment"
-                android:name="com.example.echolauncher.AppDrawer"
+                android:name="com.example.echolauncher.app_drawer.AppDrawer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:layout="@layout/app_drawer" />

@@ -18,6 +18,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.echolauncher.apps.Library;
+import com.example.echolauncher.home_screen.HomeDestination;
+import com.example.echolauncher.study_mode.StudyMode;
+import com.example.echolauncher.study_mode.StudyModeDestination;
+import com.example.echolauncher.utilities.Globals;
+import com.example.echolauncher.utilities.Sort;
+
 /**
  * This is the main entry point of the application.
  * It configures basic features of the app and opens

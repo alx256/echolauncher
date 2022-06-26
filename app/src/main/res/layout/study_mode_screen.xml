@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".HomeDestination">
+    tools:context=".home_screen.HomeDestination">
 
     <LinearLayout
         android:id="@+id/mainLayout"
@@ -75,13 +75,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.example.echolauncher.DropTarget
+            <com.example.echolauncher.utilities.DropTarget
                 android:id="@+id/allowedApps"
                 android:layout_width="match_parent"
                 android:layout_height="92dp"
                 android:layout_weight="1"/>
 
-            <com.example.echolauncher.DropTarget
+            <com.example.echolauncher.utilities.DropTarget
                 android:id="@+id/delete"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -95,7 +95,7 @@
                     app:layout_column="0"
                     app:layout_row="1"
                     app:srcCompat="@drawable/cross" />
-            </com.example.echolauncher.DropTarget>
+            </com.example.echolauncher.utilities.DropTarget>
 
         </LinearLayout>
 
