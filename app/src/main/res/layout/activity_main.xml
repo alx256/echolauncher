@@ -11,7 +11,7 @@
 
     <!-- The main scroll view, this is used to store the home screen pages, the
     app drawer and the widget drawer -->
-    <ScrollView
+    <com.example.echolauncher.home_screen.MainScrollView
         android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -50,5 +50,5 @@
                 android:layout_height="match_parent"
                 tools:layout="@layout/app_drawer" />
         </LinearLayout>
-    </ScrollView>
+    </com.example.echolauncher.home_screen.MainScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

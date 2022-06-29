@@ -1,5 +1,7 @@
 package com.example.echolauncher.drawer;
 
+import static com.example.echolauncher.home_screen.MainScrollView.Focus.HOME_SCREEN;
+
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -16,7 +18,7 @@ import androidx.annotation.NonNull;
 
 import com.example.echolauncher.R;
 import com.example.echolauncher.apps.Library;
-import com.example.echolauncher.home_screen.Scroll;
+import com.example.echolauncher.home_screen.HomeDestination;
 
 /**
  * The item class
@@ -76,7 +78,8 @@ public class Item implements Cloneable {
                     identifier);
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(VIEW);
             VIEW.startDrag(data, shadowBuilder, VIEW, 0);
-            Scroll.scrollTo(Scroll.HOME_SCREEN);
+            HomeDestination.getScrollView()
+                    .scrollTo(HOME_SCREEN);
             stationary = false;
             Library.setDragging(ITEM);
 
@@ -157,7 +160,9 @@ public class Item implements Cloneable {
                 return false;
 
             if (dragEvent.getAction() == DragEvent.ACTION_DRAG_ENDED) {
-                Scroll.scrollBack();
+                //MainScrollView.scrollBack();
+                HomeDestination.getScrollView()
+                        .scrollBack();
                 stationary = true;
             }
 
