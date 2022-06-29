@@ -9,30 +9,40 @@ import com.example.echolauncher.utilities.Globals;
 public class AppDrawerGridView extends GridView {
     public AppDrawerGridView(Context context) {
         super(context);
+        retainedHeightMeasureSpec = -1;
     }
 
     public AppDrawerGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        retainedHeightMeasureSpec = -1;
     }
 
     public AppDrawerGridView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        retainedHeightMeasureSpec = -1;
     }
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (retainedHeightMeasureSpec != -1) {
+            super.onMeasure(widthMeasureSpec, retainedHeightMeasureSpec);
+            return;
+        }
+
         // Allow the view to be as long as it needs initially
-        int newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2,
+        retainedHeightMeasureSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2,
                 MeasureSpec.AT_MOST);
-        super.onMeasure(widthMeasureSpec, newHeightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, retainedHeightMeasureSpec);
 
         if (getMeasuredHeight() < Globals.metrics.heightPixels) {
             // The height of the GridView is less than the height
             // of the screen, so make the GridView fill the whole
             // screen
-            newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(Globals.metrics.heightPixels,
+            retainedHeightMeasureSpec = MeasureSpec.makeMeasureSpec(Globals.metrics.heightPixels,
                     MeasureSpec.EXACTLY);
-            super.onMeasure(widthMeasureSpec, newHeightMeasureSpec);
+            super.onMeasure(widthMeasureSpec, retainedHeightMeasureSpec);
         }
     }
+
+    private int retainedHeightMeasureSpec;
 }
