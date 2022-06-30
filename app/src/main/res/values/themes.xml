@@ -13,7 +13,8 @@
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowShowWallpaper">true</item>
         <item name="android:windowAnimationStyle">@style/AppAnimations</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
     </style>
 
     <style name="AppAnimations" parent="@android:style/Animation.Activity">

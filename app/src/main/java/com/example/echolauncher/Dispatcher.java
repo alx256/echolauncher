@@ -61,8 +61,6 @@ public class Dispatcher extends AppCompatActivity {
         // Use entire screen area
         WINDOW.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        // Hide status bar
-        WINDOW.setStatusBarColor(Color.TRANSPARENT);
 
         // Initialise the app and widget library
         Library.init(getApplicationContext());
