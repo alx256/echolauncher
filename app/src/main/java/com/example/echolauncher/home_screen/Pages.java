@@ -153,10 +153,7 @@ public class Pages {
         if (unpinLayer == null)
             unpinLayer = (View) view.getParent().getParent().getParent().getParent();
 
-        ImageView wallpaperView = unpinLayer.findViewById(R.id.wallpaperView);
-        assert wallpaperView != null;
-
-        wallpaperView.setColorFilter(tint);
+        unpinLayer.setBackgroundColor(tint);
     }
 
     public static HomeScreenGrid getPage(int index) {

@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".home_screen.HomeDestination">
 
-    <ImageView
-        android:id="@+id/wallpaperView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/homeScreenPager"
         android:layout_width="match_parent"

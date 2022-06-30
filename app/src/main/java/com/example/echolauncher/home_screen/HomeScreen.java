@@ -38,12 +38,6 @@ public class HomeScreen extends Fragment {
 
         Pages.init(view, getContext());
 
-        // Get the user's wallpaper
-        WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
-        ImageView wallpaperView = view.findViewById(R.id.wallpaperView);
-        // Set the background to the user's wallpaper
-        wallpaperView.setImageDrawable(wallpaperManager.getDrawable());
-
         View statusBarBarrier = view.findViewById(R.id.statusBarBarrier);
         statusBarBarrier.getLayoutParams().height = Globals.statusBarHeight;
 
