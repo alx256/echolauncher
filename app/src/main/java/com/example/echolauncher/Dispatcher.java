@@ -68,11 +68,6 @@ public class Dispatcher extends AppCompatActivity {
         // Make sure sorting is properly initialised
         Sort.init();
 
-        // Request READ_EXTERNAL_STORAGE permission (needed for accessing wallpaper)
-        ActivityCompat.requestPermissions(this,
-                new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE },
-                1);
-
         // Get screen size
         Globals.metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getRealMetrics(Globals.metrics);
